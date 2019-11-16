@@ -22,7 +22,7 @@ import rma.ox.engine.utils.Logx;
 
 public class NoSqlDB {
 
-    private static final Array<Class<?>> repositoriesAllowed = new Array<>();
+    private final Array<Class<?>> repositoriesAllowed = new Array<>();
 
     private final Nitrite db;
     private final ArrayMap<Class<?>, ObjectRepository> repositories;
@@ -177,15 +177,5 @@ public class NoSqlDB {
             return false;
         }
     }
-
-   //private void checkIfFolderExistAndCreate() {
-   //    File folder = new File(LevelAssets.pathDataBase);
-   //    if (!folder.exists()) {
-   //        Logx.d(this.getClass(), "NoSqlDB db file location not exist " + LevelAssets.pathDataBase);
-   //        if (folder.mkdir()) {
-   //            Logx.d(this.getClass(), "NoSqlDB db file location mkdir " + LevelAssets.pathDataBase);
-   //        }
-   //    }
-   //}
 
 }
