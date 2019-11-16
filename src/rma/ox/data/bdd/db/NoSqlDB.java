@@ -16,24 +16,21 @@ import org.dizitart.no2.objects.filters.ObjectFilters;
 
 import java.util.Iterator;
 
-import rma.ox.data.bdd.User;
 import rma.ox.engine.utils.Logx;
 
 
 public class NoSqlDB {
 
-    private final Array<Class<?>> repositoriesAllowed = new Array<>();
+    private final Array<Class<?>> repositoriesAllowed;
 
     private final Nitrite db;
     private final ArrayMap<Class<?>, ObjectRepository> repositories;
 
-    public NoSqlDB(String dbPath) {
-        this(dbPath, true, true);
+    public NoSqlDB(String dbPath, Array<Class<?>> repositoriesAllowed) {
+        this(dbPath, true, true, repositoriesAllowed);
     }
 
-    public NoSqlDB(String dbPath, boolean isWritable, boolean compressed) {
-
-        //checkIfFolderExistAndCreate();
+    public NoSqlDB(String dbPath, boolean isWritable, boolean compressed, Array<Class<?>> repositoriesAllowed) {
 
         NitriteBuilder builder = Nitrite.builder();
         builder.filePath(dbPath);
@@ -42,11 +39,11 @@ public class NoSqlDB {
 
         db = builder.openOrCreate();
 
-        /***** ADD HERE REPOSITORY FOR YOUR DATA *****/
-        repositoriesAllowed.add(User.class);
-        repositoriesAllowed.add(Character.class);
-        /*****-----------------------------------*****/
-        
+        if(repositoriesAllowed != null) {
+            this.repositoriesAllowed = repositoriesAllowed;
+        }else{
+            this.repositoriesAllowed = new Array<>();
+        }
 
         repositories = new ArrayMap<>();
         initRepositories();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 
 import rma.ox.data.bdd.base.DBQuery;
 import rma.ox.data.bdd.pool.RemovePool;
+import rma.ox.engine.utils.Logx;
 
 import org.dizitart.no2.objects.ObjectFilter;
 import org.dizitart.no2.objects.filters.ObjectFilters;
@@ -14,9 +15,15 @@ public class RemoveDBQuery extends DBQuery {
     private Class type;
     private ObjectFilter filter;
     private DBQuery.Callback<Void> listener;
+    private String pathDB;
 
     public RemoveDBQuery setListener(DBQuery.Callback<Void> listener) {
         this.listener = listener;
+        return this;
+    }
+
+    public RemoveDBQuery setDB(String pathDB) {
+        this.pathDB = pathDB;
         return this;
     }
 
@@ -45,14 +52,18 @@ public class RemoveDBQuery extends DBQuery {
 
     @Override
     protected void executeQuery() {
+        if (pathDB == null) {
+            Logx.e(getClass(), "pathDB is null");
+            return;
+        }
         //Logx.d(this.getClass(), "==+> executeQuery"+Thread.currentThread().getName());
         try {
             if (obj != null && type != null) {
                 for (int i = 0; i < obj.length; i++) {
-                    getDB().remove(obj[i], type);
+                    getDB(pathDB).remove(obj[i], type);
                 }
             } else if (filter != null && type != null) {
-                getDB().remove(filter, type);
+                getDB(pathDB).remove(filter, type);
             }
             if (listener != null) {
                 listener.succes(null);
@@ -71,6 +82,7 @@ public class RemoveDBQuery extends DBQuery {
 
     @Override
     public void reset() {
+        pathDB = null;
         obj = null;
         filter = null;
         this.type = null;

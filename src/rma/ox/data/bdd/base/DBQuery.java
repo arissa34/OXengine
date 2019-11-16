@@ -2,6 +2,7 @@ package rma.ox.data.bdd.base;
 
 import com.badlogic.gdx.utils.Pool;
 import rma.ox.data.bdd.db.NoSqlDB;
+import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.logic.base.UseCase;
 
 public abstract class DBQuery implements Runnable, Pool.Poolable{
@@ -12,14 +13,9 @@ public abstract class DBQuery implements Runnable, Pool.Poolable{
     }
 
     protected UseCase.Callback callback;
-    private NoSqlDB dbHelper;
 
-    public void setDB(NoSqlDB dbHelper){
-        this.dbHelper = dbHelper;
-    }
-
-    public NoSqlDB getDB(){
-        return dbHelper;
+    public NoSqlDB getDB(String path){
+        return MyAssetManager.get().get(path, NoSqlDB.class);
     }
 
     @Override

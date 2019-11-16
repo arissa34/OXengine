@@ -10,9 +10,15 @@ import org.dizitart.no2.objects.filters.ObjectFilters;
 
 public class FindListDBQuery<T> extends DBQuery {
 
+    private String pathDB;
     private Class<?> type;
     private ObjectFilter filter;
     private DBQuery.Callback<T> listener;
+
+    public FindListDBQuery setDB(String pathDB) {
+        this.pathDB = pathDB;
+        return this;
+    }
 
     public FindListDBQuery setListener(DBQuery.Callback<T> listener) {
         this.listener = listener;
@@ -38,18 +44,22 @@ public class FindListDBQuery<T> extends DBQuery {
 
     @Override
     protected void executeQuery() {
+        if (pathDB == null) {
+            Logx.e(getClass(), "pathDB is null");
+            return;
+        }
         if (type == null) {
-            Logx.e(this.getClass(), "type is null");
+            Logx.e(getClass(), "type is null");
             return;
         }
         //Logx.d(this.getClass(), "==+> executeQuery : "+Thread.currentThread().getName());
         try {
             T response;
             if (filter == ObjectFilters.ALL) {
-                response = (T) getDB().findAll(type);
+                response = (T) getDB(pathDB).findAll(type);
 
             } else {
-                response = (T) getDB().findByFilter(filter, type);
+                response = (T) getDB(pathDB).findByFilter(filter, type);
             }
             if (listener != null) {
                 listener.succes(response);
@@ -68,6 +78,7 @@ public class FindListDBQuery<T> extends DBQuery {
 
     @Override
     public void reset() {
+        pathDB = null;
         type = null;
         listener = null;
         filter = null;

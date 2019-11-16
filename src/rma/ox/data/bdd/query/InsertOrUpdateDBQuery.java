@@ -8,6 +8,12 @@ public class InsertOrUpdateDBQuery extends DBQuery {
 
     private Object[] obj;
     private DBQuery.Callback<Void> listener;
+    private String pathDB;
+
+    public InsertOrUpdateDBQuery setDB(String pathDB) {
+        this.pathDB = pathDB;
+        return this;
+    }
 
     public InsertOrUpdateDBQuery setListener(DBQuery.Callback<Void> listener) {
         this.listener = listener;
@@ -21,6 +27,10 @@ public class InsertOrUpdateDBQuery extends DBQuery {
 
     @Override
     protected void executeQuery() {
+        if (pathDB == null) {
+            Logx.e(getClass(), "pathDB is null");
+            return;
+        }
         if (obj == null) {
             Logx.e(this.getClass(), "obj is null");
             return;
@@ -28,7 +38,7 @@ public class InsertOrUpdateDBQuery extends DBQuery {
         try {
             //Logx.d(this.getClass(), "==+> executeQuery "+Thread.currentThread().getName());
             for (int i = 0; i < obj.length; i++) {
-                getDB().insertOrUpdate(obj[i]);
+                getDB(pathDB).insertOrUpdate(obj[i]);
             }
             if (listener != null) {
                 listener.succes(null);
@@ -47,6 +57,7 @@ public class InsertOrUpdateDBQuery extends DBQuery {
 
     @Override
     public void reset() {
+        pathDB = null;
         obj = null;
         listener = null;
     }
