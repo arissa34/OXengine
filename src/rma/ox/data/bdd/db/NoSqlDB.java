@@ -46,6 +46,7 @@ public class NoSqlDB {
         repositoriesAllowed.add(User.class);
         repositoriesAllowed.add(Character.class);
         /*****-----------------------------------*****/
+        
 
         repositories = new ArrayMap<>();
         initRepositories();
