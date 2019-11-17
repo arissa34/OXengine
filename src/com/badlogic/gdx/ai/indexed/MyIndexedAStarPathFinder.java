@@ -14,7 +14,7 @@ public class MyIndexedAStarPathFinder<N> extends IndexedAStarPathFinder<N> {
     }
 
     public void updateIndexedGraph(IndexedGraph<N> graph){
-        //this.graph = graph;
-        //this.nodeRecords = (NodeRecord<N>[])new NodeRecord[graph.getNodeCount()];
+        this.graph = graph;
+        this.nodeRecords = (NodeRecord<N>[])new NodeRecord[graph.getNodeCount()];
     }
 }

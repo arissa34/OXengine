@@ -48,8 +48,8 @@ import com.badlogic.gdx.utils.TimeUtils;
  * 
  * @author davebaol */
 public class IndexedAStarPathFinder<N> implements PathFinder<N> {
-	IndexedGraph<N> graph;
-	NodeRecord<N>[] nodeRecords;
+	public IndexedGraph<N> graph;
+	public NodeRecord<N>[] nodeRecords;
 	BinaryHeap<NodeRecord<N>> openList;
 	NodeRecord<N> current;
 	public Metrics metrics;
@@ -295,7 +295,7 @@ public class IndexedAStarPathFinder<N> implements PathFinder<N> {
 	 * @param <N> Type of node
 	 * 
 	 * @author davebaol */
-	static class NodeRecord<N> extends BinaryHeap.Node {
+	public static class NodeRecord<N> extends BinaryHeap.Node {
 		/** The reference to the node. */
 		N node;
 

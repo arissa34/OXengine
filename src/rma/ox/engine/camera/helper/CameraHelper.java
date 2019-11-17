@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Matrix4;
 
 import rma.ox.engine.camera.FrontalCamera;
 import rma.ox.engine.camera.GhostCamera;
+import rma.ox.engine.settings.SettingsHelper;
 
 public class CameraHelper {
 
@@ -19,7 +20,7 @@ public class CameraHelper {
     private FrontalCamera defaultCamera;
 
     public CameraHelper(){
-        defaultCamera = new FrontalCamera(47, 1400, 900);
+        defaultCamera = new FrontalCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
         defaultCamera.targetPosition.set(0, 50, 200);
         defaultCamera.targetDirection.set(0, 0, 0);
         defaultCamera.targetUp.set(0, 1, 0);
