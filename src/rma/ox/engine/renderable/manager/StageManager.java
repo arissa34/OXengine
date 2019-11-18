@@ -1,4 +1,4 @@
-package rma.ox.engine.renderable;
+package rma.ox.engine.renderable.manager;
 
 import com.badlogic.gdx.utils.Array;
 

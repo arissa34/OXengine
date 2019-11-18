@@ -1,4 +1,4 @@
-package rma.ox.engine.renderable;
+package rma.ox.engine.renderable.manager;
 
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;

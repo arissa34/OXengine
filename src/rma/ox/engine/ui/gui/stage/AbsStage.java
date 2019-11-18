@@ -3,9 +3,10 @@ package rma.ox.engine.ui.gui.stage;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import rma.ox.engine.renderable.StageManager;
+import rma.ox.engine.renderable.manager.StageManager;
+import rma.ox.engine.ui.gui.IGui;
 
-public abstract class AbsStage extends Stage {
+public abstract class AbsStage<T extends AbsStage> extends Stage implements IGui {
 
     public AbsStage(){
         super();
@@ -31,13 +32,13 @@ public abstract class AbsStage extends Stage {
         draw();
     }
 
-    public AbsStage registerForRender(){
+    public T registerForRender(){
         StageManager.get().addStage(this);
-        return this;
+        return (T) this;
     }
 
-    public AbsStage unregisterForRender(){
+    public T unregisterForRender(){
         StageManager.get().removeStage(this);
-        return this;
+        return (T) this;
     }
 }

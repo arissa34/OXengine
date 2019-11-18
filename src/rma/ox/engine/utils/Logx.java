@@ -8,6 +8,7 @@ public class Logx {
 
     public static void l(Class type, String msg){
         if(Config.TYPE == Config.Type.DEBUG){
+            if(type == null) type = Logx.class;
             Gdx.app.log(type.getSimpleName(), msg);
         }
         //TODO REPORT TO ANALYTICS
@@ -15,6 +16,7 @@ public class Logx {
 
     public static void d(Class type, String msg){
         if(Config.TYPE == Config.Type.DEBUG){
+            if(type == null) type = Logx.class;
             Gdx.app.debug(type.getSimpleName(), msg);
         }
         //TODO REPORT TO ANALYTICS
@@ -22,6 +24,7 @@ public class Logx {
 
     public static void e(Class type, String msg){
         if(Config.TYPE == Config.Type.DEBUG){
+            if(type == null) type = Logx.class;
             Gdx.app.error(type.getSimpleName(), msg);
         }
         //TODO REPORT TO ANALYTICS

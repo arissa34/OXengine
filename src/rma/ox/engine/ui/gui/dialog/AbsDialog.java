@@ -51,6 +51,15 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         getButtonTable().clearChildren();
     }
 
+    public AbsDialog(Stage stage, WindowStyle windowStyle) {
+        super("", windowStyle);
+        this.stage = stage;
+        //skin = assets.get(LevelAssets.defaultSkinJson, Skin.class);
+        getTitleTable().clearChildren();
+        getContentTable().clearChildren();
+        getButtonTable().clearChildren();
+    }
+
     public D addTitle(String title) {
         return addTitle(title, Align.center);
     }

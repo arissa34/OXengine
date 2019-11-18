@@ -2,6 +2,11 @@ package rma.ox.engine.settings;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
+import rma.ox.engine.ressource.MyAssetManager;
 
 public class Config {
 
@@ -16,6 +21,22 @@ public class Config {
     public static String VERSION = "";
     public static int GAME_VERSIONNUMBER = 0;
 
+    public static boolean isDebug(){
+        return TYPE == Type.DEBUG;
+    }
+
+    public static boolean isDesktop(){
+        return Gdx.app.getType() == Application.ApplicationType.Desktop;
+    }
+
+    public static boolean isAndroid(){
+        return Gdx.app.getType() == Application.ApplicationType.Android;
+    }
+
+    public static boolean isiOS(){
+        return Gdx.app.getType() == Application.ApplicationType.iOS;
+    }
+
     /**
      * Game
      */
@@ -29,4 +50,10 @@ public class Config {
         }
     }
 
+    /**
+     * RESOLUTION
+     */
+    public static int DEFAULT_FOV = 47;
+    public static int DEFAULT_WIDTH = 1400;
+    public static int DEFAULT_HEIGHT = 900;
 }

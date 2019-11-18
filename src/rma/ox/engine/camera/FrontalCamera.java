@@ -31,7 +31,7 @@ public class FrontalCamera extends GhostCamera implements InputProcessor {
         near = 10f;
         far = 1000f;
         InputMultiplexer inputMultiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
-        inputMultiplexer.addProcessor(1, this);
+        inputMultiplexer.addProcessor(this);
     }
 
     public void update(float delta) {
