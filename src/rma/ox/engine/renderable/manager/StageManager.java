@@ -2,6 +2,7 @@ package rma.ox.engine.renderable.manager;
 
 import com.badlogic.gdx.utils.Array;
 
+import rma.ox.engine.ui.gui.notification.InAppNotificationTable;
 import rma.ox.engine.ui.gui.stage.AbsStage;
 
 public class StageManager {
@@ -15,6 +16,8 @@ public class StageManager {
 
     /*******************************/
 
+    private AbsStage mainStage;
+    private InAppNotificationTable notifTable = new InAppNotificationTable();
     public Array<AbsStage> listStage;
 
     public StageManager() {
@@ -43,5 +46,17 @@ public class StageManager {
         for(int i = 0; i < listStage.size; i++){
             listStage.get(i).render();
         }
+    }
+
+    public AbsStage getMainStage() {
+        return mainStage;
+    }
+
+    public void setMainStage(AbsStage mainStage) {
+        this.mainStage = mainStage;
+    }
+
+    public InAppNotificationTable getNotifTable() {
+        return notifTable;
     }
 }

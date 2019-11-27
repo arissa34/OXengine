@@ -5,10 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-public class FrontalCamera extends GhostCamera implements InputProcessor {
+import rma.ox.engine.settings.Config;
+
+public class FrontalCamera extends GhostCamera implements GestureDetector.GestureListener, InputProcessor {
 
     public int screenX, screenY;
     private float minX = -100f;
@@ -31,7 +35,11 @@ public class FrontalCamera extends GhostCamera implements InputProcessor {
         near = 10f;
         far = 1000f;
         InputMultiplexer inputMultiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
-        inputMultiplexer.addProcessor(this);
+        if(Config.isDesktop()) {
+            inputMultiplexer.addProcessor(this);
+        }else{
+            inputMultiplexer.addProcessor(new GestureDetector(this));
+        }
     }
 
     public void update(float delta) {
@@ -202,5 +210,56 @@ public class FrontalCamera extends GhostCamera implements InputProcessor {
             tmp.set(targetPosition).mulAdd(leftToFollow, zoomValue);
             targetPosition.set(tmp);
         }
+    }
+
+    @Override
+    public boolean touchDown(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean tap(float x, float y, int count, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean longPress(float x, float y) {
+        return false;
+    }
+
+    @Override
+    public boolean fling(float velocityX, float velocityY, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean pan(float x, float y, float deltaX, float deltaY) {
+        drag();
+        return false;
+    }
+
+    @Override
+    public boolean panStop(float x, float y, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean zoom(float initialDistance, float distance) {
+        return false;
+    }
+
+    float lastZoom;
+    @Override
+    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+        if(lastZoom == 0) lastZoom = pointer1.dst(pointer2);
+        if(lastZoom > pointer1.dst(pointer2)) zoom(2);
+        if(lastZoom < pointer1.dst(pointer2)) zoom(-2);
+        lastZoom = pointer1.dst(pointer2);
+        return true;
+    }
+
+    @Override
+    public void pinchStop() {
+        lastZoom = 0;
     }
 }

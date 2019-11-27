@@ -40,12 +40,11 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
     protected Cell<Button> cellCancel;
     protected Cell<Button> cellValid;
     protected ScrollPane scroll;
-    private Skin skin;
+    protected boolean isShowing;
 
     public AbsDialog(Stage stage) {
         super("", new WindowStyle(new BitmapFont(), Color.WHITE, null));
         this.stage = stage;
-        //skin = assets.get(LevelAssets.defaultSkinJson, Skin.class);
         getTitleTable().clearChildren();
         getContentTable().clearChildren();
         getButtonTable().clearChildren();
@@ -54,7 +53,6 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
     public AbsDialog(Stage stage, WindowStyle windowStyle) {
         super("", windowStyle);
         this.stage = stage;
-        //skin = assets.get(LevelAssets.defaultSkinJson, Skin.class);
         getTitleTable().clearChildren();
         getContentTable().clearChildren();
         getButtonTable().clearChildren();
@@ -112,9 +110,10 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
     }
 
     public D addText(String text) {
-        labelText = new Label(text, skin);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+        labelText = new Label(text, labelStyle);
         labelText.setWrap(true);
-        scroll = new ScrollPane(labelText, skin);
+        scroll = new ScrollPane(labelText);
         scroll.setForceScroll(false, false);
         cellScroll = getContentTable().add(scroll).prefWidth(LabelUtils.getTexttWidth(labelText)).growX();
         return (D) this;
@@ -225,11 +224,13 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
     public D show() {
         setPosition(getCenterX(), getCenterY());
         show(stage, Actions.sequence());
+        isShowing = true;
         return (D) this;
     }
 
     public void hide() {
         super.hide(Actions.sequence());
+        isShowing = false;
     }
 
     public D setDialogModal(boolean modal) {
