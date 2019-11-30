@@ -124,7 +124,18 @@ public class DevBar extends Table implements IGui, Observer {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 count++;
-                InAppNotification.show("badlogic.jpg", "title title title title title title title title title title : "+count, "subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle : "+count);
+                InAppNotification.Builder.setListener(new InAppNotification.Listener() {
+                    @Override
+                    public void onClick() {
+                        Logx.d("Notif onClick");
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Logx.d("Notif onCancel");
+                    }
+                }).setHeader("badlogic.jpg", "mugydqziubg diuouiqzd houqdzh uo qzduzddqz fr count "+count, bitmapFont).build().show();
+                //InAppNotification.show("badlogic.jpg", "title title title title title title title title title title : "+count, "subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle : "+count);
                 Toast.show(StageManager.get().getMainStage(), "TEST", Toast.Duration.SHORT);
             }
         });
@@ -132,13 +143,17 @@ public class DevBar extends Table implements IGui, Observer {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 count++;
-                InAppNotification.show("badlogic.jpg", "title : "+count, "subTitlesubTitlesubTitlesu : "+count).setFont(bitmapFont);
+                //InAppNotification.show("badlogic.jpg", "title : "+count, "subTitlesubTitlesubTitlesu : "+count).setFont(bitmapFont);
+                //InAppNotification.Builder.setHeader("badlogic.jpg", "HEADER").setTitle("TITLE "+count, bitmapFont).build().show();
+                InAppNotification.Builder.setHeader("badlogic.jpg", "HEADER").setIcon("badlogic.jpg").setTitle("TITLE "+count, bitmapFont).setDescription("subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle").build().show();
             }
         });
         logBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                devLogMenu.show(getPosX(logBtn), getHeight());
+                count++;
+                InAppNotification.Builder.setIcon("badlogic.jpg").setTitle("TITLE "+count).setDescription("subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle", bitmapFont).build().show();
+                //devLogMenu.show(getPosX(logBtn), getHeight());
                 Logx.d(getClass(), "==> show");
             }
         });
