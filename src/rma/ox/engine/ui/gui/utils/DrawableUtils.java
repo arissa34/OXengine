@@ -13,6 +13,8 @@ public class DrawableUtils {
         Pixmap bgPixmap = new Pixmap(1,1, Pixmap.Format.RGBA8888);
         bgPixmap.setColor(color);
         bgPixmap.fill();
-        return new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
+        TextureRegionDrawable regionDrawable = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
+        bgPixmap.dispose();
+        return regionDrawable;
     }
 }

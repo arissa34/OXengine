@@ -10,17 +10,16 @@ import rma.ox.engine.ui.gui.scroll.MyScrollPane;
 public class InAppNotificationTable {
 
     protected static final float PAD = 10f;
-    private static final float WIDTH = 300;
+    protected static final float WIDTH = 300;
+    protected static final float HEADER_HEIGHT = 180;
 
     private Container container;
     private MyScrollPane scrollPane;
     private MyTable table;
-    private int align = Align.right;
 
     public InAppNotificationTable(){
         scrollPane = new MyScrollPane(table = new MyTable());
         scrollPane.setSmoothScrolling(true);
-        this.align = align;
         table.defaults().width(WIDTH);
     }
 

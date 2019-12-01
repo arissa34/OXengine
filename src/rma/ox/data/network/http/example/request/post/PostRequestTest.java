@@ -51,7 +51,7 @@ public class PostRequestTest extends AbsRequest<PostData> {
     }
 
     @Override
-    protected boolean isFileToUpload() {
+    protected boolean isFileToDownload() {
         return false;
     }
 

@@ -17,11 +17,13 @@ public class FlushableManager {
     public Array<FlushablePool> listActionFlushable;
     public Array<FlushablePool> listBDDFlushable;
     public Array<FlushablePool> listUiFlushable;
+    public Array<FlushablePool> listRequestFlushable;
 
     public FlushableManager(){
         listActionFlushable = new Array<>();
         listBDDFlushable = new Array<>();
         listUiFlushable = new Array<>();
+        listRequestFlushable = new Array<>();
     }
 
     public void registerUi(FlushablePool pool){

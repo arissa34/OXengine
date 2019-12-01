@@ -151,17 +151,15 @@ public class DevBar extends Table implements IGui, Observer {
         logBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                count++;
-                InAppNotification.Builder.setIcon("badlogic.jpg").setTitle("TITLE "+count).setDescription("subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle", bitmapFont).build().show();
-                //devLogMenu.show(getPosX(logBtn), getHeight());
-                Logx.d(getClass(), "==> show");
+                //count++;
+                //InAppNotification.Builder.setIcon("badlogic.jpg").setTitle("TITLE "+count).setDescription("subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle", bitmapFont).build().show();
+                devLogMenu.show(getPosX(logBtn), getHeight());
             }
         });
         OxBtn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 devMainMenu.show(getPosX(OxBtn), getHeight());
-                Logx.d(getClass(), "==> show");
             }
         });
     }

@@ -43,7 +43,7 @@ public class IpRequest extends AbsRequest<IpData> {
     }
 
     @Override
-    protected boolean isFileToUpload() {
+    protected boolean isFileToDownload() {
         return false;
     }
 

@@ -2,10 +2,15 @@ package rma.ox.data.network.http;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.Pools;
+
+import rma.ox.engine.core.threading.runnable.RunnablePool;
 import rma.ox.engine.utils.Logx;
 
 import java.util.Iterator;
@@ -14,6 +19,7 @@ import java.util.Map;
 public abstract class AbsRequest<T> implements Net.HttpResponseListener {
 
     private Net.HttpRequest currentHttpRequest;
+    private static HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
     private boolean isCancelled = false;
 
     protected abstract String getUrl();
@@ -28,7 +34,7 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
 
     protected abstract boolean mustSave();
 
-    protected abstract boolean isFileToUpload();
+    protected abstract boolean isFileToDownload();
 
     protected abstract void saveResult(T result) throws Exception;
 
@@ -38,39 +44,61 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        if(isCancelled) return;
+        if (isCancelled) return;
 
         int statusCode = httpResponse.getStatus().getStatusCode();
 
-        Logx.d(this.getClass(),"httpResponse statusCode : " + statusCode);
+        Logx.d(this.getClass(), "httpResponse statusCode : " + statusCode);
 
         if (statusCode == 200 || statusCode == 201) {
-            String content = httpResponse.getResultAsString();
-            onSuccessRequest(content);
+            if (isFileToDownload()) {
+                onSuccessRequestTexture(httpResponse.getResult());
+            } else {
+                String content = httpResponse.getResultAsString();
+                onSuccessRequest(content);
+            }
         } else if (statusCode == 204) {
             onSuccessRequest(null);
         } else {
             postFailEvent(new ResponseError(httpResponse));
         }
 
+        Pools.free(currentHttpRequest);
         currentHttpRequest = null;
     }
 
-    private void onSuccessRequest(String content){
-        if(mustSave()){
+    private void onSuccessRequestTexture(byte[] rawImageBytes) {
+        if (mustSave()) {
+        } else {
+            Gdx.app.postRunnable(
+                    RunnablePool.get(new RunnablePool.Executor() {
+                        @Override
+                        public void execute() {
+                            Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
+                            Texture texture = new Texture(pixmap);
+                            postSuccesEvent((T) texture);
+                        }
+                    })
+            );
+        }
+    }
+
+    private void onSuccessRequest(String content) {
+        if (mustSave()) {
             launchThreadSave(content);
-        }else{
+        } else {
             postSuccesEvent(extractJsonResponse(content));
         }
     }
 
-    private T extractJsonResponse(String content){
+    private T extractJsonResponse(String content) {
         Json json = new Json();
         T result = json.fromJson(getTypeToken(), content);
         return result;
     }
 
-    private void launchThreadSave(final String content){
+    private void launchThreadSave(final String content) {
+        //TODO REMANAGE REMOVE THE NEW TO AVOID GCC
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -94,17 +122,18 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
     @Override
     public void failed(Throwable t) {
         postFailEvent(new ResponseError(t));
+        Pools.free(currentHttpRequest);
         currentHttpRequest = null;
     }
 
     @Override
     public void cancelled() {
         isCancelled = true;
+        Pools.free(currentHttpRequest);
         currentHttpRequest = null;
     }
 
     public void launch() {
-        HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
         requestBuilder.newRequest()
                 .method(getMethod())
                 .url(getUrl());
@@ -123,20 +152,20 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
 
         Net.HttpRequest httpRequest = requestBuilder.build();
 
-       Logx.d(this.getClass(),"+++++++++ httpRequest +++++++++");
-       Logx.d(this.getClass(),"httpRequest getUrl : " + httpRequest.getUrl());
-       Logx.d(this.getClass(),"httpRequest getMethod : " + httpRequest.getMethod());
-       Logx.d(this.getClass(),"httpRequest getHeaders : " + httpRequest.getHeaders());
-       Logx.d(this.getClass(),"httpRequest getContent : " + httpRequest.getContent());
-       Logx.d(this.getClass(),"+++++++++++++++++++++++++++++++");
+        Logx.d(this.getClass(), "+++++++++ httpRequest +++++++++");
+        Logx.d(this.getClass(), "httpRequest getUrl : " + httpRequest.getUrl());
+        Logx.d(this.getClass(), "httpRequest getMethod : " + httpRequest.getMethod());
+        Logx.d(this.getClass(), "httpRequest getHeaders : " + httpRequest.getHeaders());
+        Logx.d(this.getClass(), "httpRequest getContent : " + httpRequest.getContent());
+        Logx.d(this.getClass(), "+++++++++++++++++++++++++++++++");
 
         Gdx.net.sendHttpRequest(httpRequest, this);
         currentHttpRequest = httpRequest;
         isCancelled = false;
     }
 
-    public void cancel(){
-        if(currentHttpRequest != null) {
+    public void cancel() {
+        if (currentHttpRequest != null) {
             Gdx.net.cancelHttpRequest(currentHttpRequest);
         }
     }

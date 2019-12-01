@@ -20,19 +20,18 @@ import com.badlogic.gdx.utils.FlushablePool;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Scaling;
 
+import rma.ox.data.network.http.texture.LazyTextureRegion;
 import rma.ox.engine.pool.FlushableManager;
 import rma.ox.engine.renderable.manager.StageManager;
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.ui.gui.utils.DrawableUtils;
 import rma.ox.engine.ui.utils.StudioTexture;
-import rma.ox.engine.utils.Logx;
 import rma.ox.engine.utils.StringUtils;
 
 public class InAppNotification extends Container implements Pool.Poolable {
 
     public interface Listener {
         void onClick();
-
         void onCancel();
     }
 
@@ -82,7 +81,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
         pad(InAppNotificationTable.PAD);
         setTouchable(Touchable.enabled);
-        setWidth(300);
+        setWidth(InAppNotificationTable.WIDTH);
         left();
 
         headerTitlestyle = new Label.LabelStyle(this.font, Color.WHITE);
@@ -105,14 +104,16 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
         topImage = new Image();
         icImage = new Image();
-        topImage.setScaling(Scaling.stretch);
 
         mainTable = new Table();
+        mainTable.setTransform(true);
         vertical = new Table();
         header = new Stack();
         header.add(new Container<>(topImage).fill());
         header.add(new Container<>(topFadingImage = new Image(fadingImage.getDrawable())).fill());
         header.add(new Container<>(headerTitleLabel).fill().center().pad(10, 8, 10, 8));
+        header.setTransform(true);
+        mainTable.setClip(true);
 
         mainTable.setBackground(DrawableUtils.getColorDrawable(Color.FOREST));
         setActor(mainTable);
@@ -174,22 +175,27 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
     protected InAppNotification init() {
         if(Builder.hasHeader){
-            topTxtRegion.setRegion(MyAssetManager.get().get(Builder.headerImgPath, Texture.class));
-            topTxtDrawable.setRegion(topTxtRegion);
-            topImage.setDrawable(topTxtDrawable);
-            topFadingImage.setVisible(Builder.headerTitle != null);
 
             if (Builder.headerTitle != null ) {
                 headerTitlestyle.font = Builder.headerTitleFont;
                 headerTitleLabel.setStyle(headerTitlestyle);
                 headerTitleLabel.setText(StringUtils.capitalize(Builder.headerTitle));
             }
+            //topTxtRegion.setRegion(MyAssetManager.get().get(Builder.headerImgPath, Texture.class));
+            topTxtRegion = LazyTextureRegion.load( "http://i.imgur.com/vxomF.jpg");
+            topTxtDrawable.setRegion(topTxtRegion);
+            topTxtDrawable.setMinHeight(InAppNotificationTable.HEADER_HEIGHT);
+            topTxtDrawable.setMinWidth(InAppNotificationTable.WIDTH);
+            topImage.setSize(topTxtRegion.getRegionWidth(), topTxtRegion.getRegionHeight());
+            topImage.setDrawable(topTxtDrawable);
+            topImage.setScaling(Scaling.fill);
+            invalidate();
+
+            topFadingImage.setVisible(Builder.headerTitle != null);
+
             Cell cell = mainTable.add(header);
             if(Builder.hasIcon){
                 cell.colspan(2);
-            }
-            if (Builder.title != null || Builder.description != null) {
-                cell.pad(-5, -10, 10, -10);
             }
             cell.row();
         }
@@ -197,7 +203,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
             icTxtRegion.setRegion(MyAssetManager.get().get(Builder.iconPath, Texture.class));
             icTxtDrawable.setRegion(icTxtRegion);
             icImage.setDrawable(icTxtDrawable);
-            mainTable.add(icImage).width(50).height(50).top().padRight(10);
+            mainTable.add(icImage).width(50).height(50).top().padRight(10).padTop(5).padLeft(10);
         }
         if (Builder.title != null && !Builder.title.isEmpty()) {
             int width = Builder.hasIcon ? 200 : 260;
@@ -213,9 +219,9 @@ public class InAppNotification extends Container implements Pool.Poolable {
             descriptionLabel.setText(StringUtils.capitalize(Builder.description));
             vertical.add(descriptionLabel).width(width).expand().left().row();
         }
-        if (Builder.title != null || Builder.description != null) {
+        if (Builder.hasTitleOrDiscription) {
             mainTable.add(vertical).fillX().expandX().left();
-            mainTable.pad(5, 10, 5, 10);
+            vertical.pad(5, 0, 5, 10);
         }
 
         setListener(Builder.listener);
@@ -260,6 +266,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
         protected static boolean hasHeader;
         protected static boolean hasIcon;
+        protected static boolean hasTitleOrDiscription;
         protected static String headerImgPath;
         protected static String headerTitle;
         protected static BitmapFont headerTitleFont;
@@ -300,6 +307,9 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
         public static Builder setTitle(String title, BitmapFont titleFont) {
             Builder.title = title;
+            if(title!= null && !title.isEmpty()){
+                hasTitleOrDiscription = true;
+            }
             Builder.titleFont = titleFont;
             return builder;
         }
@@ -310,6 +320,9 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
         public static Builder setDescription(String description, BitmapFont descriptionFont) {
             Builder.description = description;
+            if(description!= null && !description.isEmpty()){
+                hasTitleOrDiscription = true;
+            }
             Builder.descriptionFont = descriptionFont;
             return builder;
         }
@@ -328,6 +341,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
         private static void reset() {
             hasHeader = false;
             hasIcon = false;
+            hasTitleOrDiscription = false;
             headerImgPath = null;
             headerTitle = null;
             headerTitleFont = null;
