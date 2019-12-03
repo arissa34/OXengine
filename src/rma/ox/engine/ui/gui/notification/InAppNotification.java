@@ -26,6 +26,7 @@ import rma.ox.engine.renderable.manager.StageManager;
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.ui.gui.utils.DrawableUtils;
 import rma.ox.engine.ui.utils.StudioTexture;
+import rma.ox.engine.utils.Logx;
 import rma.ox.engine.utils.StringUtils;
 
 public class InAppNotification extends Container implements Pool.Poolable {
@@ -46,7 +47,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
     private static BitmapFont sfont = new BitmapFont();
     private static Image
             fadingImage = new Image(new TextureRegionDrawable(new TextureRegion(
-            StudioTexture.faddingTexture(300, 100, Color.BLACK, Color.CLEAR)
+            StudioTexture.faddingTexture((int)InAppNotificationTable.WIDTH, (int)InAppNotificationTable.HEADER_HEIGHT/2, Color.BLACK, Color.CLEAR)
     )));
 
     private BitmapFont font;
@@ -81,7 +82,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
 
         pad(InAppNotificationTable.PAD);
         setTouchable(Touchable.enabled);
-        setWidth(InAppNotificationTable.WIDTH);
+        setWidth(InAppNotificationTable.WIDTH - InAppNotificationTable.PAD);
         left();
 
         headerTitlestyle = new Label.LabelStyle(this.font, Color.WHITE);
@@ -105,14 +106,21 @@ public class InAppNotification extends Container implements Pool.Poolable {
         topImage = new Image();
         icImage = new Image();
 
+        topFadingImage = new Image(fadingImage.getDrawable());
+        topFadingImage.setScaling(Scaling.fill);
+
         mainTable = new Table();
         mainTable.setTransform(true);
         vertical = new Table();
         header = new Stack();
-        header.add(new Container<>(topImage).fill());
-        header.add(new Container<>(topFadingImage = new Image(fadingImage.getDrawable())).fill());
+        Container fadingContainer;
+        Container topImgContainer;
+        header.add(topImgContainer = new Container<>(topImage));
+        header.add(fadingContainer = new Container<>(topFadingImage).fill().bottom());
         header.add(new Container<>(headerTitleLabel).fill().center().pad(10, 8, 10, 8));
         header.setTransform(true);
+        topImgContainer.setClip(true);
+        fadingContainer.setClip(true);
         mainTable.setClip(true);
 
         mainTable.setBackground(DrawableUtils.getColorDrawable(Color.FOREST));
@@ -182,38 +190,46 @@ public class InAppNotification extends Container implements Pool.Poolable {
                 headerTitleLabel.setText(StringUtils.capitalize(Builder.headerTitle));
             }
             //topTxtRegion.setRegion(MyAssetManager.get().get(Builder.headerImgPath, Texture.class));
-            topTxtRegion = LazyTextureRegion.load( "http://i.imgur.com/vxomF.jpg");
+            topTxtRegion = LazyTextureRegion.load("http://i.imgur.com/vxomF.jpg", new LazyTextureRegion.Listener() {
+                @Override
+                public void onImageLoaded(String url, TextureRegion textureRegion) {
+
+                    Logx.l("onImageLoaded");
+                }
+
+                @Override
+                public void onImageLoadFailed(String url) {
+
+                    Logx.l("onImageLoadFailed");
+                }
+            });
             topTxtDrawable.setRegion(topTxtRegion);
-            topTxtDrawable.setMinHeight(InAppNotificationTable.HEADER_HEIGHT);
-            topTxtDrawable.setMinWidth(InAppNotificationTable.WIDTH);
-            topImage.setSize(topTxtRegion.getRegionWidth(), topTxtRegion.getRegionHeight());
             topImage.setDrawable(topTxtDrawable);
             topImage.setScaling(Scaling.fill);
-            invalidate();
 
             topFadingImage.setVisible(Builder.headerTitle != null);
 
-            Cell cell = mainTable.add(header);
+            Cell cell = mainTable.add(header).maxHeight(InAppNotificationTable.HEADER_HEIGHT);
             if(Builder.hasIcon){
                 cell.colspan(2);
             }
             cell.row();
         }
         if(Builder.hasIcon){
-            icTxtRegion.setRegion(MyAssetManager.get().get(Builder.iconPath, Texture.class));
-            icTxtDrawable.setRegion(icTxtRegion);
+            //icTxtRegion.setRegion(MyAssetManager.get().get(Builder.iconPath, Texture.class));
+            icTxtDrawable.setRegion(LazyTextureRegion.load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFJ320vuQ-JSM16lPxAZoEUoZbT6VFlkMoLtYE4wfxudgdJPkl&s"));
             icImage.setDrawable(icTxtDrawable);
-            mainTable.add(icImage).width(50).height(50).top().padRight(10).padTop(5).padLeft(10);
+            mainTable.add(icImage).width(50).height(50).top().padRight(10).padTop(10).padLeft(10);
         }
         if (Builder.title != null && !Builder.title.isEmpty()) {
-            int width = Builder.hasIcon ? 200 : 260;
+            int width = Builder.hasIcon ?  (int)(InAppNotificationTable.WIDTH - InAppNotificationTable.PAD*2 - 80) : (int)(InAppNotificationTable.WIDTH - InAppNotificationTable.PAD*2);
             titlestyle.font = Builder.titleFont;
             titleLabel.setStyle(titlestyle);
             titleLabel.setText(StringUtils.capitalize(Builder.title));
             vertical.add(titleLabel).width(width).expandX().left().row();
         }
         if (Builder.description != null && !Builder.description.isEmpty()) {
-            int width = Builder.hasIcon ? 200 : 260;
+            int width = Builder.hasIcon ?  (int)(InAppNotificationTable.WIDTH - InAppNotificationTable.PAD*2 - 80) : (int)(InAppNotificationTable.WIDTH - InAppNotificationTable.PAD*2);
             descriptionstyle.font = Builder.descriptionFont;
             descriptionLabel.setStyle(descriptionstyle);
             descriptionLabel.setText(StringUtils.capitalize(Builder.description));

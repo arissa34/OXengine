@@ -20,12 +20,12 @@ public class StudioTexture {
         {
             Gdx.gl.glClearColor(0, 0, 0, 0);
             Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_ONE_MINUS_DST_ALPHA, GL20.GL_SRC_COLOR);
+            //Gdx.gl.glBlendFunc(GL20.GL_ONE_MINUS_DST_ALPHA, GL20.GL_SRC_COLOR);
             shapeRenderer.setProjectionMatrix(CameraHelper.get().getCamera().combined);
             shapeRenderer.begin();
             {
                 shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
-                shapeRenderer.rect(-(width/2), -(height/2), width, height, colorTop, colorTop, colorBottom, colorBottom);
+                shapeRenderer.rect(-(width/2), -(height/3), width, height, colorTop, colorTop, colorBottom, colorBottom);
             }
             Gdx.gl.glDisable(GL20.GL_BLEND);
             shapeRenderer.end();

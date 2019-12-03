@@ -10,8 +10,8 @@ import rma.ox.engine.ui.gui.scroll.MyScrollPane;
 public class InAppNotificationTable {
 
     protected static final float PAD = 10f;
-    protected static final float WIDTH = 300;
-    protected static final float HEADER_HEIGHT = 180;
+    protected static final float WIDTH = 310;
+    protected static final float HEADER_HEIGHT = 140;
 
     private Container container;
     private MyScrollPane scrollPane;

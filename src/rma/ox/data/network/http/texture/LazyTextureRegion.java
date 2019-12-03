@@ -19,6 +19,11 @@ import rma.ox.engine.utils.Logx;
 
 public class LazyTextureRegion {
 
+    public interface Listener{
+        void onImageLoaded(String url, TextureRegion textureRegion);
+        void onImageLoadFailed(String url);
+    }
+
     private static final LazyTextureRegion instance = new LazyTextureRegion();
     private static String placeHolderTexturePath;
     private static boolean cacheEnable = false;
@@ -48,7 +53,7 @@ public class LazyTextureRegion {
         return instance;
     }
 
-    public static TextureRegion load(String placeHolderPath, String url) {
+    public static TextureRegion load(String placeHolderPath, String url, Listener listener) {
         if(placeHolderPath == null || placeHolderPath.isEmpty()){
             throw new GdxRuntimeException("placeHolderPath null or empty !");
         }
@@ -59,10 +64,12 @@ public class LazyTextureRegion {
         if (assetEnable && MyAssetManager.get().contains(url, Texture.class)) {
             Logx.l("EXIST IN MANAGER");
             textureRegion.setRegion(MyAssetManager.get().get(url, Texture.class));
+            if(listener != null) listener.onImageLoaded(url, textureRegion);
             return textureRegion;
-        } else if (cacheEnable && Gdx.files.local(getSafeUrl(url)).exists()) {
+        } else if (cacheEnable && Gdx.files.local(basePath+getSafeUrl(url)).exists()) {
             Logx.l("EXIST IN CACHE");
             instance.loadFromCache(textureRegion, url);
+            if(listener != null) listener.onImageLoaded(url, textureRegion);
         } else {
             Logx.l("NEED REQUEST");
             Texture placeHolder;
@@ -73,13 +80,17 @@ public class LazyTextureRegion {
                 MyAssetManager.get().addAsset(placeHolderPath, Texture.class, placeHolder);
             }
             textureRegion.setRegion(placeHolder);
-            instance.launchRequest(textureRegion, url);
+            instance.launchRequest(textureRegion, url, listener);
         }
         return textureRegion;
     }
 
+    public static TextureRegion load(String url, Listener listener) {
+        return load(placeHolderTexturePath, url, listener);
+    }
+
     public static TextureRegion load(String url) {
-        return load(placeHolderTexturePath, url);
+        return load(placeHolderTexturePath, url,  null);
     }
 
     private static String getSafeUrl(String url) {
@@ -98,16 +109,16 @@ public class LazyTextureRegion {
         httpRequestBuilder = new HttpRequestBuilder();
     }
 
-    private void launchRequest(TextureRegion placeHolder, String url) {
+    private void launchRequest(TextureRegion placeHolder, String url, Listener listener) {
         httpRequestBuilder.newRequest()
                 .method(Net.HttpMethods.GET)
                 .url(url);
         Net.HttpRequest request = httpRequestBuilder.build();
-        Gdx.net.sendHttpRequest(request, pool.obtain().init(request, placeHolder));
+        Gdx.net.sendHttpRequest(request, pool.obtain().init(request, placeHolder, listener));
     }
 
     protected TextureRegion loadFromCache(TextureRegion textureRegion, String url) {
-        Texture texture = new Texture(Gdx.files.local(getSafeUrl(url)));
+        Texture texture = new Texture(Gdx.files.local(basePath+getSafeUrl(url)));
         textureRegion.setRegion(texture);
         MyAssetManager.get().addAsset(url, Texture.class, texture);
         return textureRegion;
@@ -134,10 +145,12 @@ public class LazyTextureRegion {
         private TextureRegion placeHolder;
         private Net.HttpRequest request;
         private Pixmap pixmap;
+        private Listener listener;
 
-        public Response init(Net.HttpRequest request, TextureRegion placeHolder) {
+        public Response init(Net.HttpRequest request, TextureRegion placeHolder, Listener listener) {
             this.request = request;
             this.placeHolder = placeHolder;
+            this.listener = listener;
             return this;
         }
 
@@ -156,7 +169,10 @@ public class LazyTextureRegion {
                         Response.this::run
                 );
             } else {
-                Logx.e(LazyTextureRegion.class, "load " + request.getUrl() + " failed status code not 200");
+                Logx.e(LazyTextureRegion.class, "load " + request.getUrl() + " failed status code : "+statusCode);
+                if(listener != null){
+                    listener.onImageLoadFailed(request.getUrl());
+                }
                 Pools.free(request);
                 pool.free(this);
             }
@@ -165,12 +181,18 @@ public class LazyTextureRegion {
         @Override
         public void failed(Throwable t) {
             Logx.e(LazyTextureRegion.class, "load " + request.getUrl() + " failed " + t.getMessage());
+            if(listener != null){
+                listener.onImageLoadFailed(request.getUrl());
+            }
             Pools.free(request);
             pool.free(this);
         }
 
         @Override
         public void cancelled() {
+            if(listener != null){
+                listener.onImageLoadFailed(request.getUrl());
+            }
             Pools.free(request);
             pool.free(this);
         }
@@ -184,6 +206,7 @@ public class LazyTextureRegion {
                 pixmap.dispose();
             }
             pixmap = null;
+            listener = null;
         }
 
         @Override
@@ -195,6 +218,9 @@ public class LazyTextureRegion {
                 PixmapIO.writePNG(Gdx.files.local(basePath+getSafeUrl(request.getUrl())), pixmap);
             }
             placeHolder.setRegion(texture);
+            if(listener != null){
+                listener.onImageLoaded(request.getUrl(), placeHolder);
+            }
             Pools.free(request);
             pool.free(this);
         }

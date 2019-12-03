@@ -134,7 +134,7 @@ public class DevBar extends Table implements IGui, Observer {
                     public void onCancel() {
                         Logx.d("Notif onCancel");
                     }
-                }).setHeader("badlogic.jpg", "mugydqziubg diuouiqzd houqdzh uo qzduzddqz fr count "+count, bitmapFont).build().show();
+                }).setHeader("badlogic.jpg", "Click here to download the new version of Clash of Clan "+count, bitmapFont).build().show();
                 //InAppNotification.show("badlogic.jpg", "title title title title title title title title title title : "+count, "subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle : "+count);
                 Toast.show(StageManager.get().getMainStage(), "TEST", Toast.Duration.SHORT);
             }
@@ -145,7 +145,7 @@ public class DevBar extends Table implements IGui, Observer {
                 count++;
                 //InAppNotification.show("badlogic.jpg", "title : "+count, "subTitlesubTitlesubTitlesu : "+count).setFont(bitmapFont);
                 //InAppNotification.Builder.setHeader("badlogic.jpg", "HEADER").setTitle("TITLE "+count, bitmapFont).build().show();
-                InAppNotification.Builder.setHeader("badlogic.jpg", "HEADER").setIcon("badlogic.jpg").setTitle("TITLE "+count, bitmapFont).setDescription("subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle").build().show();
+                InAppNotification.Builder.setHeader("badlogic.jpg", "Header blabla "+count, bitmapFont).setIcon("badlogic.jpg").setTitle("New version !", bitmapFont).setDescription("Click here to download the new version of Clash of Clan").build().show();
             }
         });
         logBtn.addListener(new ClickListener(){
