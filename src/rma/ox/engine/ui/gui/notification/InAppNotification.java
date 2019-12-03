@@ -190,7 +190,7 @@ public class InAppNotification extends Container implements Pool.Poolable {
                 headerTitleLabel.setText(StringUtils.capitalize(Builder.headerTitle));
             }
             //topTxtRegion.setRegion(MyAssetManager.get().get(Builder.headerImgPath, Texture.class));
-            topTxtRegion = LazyTextureRegion.load("http://i.imgur.com/vxomF.jpg", new LazyTextureRegion.Listener() {
+            topTxtRegion = LazyTextureRegion.load("https://steamcdn-a.akamaihd.net/steam/apps/359550/capsule_616x353.jpg?t=1575042419", new LazyTextureRegion.Listener() {
                 @Override
                 public void onImageLoaded(String url, TextureRegion textureRegion) {
 
@@ -238,6 +238,9 @@ public class InAppNotification extends Container implements Pool.Poolable {
         if (Builder.hasTitleOrDiscription) {
             mainTable.add(vertical).fillX().expandX().left();
             vertical.pad(5, 0, 5, 10);
+            if(!Builder.hasIcon){
+                vertical.padLeft(10);
+            }
         }
 
         setListener(Builder.listener);
