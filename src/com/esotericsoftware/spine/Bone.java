@@ -1,48 +1,48 @@
 /******************************************************************************
- * Spine Runtimes Software License v2.5
+ * Spine Runtimes License Agreement
+ * Last updated May 1, 2019. Replaces all prior versions.
  *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
+ * Copyright (c) 2013-2019, Esoteric Software LLC
  *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
+ * Integration of the Spine Runtimes into software or otherwise creating
+ * derivative works of the Spine Runtimes is permitted under the terms and
+ * conditions of Section 2 of the Spine Editor License Agreement:
+ * http://esotericsoftware.com/spine-editor-license
  *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software
+ * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * "Products"), provided that each user of the Products must obtain their own
+ * Spine Editor license and redistribution of the Products in any form must
+ * include this license and copyright notice.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
+ * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 package com.esotericsoftware.spine;
 
-import static com.esotericsoftware.spine.utils.SpineUtils.*;
 import static com.badlogic.gdx.math.Matrix3.*;
+import static com.esotericsoftware.spine.utils.SpineUtils.*;
 
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+
 import com.esotericsoftware.spine.BoneData.TransformMode;
 
 /** Stores a bone's current pose.
  * <p>
- * A bone has a local worldTransform which is used to compute its world worldTransform. A bone also has an applied worldTransform, which is a
- * local worldTransform that can be applied to compute the world worldTransform. The local worldTransform and applied worldTransform may differ if a
- * constraint or application code modifies the world worldTransform after it was computed from the local worldTransform. */
+ * A bone has a local transform which is used to compute its world transform. A bone also has an applied transform, which is a
+ * local transform that can be applied to compute the world transform. The local transform and applied transform may differ if a
+ * constraint or application code modifies the world transform after it was computed from the local transform. */
 public class Bone implements Updatable {
 	final BoneData data;
 	final Skeleton skeleton;
@@ -54,12 +54,12 @@ public class Bone implements Updatable {
 	float a, b, worldX;
 	float c, d, worldY;
 
-	boolean sorted;
+	boolean sorted, active;
 
 	/** @param parent May be null. */
 	public Bone (BoneData data, Skeleton skeleton, Bone parent) {
 		if (data == null) throw new IllegalArgumentException("data cannot be null.");
-		if (skeleton == null) throw new IllegalArgumentException("worker cannot be null.");
+		if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
 		this.data = data;
 		this.skeleton = skeleton;
 		this.parent = parent;
@@ -70,7 +70,7 @@ public class Bone implements Updatable {
 	 * @param parent May be null. */
 	public Bone (Bone bone, Skeleton skeleton, Bone parent) {
 		if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
-		if (skeleton == null) throw new IllegalArgumentException("worker cannot be null.");
+		if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
 		this.skeleton = skeleton;
 		this.parent = parent;
 		data = bone.data;
@@ -88,14 +88,14 @@ public class Bone implements Updatable {
 		updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
 	}
 
-	/** Computes the world worldTransform using the parent bone and this bone's local worldTransform.
+	/** Computes the world transform using the parent bone and this bone's local transform.
 	 * <p>
 	 * See {@link #updateWorldTransform(float, float, float, float, float, float, float)}. */
 	public void updateWorldTransform () {
 		updateWorldTransform(x, y, rotation, scaleX, scaleY, shearX, shearY);
 	}
 
-	/** Computes the world worldTransform using the parent bone and the specified local worldTransform. Child bones are not updated.
+	/** Computes the world transform using the parent bone and the specified local transform. Child bones are not updated.
 	 * <p>
 	 * See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
 	 * Runtimes Guide. */
@@ -111,28 +111,14 @@ public class Bone implements Updatable {
 
 		Bone parent = this.parent;
 		if (parent == null) { // Root bone.
-			float rotationY = rotation + 90 + shearY;
-			float la = cosDeg(rotation + shearX) * scaleX;
-			float lb = cosDeg(rotationY) * scaleY;
-			float lc = sinDeg(rotation + shearX) * scaleX;
-			float ld = sinDeg(rotationY) * scaleY;
 			Skeleton skeleton = this.skeleton;
-			if (skeleton.flipX) {
-				x = -x;
-				la = -la;
-				lb = -lb;
-			}
-			if (skeleton.flipY) {
-				y = -y;
-				lc = -lc;
-				ld = -ld;
-			}
-			a = la;
-			b = lb;
-			c = lc;
-			d = ld;
-			worldX = x + skeleton.x;
-			worldY = y + skeleton.y;
+			float rotationY = rotation + 90 + shearY, sx = skeleton.scaleX, sy = skeleton.scaleY;
+			a = cosDeg(rotation + shearX) * scaleX * sx;
+			b = cosDeg(rotationY) * scaleY * sx;
+			c = sinDeg(rotation + shearX) * scaleX * sy;
+			d = sinDeg(rotationY) * scaleY * sy;
+			worldX = x * sx + skeleton.x;
+			worldY = y * sy + skeleton.y;
 			return;
 		}
 
@@ -188,42 +174,36 @@ public class Bone implements Updatable {
 		case noScale:
 		case noScaleOrReflection: {
 			float cos = cosDeg(rotation), sin = sinDeg(rotation);
-			float za = pa * cos + pb * sin;
-			float zc = pc * cos + pd * sin;
+			float za = (pa * cos + pb * sin) / skeleton.scaleX;
+			float zc = (pc * cos + pd * sin) / skeleton.scaleY;
 			float s = (float)Math.sqrt(za * za + zc * zc);
 			if (s > 0.00001f) s = 1 / s;
 			za *= s;
 			zc *= s;
 			s = (float)Math.sqrt(za * za + zc * zc);
+			if (data.transformMode == TransformMode.noScale
+				&& (pa * pd - pb * pc < 0) != (skeleton.scaleX < 0 != skeleton.scaleY < 0)) s = -s;
 			float r = PI / 2 + atan2(zc, za);
 			float zb = cos(r) * s;
 			float zd = sin(r) * s;
 			float la = cosDeg(shearX) * scaleX;
 			float lb = cosDeg(90 + shearY) * scaleY;
 			float lc = sinDeg(shearX) * scaleX;
-			float ld = sinDeg(90 + shearY) * scaleY;			
-			if (data.transformMode != TransformMode.noScaleOrReflection ? pa * pd - pb * pc < 0 : skeleton.flipX != skeleton.flipY) {
-			    zb = -zb;
-			    zd = -zd;
-			}			
+			float ld = sinDeg(90 + shearY) * scaleY;
 			a = za * la + zb * lc;
 			b = za * lb + zb * ld;
 			c = zc * la + zd * lc;
 			d = zc * lb + zd * ld;
-			return;
+			break;
 		}
 		}
-		if (skeleton.flipX) {
-			a = -a;
-			b = -b;
-		}
-		if (skeleton.flipY) {
-			c = -c;
-			d = -d;
-		}
+		a *= skeleton.scaleX;
+		b *= skeleton.scaleX;
+		c *= skeleton.scaleY;
+		d *= skeleton.scaleY;
 	}
 
-	/** Sets this bone's local worldTransform to the setup pose. */
+	/** Sets this bone's local transform to the setup pose. */
 	public void setToSetupPose () {
 		BoneData data = this.data;
 		x = data.x;
@@ -240,7 +220,7 @@ public class Bone implements Updatable {
 		return data;
 	}
 
-	/** The worker this bone belongs to. */
+	/** The skeleton this bone belongs to. */
 	public Skeleton getSkeleton () {
 		return skeleton;
 	}
@@ -255,7 +235,13 @@ public class Bone implements Updatable {
 		return children;
 	}
 
-	// -- Local worldTransform
+	/** Returns false when the bone has not been computed because {@link BoneData#getSkinRequired()} is true and the
+	 * {@link Skeleton#getSkin() active skin} does not {@link Skin#getBones() contain} this bone. */
+	public boolean isActive () {
+		return active;
+	}
+
+	// -- Local transform
 
 	/** The local x translation. */
 	public float getX () {
@@ -280,7 +266,7 @@ public class Bone implements Updatable {
 		this.y = y;
 	}
 
-	/** The local rotation. */
+	/** The local rotation in degrees, counter clockwise. */
 	public float getRotation () {
 		return rotation;
 	}
@@ -335,7 +321,7 @@ public class Bone implements Updatable {
 		this.shearY = shearY;
 	}
 
-	// -- Applied worldTransform
+	// -- Applied transform
 
 	/** The applied local x translation. */
 	public float getAX () {
@@ -355,7 +341,7 @@ public class Bone implements Updatable {
 		this.ay = ay;
 	}
 
-	/** The applied local rotation. */
+	/** The applied local rotation in degrees, counter clockwise. */
 	public float getARotation () {
 		return arotation;
 	}
@@ -400,8 +386,8 @@ public class Bone implements Updatable {
 		this.ashearY = ashearY;
 	}
 
-	/** If true, the applied worldTransform matches the world worldTransform. If false, the world worldTransform has been modified since it was
-	 * computed and {@link #updateAppliedTransform()} must be called before accessing the applied worldTransform. */
+	/** If true, the applied transform matches the world transform. If false, the world transform has been modified since it was
+	 * computed and {@link #updateAppliedTransform()} must be called before accessing the applied transform. */
 	public boolean isAppliedValid () {
 		return appliedValid;
 	}
@@ -410,14 +396,14 @@ public class Bone implements Updatable {
 		this.appliedValid = appliedValid;
 	}
 
-	/** Computes the applied worldTransform values from the world worldTransform. This allows the applied worldTransform to be accessed after the
-	 * world worldTransform has been modified (by a constraint, {@link #rotateWorld(float)}, etc).
+	/** Computes the applied transform values from the world transform. This allows the applied transform to be accessed after the
+	 * world transform has been modified (by a constraint, {@link #rotateWorld(float)}, etc).
 	 * <p>
 	 * If {@link #updateWorldTransform()} has been called for a bone and {@link #isAppliedValid()} is false, then
-	 * {@link #updateAppliedTransform()} must be called before accessing the applied worldTransform.
+	 * {@link #updateAppliedTransform()} must be called before accessing the applied transform.
 	 * <p>
-	 * Some information is ambiguous in the world worldTransform, such as -1,-1 scale versus 180 rotation. The applied worldTransform after
-	 * calling this method is equivalent to the local tranform used to compute the world worldTransform, but may not be identical. */
+	 * Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation. The applied transform after
+	 * calling this method is equivalent to the local tranform used to compute the world transform, but may not be identical. */
 	public void updateAppliedTransform () {
 		appliedValid = true;
 		Bone parent = this.parent;
@@ -459,9 +445,9 @@ public class Bone implements Updatable {
 		}
 	}
 
-	// -- World worldTransform
+	// -- World transform
 
-	/** Part of the world worldTransform matrix for the X axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
+	/** Part of the world transform matrix for the X axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
 	public float getA () {
 		return a;
 	}
@@ -470,7 +456,7 @@ public class Bone implements Updatable {
 		this.a = a;
 	}
 
-	/** Part of the world worldTransform matrix for the Y axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
+	/** Part of the world transform matrix for the Y axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
 	public float getB () {
 		return b;
 	}
@@ -479,7 +465,7 @@ public class Bone implements Updatable {
 		this.b = b;
 	}
 
-	/** Part of the world worldTransform matrix for the X axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
+	/** Part of the world transform matrix for the X axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
 	public float getC () {
 		return c;
 	}
@@ -488,7 +474,7 @@ public class Bone implements Updatable {
 		this.c = c;
 	}
 
-	/** Part of the world worldTransform matrix for the Y axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
+	/** Part of the world transform matrix for the Y axis. If changed, {@link #setAppliedValid(boolean)} should be set to false. */
 	public float getD () {
 		return d;
 	}
@@ -552,6 +538,7 @@ public class Bone implements Updatable {
 
 	/** Transforms a point from world coordinates to the bone's local coordinates. */
 	public Vector2 worldToLocal (Vector2 world) {
+		if (world == null) throw new IllegalArgumentException("world cannot be null.");
 		float invDet = 1 / (a * d - b * c);
 		float x = world.x - worldX, y = world.y - worldY;
 		world.x = x * d * invDet - y * b * invDet;
@@ -561,6 +548,7 @@ public class Bone implements Updatable {
 
 	/** Transforms a point from the bone's local coordinates to world coordinates. */
 	public Vector2 localToWorld (Vector2 local) {
+		if (local == null) throw new IllegalArgumentException("local cannot be null.");
 		float x = local.x, y = local.y;
 		local.x = x * a + y * b + worldX;
 		local.y = x * c + y * d + worldY;
@@ -570,16 +558,17 @@ public class Bone implements Updatable {
 	/** Transforms a world rotation to a local rotation. */
 	public float worldToLocalRotation (float worldRotation) {
 		float sin = sinDeg(worldRotation), cos = cosDeg(worldRotation);
-		return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg;
+		return atan2(a * sin - c * cos, d * cos - b * sin) * radDeg + rotation - shearX;
 	}
 
 	/** Transforms a local rotation to a world rotation. */
 	public float localToWorldRotation (float localRotation) {
+		localRotation -= rotation - shearX;
 		float sin = sinDeg(localRotation), cos = cosDeg(localRotation);
 		return atan2(cos * c + sin * d, cos * a + sin * b) * radDeg;
 	}
 
-	/** Rotates the world worldTransform the specified amount and sets {@link #isAppliedValid()} to false.
+	/** Rotates the world transform the specified amount and sets {@link #isAppliedValid()} to false.
 	 * {@link #updateWorldTransform()} will need to be called on any child bones, recursively, and any constraints reapplied. */
 	public void rotateWorld (float degrees) {
 		float cos = cosDeg(degrees), sin = sinDeg(degrees);

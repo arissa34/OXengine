@@ -1,31 +1,30 @@
 /******************************************************************************
- * Spine Runtimes Software License v2.5
+ * Spine Runtimes License Agreement
+ * Last updated May 1, 2019. Replaces all prior versions.
  *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
+ * Copyright (c) 2013-2019, Esoteric Software LLC
  *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
+ * Integration of the Spine Runtimes into software or otherwise creating
+ * derivative works of the Spine Runtimes is permitted under the terms and
+ * conditions of Section 2 of the Spine Editor License Agreement:
+ * http://esotericsoftware.com/spine-editor-license
  *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software
+ * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * "Products"), provided that each user of the Products must obtain their own
+ * Spine Editor license and redistribution of the Products in any form must
+ * include this license and copyright notice.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
+ * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 package com.esotericsoftware.spine;
@@ -38,19 +37,25 @@ import com.badlogic.gdx.utils.Array;
  * the last bone is as close to the target bone as possible.
  * <p>
  * See <a href="http://esotericsoftware.com/spine-ik-constraints">IK constraints</a> in the Spine User Guide. */
-public class IkConstraint implements Constraint {
+public class IkConstraint implements Updatable {
 	final IkConstraintData data;
 	final Array<Bone> bones;
 	Bone target;
-	float mix = 1;
 	int bendDirection;
+	boolean compress, stretch;
+	float mix = 1, softness;
+
+	boolean active;
 
 	public IkConstraint (IkConstraintData data, Skeleton skeleton) {
 		if (data == null) throw new IllegalArgumentException("data cannot be null.");
-		if (skeleton == null) throw new IllegalArgumentException("worker cannot be null.");
+		if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
 		this.data = data;
 		mix = data.mix;
+		softness = data.softness;
 		bendDirection = data.bendDirection;
+		compress = data.compress;
+		stretch = data.stretch;
 
 		bones = new Array(data.bones.size);
 		for (BoneData boneData : data.bones)
@@ -61,14 +66,17 @@ public class IkConstraint implements Constraint {
 	/** Copy constructor. */
 	public IkConstraint (IkConstraint constraint, Skeleton skeleton) {
 		if (constraint == null) throw new IllegalArgumentException("constraint cannot be null.");
-		if (skeleton == null) throw new IllegalArgumentException("worker cannot be null.");
+		if (skeleton == null) throw new IllegalArgumentException("skeleton cannot be null.");
 		data = constraint.data;
 		bones = new Array(constraint.bones.size);
 		for (Bone bone : constraint.bones)
 			bones.add(skeleton.bones.get(bone.data.index));
 		target = skeleton.bones.get(constraint.target.data.index);
 		mix = constraint.mix;
+		softness = constraint.softness;
 		bendDirection = constraint.bendDirection;
+		compress = constraint.compress;
+		stretch = constraint.stretch;
 	}
 
 	/** Applies the constraint to the constrained bones. */
@@ -81,16 +89,12 @@ public class IkConstraint implements Constraint {
 		Array<Bone> bones = this.bones;
 		switch (bones.size) {
 		case 1:
-			apply(bones.first(), target.worldX, target.worldY, mix);
+			apply(bones.first(), target.worldX, target.worldY, compress, stretch, data.uniform, mix);
 			break;
 		case 2:
-			apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, mix);
+			apply(bones.first(), bones.get(1), target.worldX, target.worldY, bendDirection, stretch, softness, mix);
 			break;
 		}
-	}
-
-	public int getOrder () {
-		return data.order;
 	}
 
 	/** The bones that will be modified by this IK constraint. */
@@ -104,6 +108,7 @@ public class IkConstraint implements Constraint {
 	}
 
 	public void setTarget (Bone target) {
+		if (target == null) throw new IllegalArgumentException("target cannot be null.");
 		this.target = target;
 	}
 
@@ -116,6 +121,15 @@ public class IkConstraint implements Constraint {
 		this.mix = mix;
 	}
 
+	/** For two bone IK, the distance from the maximum reach of the bones that rotation will slow. */
+	public float getSoftness () {
+		return softness;
+	}
+
+	public void setSoftness (float softness) {
+		this.softness = softness;
+	}
+
 	/** Controls the bend direction of the IK bones, either 1 or -1. */
 	public int getBendDirection () {
 		return bendDirection;
@@ -123,6 +137,29 @@ public class IkConstraint implements Constraint {
 
 	public void setBendDirection (int bendDirection) {
 		this.bendDirection = bendDirection;
+	}
+
+	/** When true and only a single bone is being constrained, if the target is too close, the bone is scaled to reach it. */
+	public boolean getCompress () {
+		return compress;
+	}
+
+	public void setCompress (boolean compress) {
+		this.compress = compress;
+	}
+
+	/** When true, if the target is out of range, the parent bone is scaled to reach it. If more than one bone is being constrained
+	 * and the parent bone has local nonuniform scale, stretch is not applied. */
+	public boolean getStretch () {
+		return stretch;
+	}
+
+	public void setStretch (boolean stretch) {
+		this.stretch = stretch;
+	}
+
+	public boolean isActive () {
+		return active;
 	}
 
 	/** The IK constraint's setup pose data. */
@@ -135,7 +172,9 @@ public class IkConstraint implements Constraint {
 	}
 
 	/** Applies 1 bone IK. The target is specified in the world coordinate system. */
-	static public void apply (Bone bone, float targetX, float targetY, float alpha) {
+	static public void apply (Bone bone, float targetX, float targetY, boolean compress, boolean stretch, boolean uniform,
+		float alpha) {
+		if (bone == null) throw new IllegalArgumentException("bone cannot be null.");
 		if (!bone.appliedValid) bone.updateAppliedTransform();
 		Bone p = bone.parent;
 		float id = 1 / (p.a * p.d - p.b * p.c);
@@ -145,21 +184,33 @@ public class IkConstraint implements Constraint {
 		if (bone.ascaleX < 0) rotationIK += 180;
 		if (rotationIK > 180)
 			rotationIK -= 360;
-		else if (rotationIK < -180) rotationIK += 360;
-		bone.updateWorldTransform(bone.ax, bone.ay, bone.arotation + rotationIK * alpha, bone.ascaleX, bone.ascaleY, bone.ashearX,
-			bone.ashearY);
+		else if (rotationIK < -180) //
+			rotationIK += 360;
+		float sx = bone.ascaleX, sy = bone.ascaleY;
+		if (compress || stretch) {
+			float b = bone.data.length * sx, dd = (float)Math.sqrt(tx * tx + ty * ty);
+			if ((compress && dd < b) || (stretch && dd > b) && b > 0.0001f) {
+				float s = (dd / b - 1) * alpha + 1;
+				sx *= s;
+				if (uniform) sy *= s;
+			}
+		}
+		bone.updateWorldTransform(bone.ax, bone.ay, bone.arotation + rotationIK * alpha, sx, sy, bone.ashearX, bone.ashearY);
 	}
 
 	/** Applies 2 bone IK. The target is specified in the world coordinate system.
 	 * @param child A direct descendant of the parent bone. */
-	static public void apply (Bone parent, Bone child, float targetX, float targetY, int bendDir, float alpha) {
+	static public void apply (Bone parent, Bone child, float targetX, float targetY, int bendDir, boolean stretch, float softness,
+		float alpha) {
+		if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
+		if (child == null) throw new IllegalArgumentException("child cannot be null.");
 		if (alpha == 0) {
 			child.updateWorldTransform();
 			return;
 		}
 		if (!parent.appliedValid) parent.updateAppliedTransform();
 		if (!child.appliedValid) child.updateAppliedTransform();
-		float px = parent.ax, py = parent.ay, psx = parent.ascaleX, psy = parent.ascaleY, csx = child.ascaleX;
+		float px = parent.ax, py = parent.ay, psx = parent.ascaleX, sx = psx, psy = parent.ascaleY, csx = child.ascaleX;
 		int os1, os2, s2;
 		if (psx < 0) {
 			psx = -psx;
@@ -194,19 +245,39 @@ public class IkConstraint implements Constraint {
 		b = pp.b;
 		c = pp.c;
 		d = pp.d;
-		float id = 1 / (a * d - b * c), x = targetX - pp.worldX, y = targetY - pp.worldY;
-		float tx = (x * d - y * b) * id - px, ty = (y * a - x * c) * id - py;
-		x = cwx - pp.worldX;
-		y = cwy - pp.worldY;
+		float id = 1 / (a * d - b * c), x = cwx - pp.worldX, y = cwy - pp.worldY;
 		float dx = (x * d - y * b) * id - px, dy = (y * a - x * c) * id - py;
 		float l1 = (float)Math.sqrt(dx * dx + dy * dy), l2 = child.data.length * csx, a1, a2;
+		if (l1 < 0.0001f) {
+			apply(parent, targetX, targetY, false, stretch, false, alpha);
+			child.updateWorldTransform(cx, cy, 0, child.ascaleX, child.ascaleY, child.ashearX, child.ashearY);
+			return;
+		}
+		x = targetX - pp.worldX;
+		y = targetY - pp.worldY;
+		float tx = (x * d - y * b) * id - px, ty = (y * a - x * c) * id - py;
+		float dd = tx * tx + ty * ty;
+		if (softness != 0) {
+			softness *= psx * (csx + 1) / 2;
+			float td = (float)Math.sqrt(dd), sd = td - l1 - l2 * psx + softness;
+			if (sd > 0) {
+				float p = Math.min(1, sd / (softness * 2)) - 1;
+				p = (sd - softness * (1 - p * p)) / td;
+				tx -= p * tx;
+				ty -= p * ty;
+				dd = tx * tx + ty * ty;
+			}
+		}
 		outer:
 		if (u) {
 			l2 *= psx;
-			float cos = (tx * tx + ty * ty - l1 * l1 - l2 * l2) / (2 * l1 * l2);
+			float cos = (dd - l1 * l1 - l2 * l2) / (2 * l1 * l2);
 			if (cos < -1)
 				cos = -1;
-			else if (cos > 1) cos = 1;
+			else if (cos > 1) {
+				cos = 1;
+				if (stretch) sx *= ((float)Math.sqrt(dd) / (l1 + l2) - 1) * alpha + 1;
+			}
 			a2 = (float)Math.acos(cos) * bendDir;
 			a = l1 + l2 * cos;
 			b = l2 * sin(a2);
@@ -214,7 +285,7 @@ public class IkConstraint implements Constraint {
 		} else {
 			a = psx * l2;
 			b = psy * l2;
-			float aa = a * a, bb = b * b, dd = tx * tx + ty * ty, ta = atan2(ty, tx);
+			float aa = a * a, bb = b * b, ta = atan2(ty, tx);
 			c = bb * l1 * l1 + aa * dd - aa * bb;
 			float c1 = -2 * bb * l1, c2 = bb - aa;
 			d = c1 * c1 - 4 * c2 * c;
@@ -266,7 +337,7 @@ public class IkConstraint implements Constraint {
 		if (a1 > 180)
 			a1 -= 360;
 		else if (a1 < -180) a1 += 360;
-		parent.updateWorldTransform(px, py, rotation + a1 * alpha, parent.ascaleX, parent.ascaleY, 0, 0);
+		parent.updateWorldTransform(px, py, rotation + a1 * alpha, sx, parent.ascaleY, 0, 0);
 		rotation = child.arotation;
 		a2 = ((a2 + os) * radDeg - child.ashearX) * s2 + os2 - rotation;
 		if (a2 > 180)

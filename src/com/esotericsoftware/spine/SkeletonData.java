@@ -1,38 +1,37 @@
 /******************************************************************************
- * Spine Runtimes Software License v2.5
+ * Spine Runtimes License Agreement
+ * Last updated May 1, 2019. Replaces all prior versions.
  *
- * Copyright (c) 2013-2016, Esoteric Software
- * All rights reserved.
+ * Copyright (c) 2013-2019, Esoteric Software LLC
  *
- * You are granted a perpetual, non-exclusive, non-sublicensable, and
- * non-transferable license to use, install, execute, and perform the Spine
- * Runtimes software and derivative works solely for personal or internal
- * use. Without the written permission of Esoteric Software (see Section 2 of
- * the Spine Software License Agreement), you may not (a) modify, translate,
- * adapt, or develop new applications using the Spine Runtimes or otherwise
- * create derivative works or improvements of the Spine Runtimes or (b) remove,
- * delete, alter, or obscure any trademarks or any copyright, trademark, patent,
- * or other intellectual property or proprietary rights notices on or in the
- * Software, including any copy thereof. Redistributions in binary or source
- * form must include this license and terms.
+ * Integration of the Spine Runtimes into software or otherwise creating
+ * derivative works of the Spine Runtimes is permitted under the terms and
+ * conditions of Section 2 of the Spine Editor License Agreement:
+ * http://esotericsoftware.com/spine-editor-license
  *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS INTERRUPTION, OR LOSS OF
- * USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * Otherwise, it is permitted to integrate the Spine Runtimes into software
+ * or otherwise create derivative works of the Spine Runtimes (collectively,
+ * "Products"), provided that each user of the Products must obtain their own
+ * Spine Editor license and redistribution of the Products in any form must
+ * include this license and copyright notice.
+ *
+ * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
+ * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 package com.esotericsoftware.spine;
 
 import com.badlogic.gdx.utils.Array;
 
-/** Stores the setup pose and all of the stateless data for a worker.
+/** Stores the setup pose and all of the stateless data for a skeleton.
  * <p>
  * See <a href="http://esotericsoftware.com/spine-runtime-architecture#Data-objects">Data objects</a> in the Spine Runtimes
  * Guide. */
@@ -47,16 +46,16 @@ public class SkeletonData {
 	final Array<IkConstraintData> ikConstraints = new Array();
 	final Array<TransformConstraintData> transformConstraints = new Array();
 	final Array<PathConstraintData> pathConstraints = new Array();
-	float width, height;
+	float x, y, width, height;
 	String version, hash;
 
 	// Nonessential.
 	float fps = 30;
-	String imagesPath;
+	String imagesPath, audioPath;
 
 	// --- Bones.
 
-	/** The worker's bones, sorted parent first. The root bone is always the first bone. */
+	/** The skeleton's bones, sorted parent first. The root bone is always the first bone. */
 	public Array<BoneData> getBones () {
 		return bones;
 	}
@@ -76,7 +75,7 @@ public class SkeletonData {
 
 	// --- Slots.
 
-	/** The worker's slots. */
+	/** The skeleton's slots. */
 	public Array<SlotData> getSlots () {
 		return slots;
 	}
@@ -96,7 +95,7 @@ public class SkeletonData {
 
 	// --- Skins.
 
-	/** The worker's default skin. By default this skin contains all attachments that were not in a skin in Spine.
+	/** The skeleton's default skin. By default this skin contains all attachments that were not in a skin in Spine.
 	 * <p>
 	 * See {@link Skeleton#getAttachment(int, String)}.
 	 * @return May be null. */
@@ -136,14 +135,14 @@ public class SkeletonData {
 		return null;
 	}
 
-	/** The worker's events. */
+	/** The skeleton's events. */
 	public Array<EventData> getEvents () {
 		return events;
 	}
 
 	// --- Animations.
 
-	/** The worker's animations. */
+	/** The skeleton's animations. */
 	public Array<Animation> getAnimations () {
 		return animations;
 	}
@@ -163,7 +162,7 @@ public class SkeletonData {
 
 	// --- IK constraints
 
-	/** The worker's IK constraints. */
+	/** The skeleton's IK constraints. */
 	public Array<IkConstraintData> getIkConstraints () {
 		return ikConstraints;
 	}
@@ -183,12 +182,12 @@ public class SkeletonData {
 
 	// --- Transform constraints
 
-	/** The worker's worldTransform constraints. */
+	/** The skeleton's transform constraints. */
 	public Array<TransformConstraintData> getTransformConstraints () {
 		return transformConstraints;
 	}
 
-	/** Finds a worldTransform constraint by comparing each worldTransform constraint's name. It is more efficient to cache the results of
+	/** Finds a transform constraint by comparing each transform constraint's name. It is more efficient to cache the results of
 	 * this method than to call it multiple times.
 	 * @return May be null. */
 	public TransformConstraintData findTransformConstraint (String constraintName) {
@@ -203,7 +202,7 @@ public class SkeletonData {
 
 	// --- Path constraints
 
-	/** The worker's path constraints. */
+	/** The skeleton's path constraints. */
 	public Array<PathConstraintData> getPathConstraints () {
 		return pathConstraints;
 	}
@@ -223,7 +222,7 @@ public class SkeletonData {
 
 	// ---
 
-	/** The worker's name, which by default is the name of the worker data file, if possible.
+	/** The skeleton's name, which by default is the name of the skeleton data file, if possible.
 	 * @return May be null. */
 	public String getName () {
 		return name;
@@ -234,7 +233,25 @@ public class SkeletonData {
 		this.name = name;
 	}
 
-	/** The width of the worker's axis aligned bounding box in the setup pose. */
+	/** The X coordinate of the skeleton's axis aligned bounding box in the setup pose. */
+	public float getX () {
+		return x;
+	}
+
+	public void setX (float x) {
+		this.x = x;
+	}
+
+	/** The Y coordinate of the skeleton's axis aligned bounding box in the setup pose. */
+	public float getY () {
+		return y;
+	}
+
+	public void setY (float y) {
+		this.y = y;
+	}
+
+	/** The width of the skeleton's axis aligned bounding box in the setup pose. */
 	public float getWidth () {
 		return width;
 	}
@@ -243,7 +260,7 @@ public class SkeletonData {
 		this.width = width;
 	}
 
-	/** The height of the worker's axis aligned bounding box in the setup pose. */
+	/** The height of the skeleton's axis aligned bounding box in the setup pose. */
 	public float getHeight () {
 		return height;
 	}
@@ -252,7 +269,7 @@ public class SkeletonData {
 		this.height = height;
 	}
 
-	/** The Spine version used to export the worker data, or null. */
+	/** The Spine version used to export the skeleton data, or null. */
 	public String getVersion () {
 		return version;
 	}
@@ -262,7 +279,7 @@ public class SkeletonData {
 		this.version = version;
 	}
 
-	/** The worker data hash. This value will change if any of the worker data has changed.
+	/** The skeleton data hash. This value will change if any of the skeleton data has changed.
 	 * @return May be null. */
 	public String getHash () {
 		return hash;
@@ -273,7 +290,7 @@ public class SkeletonData {
 		this.hash = hash;
 	}
 
-	/** The path to the image directory as defined in Spine. Available only when nonessential data was exported.
+	/** The path to the images directory as defined in Spine. Available only when nonessential data was exported.
 	 * @return May be null. */
 	public String getImagesPath () {
 		return imagesPath;
@@ -282,6 +299,17 @@ public class SkeletonData {
 	/** @param imagesPath May be null. */
 	public void setImagesPath (String imagesPath) {
 		this.imagesPath = imagesPath;
+	}
+
+	/** The path to the audio directory as defined in Spine. Available only when nonessential data was exported.
+	 * @return May be null. */
+	public String getAudioPath () {
+		return audioPath;
+	}
+
+	/** @param audioPath May be null. */
+	public void setAudioPath (String audioPath) {
+		this.audioPath = audioPath;
 	}
 
 	/** The dopesheet FPS in Spine. Available only when nonessential data was exported. */

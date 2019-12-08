@@ -15,6 +15,9 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
 
     private static final String TAG = SkeletonLoader.class.getSimpleName();
 
+    private FileHandle atlasFile;
+    private FileHandle jsonFile;
+
     public SkeletonLoader (FileHandleResolver resolver) {
         super(resolver);
     }
@@ -26,24 +29,17 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
-        //Gdx.app.log(TAG, "===> loadAsync : "+fileName);
+        int i = fileName.lastIndexOf('.');
+        String atlasFileName = fileName.substring(0,i) + ".atlas";
+        atlasFile = Gdx.files.internal(atlasFileName);
+        jsonFile = Gdx.files.internal(fileName);
     }
 
     @Override
     public Skeleton loadSync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
-        //Gdx.app.log(TAG, "===> loadSync : "+fileName);
-
-
-        int i = fileName.lastIndexOf('.');
-        String atlasFileName = fileName.substring(0,i) + ".atlas";
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal(atlasFileName));
-        //MyAssetManager.get().addAsset(atlasFileName, TextureAtlas.class, atlas);
-
-        SkeletonJson jsonSkeleton = new SkeletonJson(atlas);
-        SkeletonData skeletonData = jsonSkeleton.readSkeletonData(Gdx.files.internal(fileName));
-        Skeleton skeleton = new Skeleton(skeletonData);
-
-        return skeleton;
+        TextureAtlas atlas = new TextureAtlas(atlasFile);
+        SkeletonData skeletonData = new SkeletonJson(atlas).readSkeletonData(jsonFile);
+        return new Skeleton(skeletonData);
     }
 
     static public class SkeletonParameter extends AssetLoaderParameters<Skeleton> {

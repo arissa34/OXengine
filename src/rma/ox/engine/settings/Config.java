@@ -56,4 +56,5 @@ public class Config {
     public static int DEFAULT_FOV = 47;
     public static int DEFAULT_WIDTH = 1400;
     public static int DEFAULT_HEIGHT = 900;
+
 }

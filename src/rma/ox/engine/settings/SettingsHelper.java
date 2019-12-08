@@ -3,6 +3,8 @@ package rma.ox.engine.settings;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
+import java.util.Locale;
+
 public class SettingsHelper {
 
     private static SettingsHelper instance;
@@ -81,4 +83,12 @@ public class SettingsHelper {
         return prefs.getBoolean("MUSIC", true);
     }
 
+    public void setLanguage(Locale locale){
+        prefs.putString("LANGUAGE", locale.getLanguage());
+        prefs.flush();
+    }
+
+    public String getLanguage(){
+        return prefs.getString("LANGUAGE", "default");
+    }
 }
