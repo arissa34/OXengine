@@ -19,4 +19,8 @@ public class RandomUtils {
         }
         return r.nextFloat() * (max - min) + min;
     }
+
+    public static boolean getRandomBoolean() {
+        return r.nextBoolean();
+    }
 }

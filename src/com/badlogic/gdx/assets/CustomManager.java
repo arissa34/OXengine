@@ -19,7 +19,7 @@ public class CustomManager extends AssetManager {
         // add the asset to the type lookup
         ObjectMap<String, RefCountedContainer> typeToAssets = assets.get(type);
         if (typeToAssets == null) {
-            typeToAssets = new ObjectMap<String, RefCountedContainer>();
+            typeToAssets = new ObjectMap<>();
             assets.put(type, typeToAssets);
         }
         typeToAssets.put(fileName, new RefCountedContainer(asset));

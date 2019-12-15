@@ -133,7 +133,7 @@ public class AnimationState {
 				float nextTime = current.trackLast - next.delay;
 				if (nextTime >= 0) {
 					next.delay = 0;
-					next.trackTime = current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
+					next.trackTime += current.timeScale == 0 ? 0 : (nextTime / current.timeScale + delta) * next.timeScale;
 					current.trackTime += currentDelta;
 					setCurrent(i, next, true);
 					while (next.mixingFrom != null) {
@@ -291,12 +291,12 @@ public class AnimationState {
 				float alpha;
 				switch (timelineMode[i] & NOT_LAST - 1) {
 				case SUBSEQUENT:
+					timelineBlend = blend;
 					if (!attachments && timeline instanceof AttachmentTimeline) {
 						if ((timelineMode[i] & NOT_LAST) == NOT_LAST) continue;
-						blend = MixBlend.setup;
+						timelineBlend = MixBlend.setup;
 					}
 					if (!drawOrder && timeline instanceof DrawOrderTimeline) continue;
-					timelineBlend = blend;
 					alpha = alphaMix;
 					break;
 				case FIRST:
@@ -695,7 +695,7 @@ public class AnimationState {
 		entry.next = null;
 	}
 
-	private void animationsChanged () {
+	void animationsChanged () {
 		animationsChanged = false;
 
 		// Process in the order that animations are applied.
@@ -746,11 +746,11 @@ public class AnimationState {
 			if (!propertyIDs.add(id))
 				timelineMode[i] = SUBSEQUENT;
 			else if (to == null || timeline instanceof AttachmentTimeline || timeline instanceof DrawOrderTimeline
-				|| timeline instanceof EventTimeline || !hasTimeline(to, id)) {
+				|| timeline instanceof EventTimeline || !to.animation.hasTimeline(id)) {
 				timelineMode[i] = FIRST;
 			} else {
 				for (TrackEntry next = to.mixingTo; next != null; next = next.mixingTo) {
-					if (hasTimeline(next, id)) continue;
+					if (next.animation.hasTimeline(id)) continue;
 					if (next.mixDuration > 0) {
 						timelineMode[i] = HOLD_MIX;
 						timelineHoldMix[i] = next;
@@ -775,13 +775,6 @@ public class AnimationState {
 				if (!propertyIDs.add(timeline.slotIndex)) timelineMode[i] |= NOT_LAST;
 			}
 		}
-	}
-
-	private boolean hasTimeline (TrackEntry entry, int id) {
-		Object[] timelines = entry.animation.timelines.items;
-		for (int i = 0, n = entry.animation.timelines.size; i < n; i++)
-			if (((Timeline)timelines[i]).getPropertyId() == id) return true;
-		return false;
 	}
 
 	/** Returns the track entry for the animation currently playing on the track, or null if no animation is currently playing. */

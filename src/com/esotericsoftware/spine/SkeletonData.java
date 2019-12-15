@@ -39,7 +39,7 @@ public class SkeletonData {
 	String name;
 	final Array<BoneData> bones = new Array(); // Ordered parents first.
 	final Array<SlotData> slots = new Array(); // Setup pose draw order.
-	final Array<Skin> skins = new Array();
+	public Array<Skin> skins = new Array();
 	Skin defaultSkin;
 	final Array<EventData> events = new Array();
 	final Array<Animation> animations = new Array();

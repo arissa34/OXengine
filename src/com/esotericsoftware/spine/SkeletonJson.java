@@ -111,12 +111,13 @@ public class SkeletonJson {
 		return new JsonReader().parse(file);
 	}
 
+	private SkeletonData skeletonData;
 	public SkeletonData readSkeletonData (FileHandle file) {
 		if (file == null) throw new IllegalArgumentException("file cannot be null.");
 
 		float scale = this.scale;
 
-		SkeletonData skeletonData = new SkeletonData();
+		skeletonData = new SkeletonData();
 		skeletonData.name = file.nameWithoutExtension();
 
 		JsonValue root = parse(file);
@@ -271,7 +272,7 @@ public class SkeletonJson {
 		}
 
 		// Skins.
-		for (JsonValue skinMap = root.getChild("skins"); skinMap != null && skinMap.has("name"); skinMap = skinMap.next) {
+		for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next) {
 			Skin skin = new Skin(skinMap.getString("name"));
 			for (JsonValue entry = skinMap.getChild("bones"); entry != null; entry = entry.next) {
 				BoneData bone = skeletonData.findBone(entry.asString());
@@ -352,6 +353,50 @@ public class SkeletonJson {
 		skeletonData.animations.shrink();
 		skeletonData.ikConstraints.shrink();
 		return skeletonData;
+	}
+
+	public void addSkin(SkeletonData skeletonData, FileHandle file){
+		JsonValue root = parse(file);
+
+		// Skins.
+		for (JsonValue skinMap = root.getChild("skins"); skinMap != null; skinMap = skinMap.next) {
+			Skin skin = new Skin(skinMap.getString("name"));
+			for (JsonValue entry = skinMap.getChild("bones"); entry != null; entry = entry.next) {
+				BoneData bone = skeletonData.findBone(entry.asString());
+				if (bone == null) throw new SerializationException("Skin bone not found: " + entry);
+				skin.bones.add(bone);
+			}
+			for (JsonValue entry = skinMap.getChild("ik"); entry != null; entry = entry.next) {
+				IkConstraintData constraint = skeletonData.findIkConstraint(entry.asString());
+				if (constraint == null) throw new SerializationException("Skin IK constraint not found: " + entry);
+				skin.constraints.add(constraint);
+			}
+			for (JsonValue entry = skinMap.getChild("transform"); entry != null; entry = entry.next) {
+				TransformConstraintData constraint = skeletonData.findTransformConstraint(entry.asString());
+				if (constraint == null) throw new SerializationException("Skin transform constraint not found: " + entry);
+				skin.constraints.add(constraint);
+			}
+			for (JsonValue entry = skinMap.getChild("path"); entry != null; entry = entry.next) {
+				PathConstraintData constraint = skeletonData.findPathConstraint(entry.asString());
+				if (constraint == null) throw new SerializationException("Skin path constraint not found: " + entry);
+				skin.constraints.add(constraint);
+			}
+			for (JsonValue slotEntry = skinMap.getChild("attachments"); slotEntry != null; slotEntry = slotEntry.next) {
+				SlotData slot = skeletonData.findSlot(slotEntry.name);
+				if (slot == null) throw new SerializationException("Slot not found: " + slotEntry.name);
+				for (JsonValue entry = slotEntry.child; entry != null; entry = entry.next) {
+					try {
+						Attachment attachment = readAttachment(entry, skin, slot.index, entry.name, skeletonData);
+						if (attachment != null) skin.setAttachment(slot.index, entry.name, attachment);
+					} catch (Throwable ex) {
+						throw new SerializationException("Error reading attachment: " + entry.name + ", skin: " + skin, ex);
+					}
+				}
+			}
+			skeletonData.skins.add(skin);
+			//if (skin.name.equals("default")) skeletonData.defaultSkin = skin;
+		}
+		skeletonData.skins.shrink();
 	}
 
 	private Attachment readAttachment (JsonValue map, Skin skin, int slotIndex, String name, SkeletonData skeletonData) {
