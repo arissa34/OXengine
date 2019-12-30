@@ -148,7 +148,7 @@ public class RegionAttachment extends Attachment {
 	 * Runtimes Guide.
 	 * @param worldVertices The output world vertices. Must have a length >= <code>offset</code> + 8.
 	 * @param offset The <code>worldVertices</code> index to begin writing values.
-	 * @param stride The number of <code>worldVertices</code> entries between the value pairs written. */
+	 * @param stride The number of <code>worldVertices</code> entries between the id pairs written. */
 	public void computeWorldVertices (Bone bone, float[] worldVertices, int offset, int stride) {
 		float[] vertexOffset = this.offset;
 		float x = bone.getWorldX(), y = bone.getWorldY();

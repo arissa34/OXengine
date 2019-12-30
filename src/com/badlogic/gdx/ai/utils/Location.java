@@ -16,7 +16,6 @@
 
 package com.badlogic.gdx.ai.utils;
 
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector;
 
 /** The {@code Location} interface represents any game object having a position and an orientation.
@@ -27,34 +26,30 @@ import com.badlogic.gdx.math.Vector;
 public interface Location<T extends Vector<T>> {
 
 	/** Returns the vector indicating the position of this location. */
-	public T getPosition();
+	public T getPosition ();
 
-	/** Returns the float value indicating the orientation of this location. The orientation is the angle in radians representing
+	/** Returns the float id indicating the orientation of this location. The orientation is the angle in radians representing
 	 * the direction that this location is facing. */
-	public float getOrientation();
-	public float getOrientationOnY();
-	public float getOrientationOnZ();
-	public Matrix4 getTransform();
-
+	public float getOrientation ();
 
 	/** Sets the orientation of this location, i.e. the angle in radians representing the direction that this location is facing.
 	 * @param orientation the orientation in radians */
-	public void setOrientation(float orientation);
+	public void setOrientation (float orientation);
 
 	/** Returns the angle in radians pointing along the specified vector.
 	 * @param vector the vector */
-	public float vectorToAngle(T vector);
+	public float vectorToAngle (T vector);
 
 	/** Returns the unit vector in the direction of the specified angle expressed in radians.
 	 * @param outVector the output vector.
 	 * @param angle the angle in radians.
 	 * @return the output vector for chaining. */
-	public T angleToVector(T outVector, float angle);
+	public T angleToVector (T outVector, float angle);
 
 	/** Creates a new location.
 	 * <p>
 	 * This method is used internally to instantiate locations of the correct type parameter {@code T}. This technique keeps the API
 	 * simple and makes the API easier to use with the GWT backend because avoids the use of reflection.
 	 * @return the newly created location. */
-	public Location<T> newLocation();
+	public Location<T> newLocation ();
 }

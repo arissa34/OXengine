@@ -80,7 +80,7 @@ public class BehaviorTree<E> extends Task<E> {
 	 * @return the index where the root task has been added (always 0).
 	 * @throws IllegalStateException if the root task is already set. */
 	@Override
-	protected int addChildToTask (Task<E> child) {
+	public int addChildToTask (Task<E> child) {
 		if (this.rootTask != null) throw new IllegalStateException("A behavior tree cannot have more than one root task");
 		this.rootTask = child;
 		return 0;
@@ -240,11 +240,11 @@ public class BehaviorTree<E> extends Task<E> {
 		/** This method is invoked when the task status is set. This does not necessarily mean that the status has changed.
 		 * @param task the task whose status has been set
 		 * @param previousStatus the task's status before the update */
-		public void statusUpdated(Task<E> task, Status previousStatus);
+		public void statusUpdated (Task<E> task, Status previousStatus);
 
 		/** This method is invoked when a child task is added to the children of a parent task.
 		 * @param task the parent task of the newly added child
 		 * @param index the index where the child has been added */
-		public void childAdded(Task<E> task, int index);
+		public void childAdded (Task<E> task, int index);
 	}
 }

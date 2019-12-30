@@ -30,21 +30,19 @@ import com.badlogic.gdx.math.Vector;
 public interface Steerable<T extends Vector<T>> extends Location<T>, Limiter {
 
 	/** Returns the vector indicating the linear velocity of this Steerable. */
-	public T getLinearVelocity();
+	public T getLinearVelocity ();
 
-	/** Returns the float value indicating the the angular velocity in radians of this Steerable. */
-	public float getAngularVelocity();
-	public float getAngularVelocityOnY();
-	public float getAngularVelocityOnZ();
+	/** Returns the float id indicating the the angular velocity in radians of this Steerable. */
+	public float getAngularVelocity ();
 
 	/** Returns the bounding radius of this Steerable. */
-	public float getBoundingRadius();
+	public float getBoundingRadius ();
 
 	/** Returns {@code true} if this Steerable is tagged; {@code false} otherwise. */
-	public boolean isTagged();
+	public boolean isTagged ();
 
 	/** Tag/untag this Steerable. This is a generic flag utilized in a variety of ways.
-	 * @param tagged the boolean value to set */
-	public void setTagged(boolean tagged);
+	 * @param tagged the boolean id to set */
+	public void setTagged (boolean tagged);
 
 }

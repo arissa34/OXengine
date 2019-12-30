@@ -17,9 +17,9 @@ public class FrontalCamera extends GhostCamera implements GestureDetector.Gestur
     public int screenX, screenY;
     private float minX = -100f;
     private float maxX = 100f;
-    private float minY = -20f;
+    private float minY = -2f;
     private float maxY = 50f;
-    private float minZ = 30f;
+    private float minZ = 10f;
     private float maxZ = 150f;
     private float degreesPerPixel = 0.4f;
     public Matrix4 transformToFollow = new Matrix4();
@@ -32,18 +32,13 @@ public class FrontalCamera extends GhostCamera implements GestureDetector.Gestur
 
     public FrontalCamera(float fov, float width, float height) {
         super(fov, width, height);
-        near = 10f;
-        far = 1000f;
-        InputMultiplexer inputMultiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
-        if(Config.isDesktop()) {
-            inputMultiplexer.addProcessor(this);
-        }else{
-            inputMultiplexer.addProcessor(new GestureDetector(this));
-        }
+
+        addInputAndGestureListener(this, this);
     }
 
+    @Override
     public void update(float delta) {
-        //Gdx.app.log("","update FrontalCamera position "+position);
+        //Gdx.app.log("","updateOnMainThread FrontalCamera position "+position);
         updateTransformToFollow();
         super.update(delta);
     }

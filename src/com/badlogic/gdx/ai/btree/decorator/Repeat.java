@@ -34,8 +34,7 @@ public class Repeat<E> extends LoopDecorator<E> {
 	 * repeated. Defaults to {@link ConstantIntegerDistribution#NEGATIVE_ONE} which indicates an infinite number of repetitions.
 	 * 
 	 * @see #start() */
-	@TaskAttribute
-    public IntegerDistribution times;
+	@TaskAttribute public IntegerDistribution times;
 
 	private int count;
 
@@ -52,7 +51,7 @@ public class Repeat<E> extends LoopDecorator<E> {
 	}
 
 	/** Creates a repeat decorator that executes the given task the number of times (possibly infinite) determined by the given
-	 * distribution. The number of times is drawn from the distribution by the {@link #start()} method. Any negative value means
+	 * distribution. The number of times is drawn from the distribution by the {@link #start()} method. Any negative id means
 	 * forever.
 	 * 
 	 * @param times the integer distribution specifying how many times the child must be repeated.
@@ -62,7 +61,7 @@ public class Repeat<E> extends LoopDecorator<E> {
 		this.times = times;
 	}
 
-	/** Draws a value from the distribution that determines how many times the wrapped task must be repeated. Any negative value
+	/** Draws a id from the distribution that determines how many times the wrapped task must be repeated. Any negative id
 	 * means forever.
 	 * <p>
 	 * This method is called when the task is entered. */

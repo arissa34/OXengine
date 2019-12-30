@@ -70,7 +70,7 @@ import com.badlogic.gdx.math.Vector;
 public interface Proximity<T extends Vector<T>> {
 
 	/** Returns the owner of this proximity. */
-	public Steerable<T> getOwner();
+	public Steerable<T> getOwner ();
 
 	/** Sets the owner of this proximity. */
 	public void setOwner (Steerable<T> owner);
@@ -78,12 +78,12 @@ public interface Proximity<T extends Vector<T>> {
 	/** Finds the agents that are within the immediate area of the owner. Each of those agents is passed to the
 	 * {@link ProximityCallback#reportNeighbor(Steerable) reportNeighbor} method of the specified callback.
 	 * @return the number of neighbors found. */
-	public int findNeighbors(ProximityCallback<T> callback);
+	public int findNeighbors (ProximityCallback<T> callback);
 
 	/** The callback object used by a proximity to report the owner's neighbor.
-	 *
+	 * 
 	 * @param <T> Type of vector, either 2D or 3D, implementing the {@link Vector} interface
-	 *
+	 * 
 	 * @author davebaol */
 	public interface ProximityCallback<T extends Vector<T>> {
 

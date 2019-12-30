@@ -2,15 +2,13 @@ package rma.ox.data.network.http;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pools;
 
-import rma.ox.engine.core.threading.runnable.RunnablePool;
+import rma.ox.engine.core.threading.RunnableThread;
 import rma.ox.engine.utils.Logx;
 
 import java.util.Iterator;
@@ -67,19 +65,19 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
         currentHttpRequest = null;
     }
 
-    private void onSuccessRequestTexture(byte[] rawImageBytes) {
+    private void onSuccessRequestTexture(final byte[] rawImageBytes) {
         if (mustSave()) {
         } else {
-            Gdx.app.postRunnable(
-                    RunnablePool.get(new RunnablePool.Executor() {
-                        @Override
-                        public void execute() {
-                            Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
-                            Texture texture = new Texture(pixmap);
-                            postSuccesEvent((T) texture);
-                        }
-                    })
-            );
+            //Gdx.app.postRunnable(
+            //        RunnablePool.get(new RunnablePool.Executor() {
+            //            @Override
+            //            public void execute() {
+            //                Pixmap pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
+            //                Texture texture = new Texture(pixmap);
+            //                postSuccesEvent((T) texture);
+            //            }
+            //        })
+            //);
         }
     }
 
@@ -99,7 +97,7 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
 
     private void launchThreadSave(final String content) {
         //TODO REMANAGE REMOVE THE NEW TO AVOID GCC
-        new Thread(new Runnable() {
+        RunnableThread.get().add(new Runnable() {
             @Override
             public void run() {
                 final T result = extractJsonResponse(content);
@@ -116,7 +114,7 @@ public abstract class AbsRequest<T> implements Net.HttpResponseListener {
                     }
                 });
             }
-        }).start();
+        });
     }
 
     @Override

@@ -36,7 +36,7 @@ public class SlotData {
 	final int index;
 	final String name;
 	final BoneData boneData;
-	final Color color = new Color(1, 1, 1, 1);
+	public Color color = new Color(1, 1, 1, 1);
 	Color darkColor;
 	String attachmentName;
 	BlendMode blendMode;

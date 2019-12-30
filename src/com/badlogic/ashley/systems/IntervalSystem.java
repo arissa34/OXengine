@@ -19,7 +19,7 @@ package com.badlogic.ashley.systems;
 import com.badlogic.ashley.core.EntitySystem;
 
 /**
- * A simple {@link EntitySystem} that does not run its update logic every call to {@link EntitySystem#update(float)}, but after a
+ * A simple {@link EntitySystem} that does not run its updateOnMainThread logic every call to {@link EntitySystem#update(float)}, but after a
  * given interval. The actual logic should be placed in {@link IntervalSystem#updateInterval()}.
  * @author David Saltares
  */

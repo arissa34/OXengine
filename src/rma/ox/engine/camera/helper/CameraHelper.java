@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Matrix4;
 
 import rma.ox.engine.camera.FrontalCamera;
 import rma.ox.engine.camera.GhostCamera;
+import rma.ox.engine.camera.GodCamera;
 import rma.ox.engine.settings.SettingsHelper;
 
 public class CameraHelper {
@@ -17,16 +18,13 @@ public class CameraHelper {
 
     /*******************************/
 
-    private FrontalCamera defaultCamera;
+    private GhostCamera defaultCamera;
+    private FrontalCamera frontalCamera;
+    private GodCamera godCamera;
 
     public CameraHelper(){
-        defaultCamera = new FrontalCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
+        setGodCamera();
         defaultCamera.targetPosition.set(0, 50, 200);
-        defaultCamera.targetDirection.set(0, 0, 0);
-        defaultCamera.targetUp.set(0, 1, 0);
-        defaultCamera.snapToTarget();
-        defaultCamera.setTransformToFollow(new Matrix4().setTranslation(0, 10, 0));
-        defaultCamera.initPosition();
     }
 
     public void update(float delta){
@@ -35,6 +33,35 @@ public class CameraHelper {
 
     public GhostCamera getCamera(){
         return defaultCamera;
+    }
+
+    public void setFrontalCamera(Matrix4 targetToFollow){
+        if(frontalCamera == null){
+            frontalCamera  = new FrontalCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
+        }
+        if(defaultCamera != null){
+            passInfo(godCamera, defaultCamera);
+        }
+        defaultCamera = frontalCamera;
+        frontalCamera.setTransformToFollow(targetToFollow);
+        frontalCamera.initPosition();
+    }
+
+    public void setGodCamera(){
+        if(godCamera == null){
+            godCamera = new GodCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
+        }
+        if(defaultCamera != null){
+            passInfo(godCamera, defaultCamera);
+        }
+        defaultCamera = godCamera;
+    }
+
+    private void passInfo(GhostCamera newCam, GhostCamera oldCam){
+        newCam.targetPosition.set(oldCam.targetPosition);
+        newCam.targetDirection.set(oldCam.targetDirection);
+        newCam.targetUp.set(oldCam.targetUp);
+        newCam.snapToTarget();
     }
 
 }

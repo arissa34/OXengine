@@ -29,13 +29,13 @@ import com.badlogic.gdx.ai.steer.behaviors.Jump;
 public interface Timepiece {
 
 	/** Returns the time accumulated up to the current frame in seconds. */
-	public float getTime();
+	public float getTime ();
 
 	/** Returns the time span between the current frame and the last frame in seconds. */
-	public float getDeltaTime();
+	public float getDeltaTime ();
 
 	/** Updates this timepiece with the given delta time.
 	 * @param deltaTime the time in seconds since the last frame. */
-	public void update(float deltaTime);
+	public void update (float deltaTime);
 
 }

@@ -21,35 +21,35 @@ package com.badlogic.gdx.ai.steer;
  * @author davebaol */
 public interface Limiter {
 
-	/** Returns the threshold below which the linear speed can be considered zero. It must be a small positive value near to zero.
+	/** Returns the threshold below which the linear speed can be considered zero. It must be a small positive id near to zero.
 	 * Usually it is used to avoid updating the orientation when the velocity vector has a negligible length. */
-	public float getZeroLinearSpeedThreshold();
+	public float getZeroLinearSpeedThreshold ();
 
-	/** Sets the threshold below which the linear speed can be considered zero. It must be a small positive value near to zero.
+	/** Sets the threshold below which the linear speed can be considered zero. It must be a small positive id near to zero.
 	 * Usually it is used to avoid updating the orientation when the velocity vector has a negligible length. */
-	public void setZeroLinearSpeedThreshold(float value);
+	public void setZeroLinearSpeedThreshold (float value);
 
 	/** Returns the maximum linear speed. */
-	public float getMaxLinearSpeed();
+	public float getMaxLinearSpeed ();
 
 	/** Sets the maximum linear speed. */
-	public void setMaxLinearSpeed(float maxLinearSpeed);
+	public void setMaxLinearSpeed (float maxLinearSpeed);
 
 	/** Returns the maximum linear acceleration. */
-	public float getMaxLinearAcceleration();
+	public float getMaxLinearAcceleration ();
 
 	/** Sets the maximum linear acceleration. */
-	public void setMaxLinearAcceleration(float maxLinearAcceleration);
+	public void setMaxLinearAcceleration (float maxLinearAcceleration);
 
 	/** Returns the maximum angular speed. */
-	public float getMaxAngularSpeed();
+	public float getMaxAngularSpeed ();
 
 	/** Sets the maximum angular speed. */
-	public void setMaxAngularSpeed(float maxAngularSpeed);
+	public void setMaxAngularSpeed (float maxAngularSpeed);
 
 	/** Returns the maximum angular acceleration. */
-	public float getMaxAngularAcceleration();
+	public float getMaxAngularAcceleration ();
 
 	/** Sets the maximum angular acceleration. */
-	public void setMaxAngularAcceleration(float maxAngularAcceleration);
+	public void setMaxAngularAcceleration (float maxAngularAcceleration);
 }

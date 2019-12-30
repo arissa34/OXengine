@@ -71,7 +71,7 @@ public class PathFinderQueue<N> implements Schedulable, Telegraph {
 	@Override
 	public boolean handleMessage (Telegram telegram) {
 		@SuppressWarnings("unchecked")
-        PathFinderRequest<N> pfr = (PathFinderRequest<N>)telegram.extraInfo;
+		PathFinderRequest<N> pfr = (PathFinderRequest<N>)telegram.extraInfo;
 		pfr.client = telegram.sender; // set the client to be notified once the request has completed
 		pfr.status = PathFinderRequest.SEARCH_NEW; // Reset status
 		pfr.statusChanged = true; // Status has just changed

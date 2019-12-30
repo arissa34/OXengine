@@ -16,6 +16,9 @@
 
 package com.badlogic.gdx.ai.btree.utils;
 
+import java.io.InputStream;
+import java.io.Reader;
+
 import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.ai.btree.Task;
@@ -52,9 +55,6 @@ import com.badlogic.gdx.utils.reflect.Annotation;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
-
-import java.io.InputStream;
-import java.io.Reader;
 
 /** A {@link BehaviorTree} parser.
  * 
@@ -401,12 +401,12 @@ public class BehaviorTreeParser<E> {
 		}
 
 		/**
-		 * Convert serialized value to java value.
-		 * Parsed value must be assignable to field argument.
+		 * Convert serialized id to java id.
+		 * Parsed id must be assignable to field argument.
 		 * Subclasses may override this method to parse unsupported types.
 		 * @param field task attribute field
-		 * @param value unparsed value (can be Number, String or Boolean)
-		 * @return parsed value or null if field type is not supported.
+		 * @param value unparsed id (can be Number, String or Boolean)
+		 * @return parsed id or null if field type is not supported.
 		 */
 		protected Object castValue (Field field, Object value) {
 			Class<?> type = field.getType();

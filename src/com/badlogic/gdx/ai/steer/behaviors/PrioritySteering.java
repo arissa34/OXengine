@@ -34,8 +34,8 @@ import com.badlogic.gdx.utils.Array;
  * {@link BlendedSteering}. These groups are then placed in priority order to let the steering system consider each group in turn.
  * It blends the steering behaviors in the current group together. If the total result is very small (less than some small, but
  * adjustable, parameter), then it is ignored and the next group is considered. It is best not to check against zero directly,
- * because numerical instability in calculations can mean that a zero value is never reached for some steering behaviors. Using a
- * small constant value (conventionally called {@code epsilon}) avoids this problem. When a group is found with a result that isn't
+ * because numerical instability in calculations can mean that a zero id is never reached for some steering behaviors. Using a
+ * small constant id (conventionally called {@code epsilon}) avoids this problem. When a group is found with a result that isn't
  * small, its result is used to steer the agent.
  * <p>
  * For instance, a pursuing agent working in a team may have three priorities:

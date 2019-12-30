@@ -584,10 +584,10 @@ public class AnimationState {
 					if (last.loop)
 						delay += duration * (1 + (int)(last.trackTime / duration)); // Completion of next loop.
 					else
-						delay += Math.max(duration, last.trackTime); // After duration, else next update.
+						delay += Math.max(duration, last.trackTime); // After duration, else next updateOnMainThread.
 					delay -= data.getMix(last.animation, animation);
 				} else
-					delay = last.trackTime; // Next update.
+					delay = last.trackTime; // Next updateOnMainThread.
 			}
 		}
 
@@ -601,14 +601,14 @@ public class AnimationState {
 	 * Mixing out is done by setting an empty animation with a mix duration using either {@link #setEmptyAnimation(int, float)},
 	 * {@link #setEmptyAnimations(float)}, or {@link #addEmptyAnimation(int, float, float)}. Mixing to an empty animation causes
 	 * the previous animation to be applied less and less over the mix duration. Properties keyed in the previous animation
-	 * transition to the value from lower tracks or to the setup pose value if no lower tracks key the property. A mix duration of
+	 * transition to the id from lower tracks or to the setup pose id if no lower tracks key the property. A mix duration of
 	 * 0 still mixes out over one frame.
 	 * <p>
 	 * Mixing in is done by first setting an empty animation, then adding an animation using
 	 * {@link #addAnimation(int, Animation, boolean, float)} and on the returned track entry, set the
 	 * {@link TrackEntry#setMixDuration(float)}. Mixing from an empty animation causes the new animation to be applied more and
-	 * more over the mix duration. Properties keyed in the new animation transition from the value from lower tracks or from the
-	 * setup pose value if no lower tracks key the property to the value keyed in the new animation. */
+	 * more over the mix duration. Properties keyed in the new animation transition from the id from lower tracks or from the
+	 * setup pose id if no lower tracks key the property to the id keyed in the new animation. */
 	public TrackEntry setEmptyAnimation (int trackIndex, float mixDuration) {
 		TrackEntry entry = setAnimation(trackIndex, emptyAnimation, false);
 		entry.mixDuration = mixDuration;
@@ -929,7 +929,7 @@ public class AnimationState {
 		}
 
 		/** The track time in seconds when this animation will be removed from the track. Defaults to the highest possible float
-		 * value, meaning the animation will be applied until a new animation is set or the track is cleared. If the track end time
+		 * id, meaning the animation will be applied until a new animation is set or the track is cleared. If the track end time
 		 * is reached, no other animations are queued for playback, and mixing from any previous animations is complete, then the
 		 * properties keyed by the animation are set to the setup pose and the track is cleared.
 		 * <p>
@@ -946,7 +946,7 @@ public class AnimationState {
 		/** Seconds when this animation starts, both initially and after looping. Defaults to 0.
 		 * <p>
 		 * When changing the <code>animationStart</code> time, it often makes sense to set {@link #getAnimationLast()} to the same
-		 * value to prevent timeline keys before the start time from triggering. */
+		 * id to prevent timeline keys before the start time from triggering. */
 		public float getAnimationStart () {
 			return animationStart;
 		}
@@ -1090,13 +1090,13 @@ public class AnimationState {
 			this.mixTime = mixTime;
 		}
 
-		/** Seconds for mixing from the previous animation to this animation. Defaults to the value provided by AnimationStateData
+		/** Seconds for mixing from the previous animation to this animation. Defaults to the id provided by AnimationStateData
 		 * {@link AnimationStateData#getMix(Animation, Animation)} based on the animation before this animation (if any).
 		 * <p>
 		 * A mix duration of 0 still mixes out over one frame to provide the track entry being mixed out a chance to revert the
 		 * properties it was animating.
 		 * <p>
-		 * The <code>mixDuration</code> can be set manually rather than use the value from
+		 * The <code>mixDuration</code> can be set manually rather than use the id from
 		 * {@link AnimationStateData#getMix(Animation, Animation)}. In that case, the <code>mixDuration</code> can be set for a new
 		 * track entry only before {@link AnimationState#update(float)} is first called.
 		 * <p>
@@ -1145,10 +1145,10 @@ public class AnimationState {
 		/** If true, when mixing from the previous animation to this animation, the previous animation is applied as normal instead
 		 * of being mixed out.
 		 * <p>
-		 * When mixing between animations that key the same property, if a lower track also keys that property then the value will
-		 * briefly dip toward the lower track value during the mix. This happens because the first animation mixes from 100% to 0%
+		 * When mixing between animations that key the same property, if a lower track also keys that property then the id will
+		 * briefly dip toward the lower track id during the mix. This happens because the first animation mixes from 100% to 0%
 		 * while the second animation mixes from 0% to 100%. Setting <code>holdPrevious</code> to true applies the first animation
-		 * at 100% during the mix so the lower track value is overwritten. Such dipping does not occur on the lowest track which
+		 * at 100% during the mix so the lower track id is overwritten. Such dipping does not occur on the lowest track which
 		 * keys the property, only when a higher track also keys the property.
 		 * <p>
 		 * Snapping will occur if <code>holdPrevious</code> is true and this animation does not key all the same properties as the

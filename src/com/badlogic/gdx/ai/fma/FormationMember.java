@@ -29,5 +29,5 @@ import com.badlogic.gdx.math.Vector;
 public interface FormationMember<T extends Vector<T>> {
 
 	/** Returns the target location of this formation member. */
-	public Location<T> getTargetLocation();
+	public Location<T> getTargetLocation ();
 }

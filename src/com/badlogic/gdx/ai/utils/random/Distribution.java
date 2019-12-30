@@ -19,12 +19,12 @@ package com.badlogic.gdx.ai.utils.random;
 /** @author davebaol */
 public interface Distribution {
 
-	public int nextInt();
+	public int nextInt ();
 
-	public long nextLong();
+	public long nextLong ();
 
-	public float nextFloat();
+	public float nextFloat ();
 
-	public double nextDouble();
+	public double nextDouble ();
 
 }

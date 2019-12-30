@@ -336,7 +336,7 @@ public class Skeleton {
 	 * See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
 	 * Runtimes Guide. */
 	public void updateWorldTransform () {
-		// This partial update avoids computing the world transform for constrained bones when 1) the bone is not updated
+		// This partial updateOnMainThread avoids computing the world transform for constrained bones when 1) the bone is not updated
 		// before the constraint, 2) the constraint only needs to access the applied local transform, and 3) the constraint calls
 		// updateWorldTransform.
 		Array<Bone> updateCacheReset = this.updateCacheReset;
@@ -363,7 +363,7 @@ public class Skeleton {
 	 * Runtimes Guide. */
 	public void updateWorldTransform (Bone parent) {
 		if (parent == null) throw new IllegalArgumentException("parent cannot be null.");
-		// This partial update avoids computing the world transform for constrained bones when 1) the bone is not updated
+		// This partial updateOnMainThread avoids computing the world transform for constrained bones when 1) the bone is not updated
 		// before the constraint, 2) the constraint only needs to access the applied local transform, and 3) the constraint calls
 		// updateWorldTransform.
 		Array<Bone> updateCacheReset = this.updateCacheReset;
@@ -659,8 +659,8 @@ public class Skeleton {
 	}
 
 	/** Returns the axis aligned bounding box (AABB) of the region and mesh attachments for the current pose.
-	 * @param offset An output value, the distance from the skeleton origin to the bottom left corner of the AABB.
-	 * @param size An output value, the width and height of the AABB.
+	 * @param offset An output id, the distance from the skeleton origin to the bottom left corner of the AABB.
+	 * @param size An output id, the width and height of the AABB.
 	 * @param temp Working memory to temporarily store attachments' computed world vertices. */
 	public void getBounds (Vector2 offset, Vector2 size, FloatArray temp) {
 		if (offset == null) throw new IllegalArgumentException("offset cannot be null.");

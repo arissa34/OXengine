@@ -1,9 +1,15 @@
 package rma.ox.engine.camera;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import rma.ox.engine.core.math.Vector3Utils;
+import rma.ox.engine.settings.Config;
+import rma.ox.engine.utils.Logx;
 
 public class GhostCamera extends Camera {
     /** the field of view of the height, in degrees **/
@@ -23,16 +29,16 @@ public class GhostCamera extends Camera {
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
 
-        targetPosition = new Vector3();
-        targetDirection = new Vector3();
-        targetUp = new Vector3();
+        targetPosition = new Vector3(0, 0, 0);
+        targetDirection = new Vector3(0, 0, -1);
+        targetUp = new Vector3(0, 1, 0);
         targetView = new Matrix4();
 
         targetFieldOfView = fieldOfView;
         isLerping = true;
 
         near = 10f;
-        far = 1000000f;
+        far = 1000f;
 
         update();
     }
@@ -54,12 +60,24 @@ public class GhostCamera extends Camera {
     }
 
     public void update(boolean updateFrustum){
+        //float aspect = viewportWidth / viewportHeight;
+        //projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
+        //view.setToLookAt(position, direction, up);
+        //combined.set(projection);
+        //Matrix4.mul(combined.val, view.val);
+        //if(updateFrustum) {
+        //    invProjectionView.set(combined);
+        //    Matrix4.inv(invProjectionView.val);
+        //    frustum.update(invProjectionView);
+        //}
+
         float aspect = viewportWidth / viewportHeight;
         projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
-        view.setToLookAt(position, direction, up);
+        view.setToLookAt(position, tmp.set(position).add(direction), up);
         combined.set(projection);
         Matrix4.mul(combined.val, view.val);
-        if(updateFrustum) {
+
+        if (updateFrustum) {
             invProjectionView.set(combined);
             Matrix4.inv(invProjectionView.val);
             frustum.update(invProjectionView);
@@ -153,5 +171,18 @@ public class GhostCamera extends Camera {
 
     public void stopLerp() {
         isLerping = false;
+    }
+
+    protected static void addInputAndGestureListener(GestureDetector.GestureListener gestureListener, InputProcessor inputProcessor){
+
+        InputMultiplexer inputMultiplexer = (InputMultiplexer) Gdx.input.getInputProcessor();
+        if(Config.isDesktop()) {
+            inputMultiplexer.addProcessor(inputProcessor);
+        }else{
+            if(inputMultiplexer == null){
+                Gdx.input.setInputProcessor(inputMultiplexer = new InputMultiplexer());
+            }
+            inputMultiplexer.addProcessor(new GestureDetector(gestureListener));
+        }
     }
 }

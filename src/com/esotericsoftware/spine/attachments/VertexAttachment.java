@@ -57,12 +57,12 @@ abstract public class VertexAttachment extends Attachment {
 	 * <p>
 	 * See <a href="http://esotericsoftware.com/spine-runtime-skeletons#World-transforms">World transforms</a> in the Spine
 	 * Runtimes Guide.
-	 * @param start The index of the first {@link #getVertices()} value to transform. Each vertex has 2 values, x and y.
+	 * @param start The index of the first {@link #getVertices()} id to transform. Each vertex has 2 values, x and y.
 	 * @param count The number of world vertex values to output. Must be <= {@link #getWorldVerticesLength()} - <code>start</code>.
 	 * @param worldVertices The output world vertices. Must have a length >= <code>offset</code> + <code>count</code> *
 	 *           <code>stride</code> / 2.
 	 * @param offset The <code>worldVertices</code> index to begin writing values.
-	 * @param stride The number of <code>worldVertices</code> entries between the value pairs written. */
+	 * @param stride The number of <code>worldVertices</code> entries between the id pairs written. */
 	public void computeWorldVertices (Slot slot, int start, int count, float[] worldVertices, int offset, int stride) {
 		count = offset + (count >> 1) * stride;
 		Skeleton skeleton = slot.getSkeleton();

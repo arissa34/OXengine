@@ -69,7 +69,7 @@ public class Jump<T extends Vector<T>> extends MatchVelocity<T> {
 	 * @param gravityComponentHandler the handler giving access to the vertical axis
 	 * @param callback the callback that gets informed about jump achievability and when to jump */
 	public Jump (Steerable<T> owner, JumpDescriptor<T> jumpDescriptor, T gravity,
-                 GravityComponentHandler<T> gravityComponentHandler, JumpCallback callback) {
+		GravityComponentHandler<T> gravityComponentHandler, JumpCallback callback) {
 		super(owner);
 		this.gravity = gravity;
 		this.gravityComponentHandler = gravityComponentHandler;
@@ -136,9 +136,9 @@ public class Jump<T extends Vector<T>> extends MatchVelocity<T> {
 
 		// Calculate the first jump time, see time of flight at http://hyperphysics.phy-astr.gsu.edu/hbase/traj.html
 		// Notice that the equation has 2 solutions. We'd ideally like to achieve the jump in the fastest time
-		// possible, so we want to use the smaller of the two values. However, this time value might give us
+		// possible, so we want to use the smaller of the two values. However, this time id might give us
 		// an impossible launch velocity (required speed greater than the max), so we need to check and
-		// use the higher value if necessary.
+		// use the higher id if necessary.
 		float sqrtTerm = (float)Math.sqrt(2f * g * gravityComponentHandler.getComponent(jumpDescriptor.delta)
 			+ maxVerticalVelocity * maxVerticalVelocity);
 		float time = (-maxVerticalVelocity + sqrtTerm) / g;
@@ -370,27 +370,27 @@ public class Jump<T extends Vector<T>> extends MatchVelocity<T> {
 		 * 
 		 * Of course, the equivalent 2D implementation will use Vector2 instead of Vector3.
 		 * @param vector the vector
-		 * @return the value of the component affected by gravity. */
-		public float getComponent(T vector);
+		 * @return the id of the component affected by gravity. */
+		public float getComponent (T vector);
 
 		/** Sets the component of the given vector along which the gravity operates.
 		 * <p>
 		 * Assuming a 3D coordinate system where the gravity is acting along the y-axis, this method will be implemented as follows:
-		 *
+		 * 
 		 * <pre>
-		 * public void setComponent (Vector3 vector, float value) {
-		 * 	vector.y = value;
+		 * public void setComponent (Vector3 vector, float id) {
+		 * 	vector.y = id;
 		 * }
 		 * </pre>
-		 *
+		 * 
 		 * Of course, the equivalent 2D implementation will use Vector2 instead of Vector3.
 		 * @param vector the vector
-		 * @param value the value of the component affected by gravity */
-		public void setComponent(T vector, float value);
+		 * @param value the id of the component affected by gravity */
+		public void setComponent (T vector, float value);
 	}
 
 	/** The {@code JumpCallback} allows you to know whether a jump is achievable and when to jump.
-	 *
+	 * 
 	 * @author davebaol */
 	public interface JumpCallback {
 
@@ -402,12 +402,12 @@ public class Jump<T extends Vector<T>> extends MatchVelocity<T> {
 		 * If the jump is achievable the run up phase will start immediately and the character will try to match the target velocity
 		 * toward the takeoff point. This is the right moment to start the run up animation, if needed.
 		 * @param achievable whether the jump is achievable or not. */
-		public void reportAchievability(boolean achievable);
+		public void reportAchievability (boolean achievable);
 
 		/** This method is called to notify that both the position and velocity of the character are good enough to jump.
 		 * @param maxVerticalVelocity the velocity to set along the vertical axis to achieve the jump
 		 * @param time the duration of the jump */
-		public void takeoff(float maxVerticalVelocity, float time);
+		public void takeoff (float maxVerticalVelocity, float time);
 
 	}
 }

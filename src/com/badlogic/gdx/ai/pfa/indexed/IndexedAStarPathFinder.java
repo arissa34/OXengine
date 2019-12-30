@@ -48,8 +48,8 @@ import com.badlogic.gdx.utils.TimeUtils;
  * 
  * @author davebaol */
 public class IndexedAStarPathFinder<N> implements PathFinder<N> {
-	public IndexedGraph<N> graph;
-	public NodeRecord<N>[] nodeRecords;
+	IndexedGraph<N> graph;
+	NodeRecord<N>[] nodeRecords;
 	BinaryHeap<NodeRecord<N>> openList;
 	NodeRecord<N> current;
 	public Metrics metrics;
@@ -223,8 +223,8 @@ public class IndexedAStarPathFinder<N> implements PathFinder<N> {
 				nodeHeuristic = nodeRecord.getEstimatedTotalCost() - nodeRecord.costSoFar;
 			} else { // the node is unvisited
 
-				// We'll need to calculate the heuristic value using the function,
-				// since we don't have a node record with a previously calculated value
+				// We'll need to calculate the heuristic id using the function,
+				// since we don't have a node record with a previously calculated id
 				nodeHeuristic = heuristic.estimate(node, endNode);
 			}
 
@@ -295,7 +295,7 @@ public class IndexedAStarPathFinder<N> implements PathFinder<N> {
 	 * @param <N> Type of node
 	 * 
 	 * @author davebaol */
-	public static class NodeRecord<N> extends BinaryHeap.Node {
+	static class NodeRecord<N> extends BinaryHeap.Node {
 		/** The reference to the node. */
 		N node;
 

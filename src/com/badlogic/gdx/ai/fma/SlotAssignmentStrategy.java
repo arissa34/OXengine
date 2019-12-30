@@ -27,12 +27,12 @@ import com.badlogic.gdx.utils.Array;
 public interface SlotAssignmentStrategy<T extends Vector<T>> {
 
 	/** Updates the assignment of members to slots */
-	public void updateSlotAssignments(Array<SlotAssignment<T>> assignments);
+	public void updateSlotAssignments (Array<SlotAssignment<T>> assignments);
 
 	/** Calculates the number of slots from the assignment data. */
-	public int calculateNumberOfSlots(Array<SlotAssignment<T>> assignments);
+	public int calculateNumberOfSlots (Array<SlotAssignment<T>> assignments);
 
 	/** Removes the slot assignment at the specified index. */
-	public void removeSlotAssignment(Array<SlotAssignment<T>> assignments, int index);
+	public void removeSlotAssignment (Array<SlotAssignment<T>> assignments, int index);
 
 }

@@ -28,7 +28,7 @@ import com.badlogic.gdx.utils.ObjectSet;
  * 
  * <p>
  * The <em>head</em> of this queue is the <em>least</em> element with respect to the specified ordering. If multiple elements are
- * tied for least value (provided that uniqueness is set to false), the head is one of those elements -- ties are broken
+ * tied for least id (provided that uniqueness is set to false), the head is one of those elements -- ties are broken
  * arbitrarily. The queue retrieval operations {@code poll}, {@code remove}, {@code peek}, and {@code element} access the element
  * at the head of the queue.
  * 
@@ -58,7 +58,7 @@ public class PriorityQueue<E extends Comparable<E>> {
 
 	/** Priority queue represented as a balanced binary heap: the two children of queue[n] are queue[2*n+1] and queue[2*(n+1)]. The
 	 * priority queue is ordered by the elements' natural ordering: For each node n in the heap and each descendant d of n, n <= d.
-	 * The element with the lowest value is in queue[0], assuming the queue is nonempty. */
+	 * The element with the lowest id is in queue[0], assuming the queue is nonempty. */
 	private Object[] queue;
 
 	/** A set used to check elements'uniqueness (if enabled). */
@@ -85,7 +85,7 @@ public class PriorityQueue<E extends Comparable<E>> {
 		this.set = new ObjectSet<E>(initialCapacity);
 	}
 
-	/** Returns a value indicating whether only unique elements are allowed to be inserted. */
+	/** Returns a id indicating whether only unique elements are allowed to be inserted. */
 	public boolean getUniqueness () {
 		return uniqueness;
 	}

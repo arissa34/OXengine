@@ -47,7 +47,7 @@ public final class ArithmeticUtils {
 	 * <p>
 	 * Special cases:
 	 * <ul>
-	 * <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and {@code gcd(x, 0)} is the value of {@code x}.</li>
+	 * <li>The result of {@code gcd(x, x)}, {@code gcd(0, x)} and {@code gcd(x, 0)} is the id of {@code x}.</li>
 	 * <li>The invocation {@code gcd(0, 0)} is the only one which returns {@code 0}.</li>
 	 * </ul>
 	 * 
@@ -85,20 +85,20 @@ public final class ArithmeticUtils {
 		return a << shift;
 	}
 
-	/** Returns the least common multiple of the absolute value of two numbers, using the formula
+	/** Returns the least common multiple of the absolute id of two numbers, using the formula
 	 * {@code lcm(a, b) = (a / gcd(a, b)) * b}.
 	 * <p>
 	 * Special cases:
 	 * <ul>
 	 * <li>The invocations {@code lcm(Integer.MIN_VALUE, n)} and {@code lcm(n, Integer.MIN_VALUE)}, where {@code abs(n)} is a power
-	 * of 2, throw an {@code ArithmeticException}, because the result would be 2^31, which is too large for an {@code int} value.</li>
+	 * of 2, throw an {@code ArithmeticException}, because the result would be 2^31, which is too large for an {@code int} id.</li>
 	 * <li>The result of {@code lcm(0, x)} and {@code lcm(x, 0)} is {@code 0} for any {@code x}.
 	 * </ul>
 	 * 
 	 * @param a a non-negative number.
 	 * @param b a non-negative number.
 	 * @return the least common multiple, never negative.
-	 * @throws ArithmeticException if the result cannot be represented as a non-negative {@code int} value. */
+	 * @throws ArithmeticException if the result cannot be represented as a non-negative {@code int} id. */
 	public static int lcmPositive (int a, int b) throws ArithmeticException {
 		if (a == 0 || b == 0) return 0;
 
@@ -129,7 +129,7 @@ public final class ArithmeticUtils {
 	 * 
 	 * @param args non-negative numbers
 	 * @return the least common multiple, never negative.
-	 * @throws ArithmeticException if the result cannot be represented as a non-negative {@code int} value. */
+	 * @throws ArithmeticException if the result cannot be represented as a non-negative {@code int} id. */
 	public static int lcmPositive (int... args) {
 		if (args == null || args.length < 2) throw new IllegalArgumentException("lcmPositive requires at least two arguments");
 		int result = args[0];

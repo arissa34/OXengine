@@ -112,7 +112,7 @@ public class RaycastObstacleAvoidance<T extends Vector<T>> extends SteeringBehav
 	 * @param raycastCollisionDetector the collision detector
 	 * @param distanceFromBoundary the minimum distance to a wall (i.e., how far to avoid collision). */
 	public RaycastObstacleAvoidance (Steerable<T> owner, RayConfiguration<T> rayConfiguration,
-                                     RaycastCollisionDetector<T> raycastCollisionDetector, float distanceFromBoundary) {
+		RaycastCollisionDetector<T> raycastCollisionDetector, float distanceFromBoundary) {
 		super(owner);
 		this.rayConfiguration = rayConfiguration;
 		this.raycastCollisionDetector = raycastCollisionDetector;

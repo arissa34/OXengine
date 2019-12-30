@@ -207,7 +207,8 @@ public class InAppNotification extends Container implements Pool.Poolable {
             topImage.setDrawable(topTxtDrawable);
             topImage.setScaling(Scaling.fill);
 
-            topFadingImage.setVisible(Builder.headerTitle != null);
+            //topFadingImage.setVisible(Builder.headerTitle != null);
+            topFadingImage.setVisible(false);
 
             Cell cell = mainTable.add(header).maxHeight(InAppNotificationTable.HEADER_HEIGHT);
             if(Builder.hasIcon){

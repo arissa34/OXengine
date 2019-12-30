@@ -56,7 +56,7 @@ public abstract class EntitySystem {
 	}
 
 	/**
-	 * The update method called every tick.
+	 * The updateOnMainThread method called every tick.
 	 * @param deltaTime The time passed since last frame in seconds.
 	 */
 	public void update (float deltaTime) {

@@ -16,6 +16,8 @@
 
 package com.badlogic.gdx.ai.btree.utils;
 
+import java.io.Reader;
+
 import com.badlogic.gdx.ai.btree.BehaviorTree;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -26,8 +28,6 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StreamUtils;
-
-import java.io.Reader;
 
 /** {@link AssetLoader} for {@link BehaviorTree} instances. The behavior tree is loaded asynchronously.
  * 

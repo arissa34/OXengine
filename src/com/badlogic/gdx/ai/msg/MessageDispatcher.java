@@ -624,8 +624,8 @@ public class MessageDispatcher implements Telegraph {
 		 * @param message The message code
 		 * @param extraInfo Any additional information that may accompany the message
 		 * @param returnReceiptStatus The return receipt status of the message */
-		public void report(float delay, Telegraph sender, Telegraph receiver, int message, Object extraInfo,
-                           int returnReceiptStatus);
+		public void report (float delay, Telegraph sender, Telegraph receiver, int message, Object extraInfo,
+			int returnReceiptStatus);
 	}
 
 }

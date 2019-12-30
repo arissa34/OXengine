@@ -38,8 +38,8 @@ import com.badlogic.gdx.utils.TimeUtils;
  * values will lead to a regular spike or not. That's why this scheduler supports automatic phasing. When a new task is added to
  * the scheduler, with a frequency of {@code f}, we perform a dry run of the scheduler for a fixed number of frames into the
  * future. Rather than executing tasks in this dry run, we simply count how many would be executed. We find the frame with the
- * least number of running tasks. The phase value for the task is set to the number of frames ahead at which this minimum occurs.
- * The fixed number of frames is normally a manually set value found by experimentation. Ideally, it would be the least common
+ * least number of running tasks. The phase id for the task is set to the number of frames ahead at which this minimum occurs.
+ * The fixed number of frames is normally a manually set id found by experimentation. Ideally, it would be the least common
  * multiple (LCM) of all the frequency values used in the scheduler, see {@link ArithmeticUtils#lcmPositive(int, int)}. Typically,
  * however, this is a large number and would slow the algorithm unnecessarily (for frequencies of 2, 3, 5, 7, and 11, for example,
  * we have an LCM of 2310). Despite being a good approach in practice, it has a theoretical chance that it will still produce

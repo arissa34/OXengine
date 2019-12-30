@@ -173,7 +173,7 @@ public class FollowPath<T extends Vector<T>, P extends PathParam> extends Arrive
 
 	/** Sets the flag indicating whether to use {@link Arrive} behavior to approach the end of an open path. It defaults to
 	 * {@code true}.
-	 * @param arriveEnabled the flag value to set
+	 * @param arriveEnabled the flag id to set
 	 * @return this behavior for chaining. */
 	public FollowPath<T, P> setArriveEnabled (boolean arriveEnabled) {
 		this.arriveEnabled = arriveEnabled;

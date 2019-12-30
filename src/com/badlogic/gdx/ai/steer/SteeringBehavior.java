@@ -123,7 +123,7 @@ public abstract class SteeringBehavior<T extends Vector<T>> {
 	}
 
 	/** Returns the actual limiter of this steering behavior. */
-    public Limiter getActualLimiter () {
+	protected Limiter getActualLimiter () {
 		return limiter == null ? owner : limiter;
 	}
 

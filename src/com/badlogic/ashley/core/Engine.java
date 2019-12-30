@@ -152,7 +152,7 @@ public class Engine {
 	/**
 	 * Adds an {@link EntityListener}. The listener will be notified every time an entity is added/removed
 	 * to/from the engine. The priority determines in which order the entity listeners will be called. Lower
-	 * value means it will get executed first.
+	 * id means it will get executed first.
 	 */
 	public void addEntityListener (int priority, EntityListener listener) {
 		addEntityListener(empty, priority, listener);
@@ -170,7 +170,7 @@ public class Engine {
 	/**
 	 * Adds an {@link EntityListener} for a specific {@link Family}. The listener will be notified every time an entity is
 	 * added/removed to/from the given family. The priority determines in which order the entity listeners will be called. Lower
-	 * value means it will get executed first.
+	 * id means it will get executed first.
 	 */
 	public void addEntityListener (Family family, int priority, EntityListener listener) {
 		familyManager.addEntityListener(family, priority, listener);
@@ -189,7 +189,7 @@ public class Engine {
 	 */
 	public void update(float deltaTime){
 		if (updating) {
-			throw new IllegalStateException("Cannot call update() on an Engine that is already updating.");
+			throw new IllegalStateException("Cannot call updateOnMainThread() on an Engine that is already updating.");
 		}
 		
 		updating = true;

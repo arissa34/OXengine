@@ -16,8 +16,10 @@
 
 package com.badlogic.gdx.ai;
 
-import com.badlogic.gdx.Files.FileType;
+import java.io.File;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.AbsoluteFileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.ClasspathFileHandleResolver;
@@ -25,8 +27,6 @@ import com.badlogic.gdx.assets.loaders.resolvers.ExternalFileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.LocalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-
-import java.io.File;
 
 /** @author davebaol */
 public class GdxFileSystem implements FileSystem {

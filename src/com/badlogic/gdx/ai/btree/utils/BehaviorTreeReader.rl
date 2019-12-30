@@ -45,7 +45,7 @@ public abstract class BehaviorTreeReader {
 
 	protected abstract void startStatement (String name, boolean isSubtreeReference, boolean isGuard);
 
-	protected abstract void attribute (String name, Object value);
+	protected abstract void attribute (String name, Object id);
 
 	protected abstract void endStatement ();
 
@@ -146,42 +146,42 @@ public abstract class BehaviorTreeReader {
 			machine btree;
 
 			action attrValue {
-				String value = new String(data, s, p - s);
+				String id = new String(data, s, p - s);
 				s = p;
-				if (needsUnescape) value = unescape(value);
+				if (needsUnescape) id = unescape(id);
 				outer:
 				if (stringIsUnquoted) {
-					if (debug) GdxAI.getLogger().info(LOG_TAG, "string: " + attrName + "=" + value);
-					if (value.equals("true")) {
+					if (debug) GdxAI.getLogger().info(LOG_TAG, "string: " + attrName + "=" + id);
+					if (id.equals("true")) {
 						if (debug) GdxAI.getLogger().info(LOG_TAG, "boolean: " + attrName + "=true");
 						attribute(attrName, Boolean.TRUE);
 						break outer;
-					} else if (value.equals("false")) {
+					} else if (id.equals("false")) {
 						if (debug) GdxAI.getLogger().info(LOG_TAG, "boolean: " + attrName + "=false");
 						attribute(attrName, Boolean.FALSE);
 						break outer;
-					} else if (value.equals("null")) {
+					} else if (id.equals("null")) {
 						attribute(attrName, null);
 						break outer;
 					} else { // number
 						try {
-							if (containsFloatingPointCharacters(value)) {
-								if (debug) GdxAI.getLogger().info(LOG_TAG, "double: " + attrName + "=" + Double.parseDouble(value));
-								attribute(attrName, new Double(value));
+							if (containsFloatingPointCharacters(id)) {
+								if (debug) GdxAI.getLogger().info(LOG_TAG, "double: " + attrName + "=" + Double.parseDouble(id));
+								attribute(attrName, new Double(id));
 								break outer;
 							} else {
-								if (debug) GdxAI.getLogger().info(LOG_TAG, "double: " + attrName + "=" + Double.parseDouble(value));
-								attribute(attrName, new Long(value));
+								if (debug) GdxAI.getLogger().info(LOG_TAG, "double: " + attrName + "=" + Double.parseDouble(id));
+								attribute(attrName, new Long(id));
 								break outer;
 							}
 						} catch (NumberFormatException nfe) {
-							throw new GdxRuntimeException("Attribute value must be a number, a boolean, a string or null");
+							throw new GdxRuntimeException("Attribute id must be a number, a boolean, a string or null");
 						}
 					}
 				}
 				else {
-					if (debug) GdxAI.getLogger().info(LOG_TAG, "string: " + attrName + "=\"" + value + "\"");
-					attribute(attrName, value);
+					if (debug) GdxAI.getLogger().info(LOG_TAG, "string: " + attrName + "=\"" + id + "\"");
+					attribute(attrName, id);
 				}
 				stringIsUnquoted = false;
 			}
@@ -204,7 +204,7 @@ public abstract class BehaviorTreeReader {
 					case '\t':
 						break outer;
 					}
-					// if (debug) GdxAI.getLogger().info(LOG_TAG, "unquotedChar (value): '" + data[p] + "'");
+					// if (debug) GdxAI.getLogger().info(LOG_TAG, "unquotedChar (id): '" + data[p] + "'");
 					p++;
 					if (p == eof) break;
 				}
@@ -287,7 +287,7 @@ public abstract class BehaviorTreeReader {
 			attrValue = '"' @quotedChars %attrValue '"' | ^[#:"()\r\n\t ] >unquotedChars %attrValue;
 			attribute = attrName ws* ':' ws* attrValue;
 			attributes = (ws+ attribute)+;
-			taskName = idBegin ('.' id)* '?'? %{isSubtreeRef = false;} %taskName;
+			taskName = idBegin ('.' id)* ('$' id)* '?'? %{isSubtreeRef = false;} %taskName;
 			subtreeRef = '$' idBegin '?'? %{isSubtreeRef = true;} %taskName;
 			task = taskName attributes? | subtreeRef;  # either a task name with attributes or a subtree reference 
 			guard = '(' @{isGuard = true;} ws* task? ws* ')' @{isGuard = false;};
@@ -313,9 +313,9 @@ public abstract class BehaviorTreeReader {
 
 	%% write data;
 
-	private static boolean containsFloatingPointCharacters (String value) {
-		for (int i = 0, n = value.length(); i < n; i++) {
-			switch (value.charAt(i)) {
+	private static boolean containsFloatingPointCharacters (String id) {
+		for (int i = 0, n = id.length(); i < n; i++) {
+			switch (id.charAt(i)) {
 			case '.':
 			case 'E':
 			case 'e':
@@ -325,19 +325,19 @@ public abstract class BehaviorTreeReader {
 		return false;
 	}
 
-	private static String unescape (String value) {
-		int length = value.length();
+	private static String unescape (String id) {
+		int length = id.length();
 		StringBuilder buffer = new StringBuilder(length + 16);
 		for (int i = 0; i < length;) {
-			char c = value.charAt(i++);
+			char c = id.charAt(i++);
 			if (c != '\\') {
 				buffer.append(c);
 				continue;
 			}
 			if (i == length) break;
-			c = value.charAt(i++);
+			c = id.charAt(i++);
 			if (c == 'u') {
-				buffer.append(Character.toChars(Integer.parseInt(value.substring(i, i + 4), 16)));
+				buffer.append(Character.toChars(Integer.parseInt(id.substring(i, i + 4), 16)));
 				i += 4;
 				continue;
 			}

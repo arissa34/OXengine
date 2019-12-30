@@ -106,7 +106,6 @@ public class BlendedSteering<T extends Vector<T>> extends SteeringBehavior<T> {
 	protected SteeringAcceleration<T> calculateRealSteering (SteeringAcceleration<T> blendedSteering) {
 		// Clear the output to start with
 		blendedSteering.setZero();
-        blendedSteering.angular2.setZero();
 
 		// Go through all the behaviors
 		int len = list.size;
@@ -115,7 +114,7 @@ public class BlendedSteering<T extends Vector<T>> extends SteeringBehavior<T> {
 
 			// Calculate the behavior's steering
 			bw.behavior.calculateSteering(steering);
-            blendedSteering.angular2.add(steering.angular2);
+
 			// Scale and add the steering to the accumulator
 			blendedSteering.mulAdd(steering, bw.weight);
 		}

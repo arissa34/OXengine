@@ -273,7 +273,7 @@ public abstract class Task<E> implements Poolable {
 	}
 
 	/** Copies this task to the given task. This method is invoked by {@link #cloneTask()} only if {@link #TASK_CLONER} is
-	 * {@code null} which is its default value.
+	 * {@code null} which is its default id.
 	 * @param task the task to be filled
 	 * @return the given task for chaining
 	 * @throws TaskCloneException if the task cannot be successfully copied. */

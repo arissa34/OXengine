@@ -17,8 +17,6 @@ public class Logx {
         public void enter(Object entity) {
 
         }
-
-        @Override
         public void enter(Object entity, Object object) {
 
         }

@@ -32,13 +32,13 @@ public interface FormationPattern<T extends Vector<T>> {
 
 	/** Sets the number of slots.
 	 * @param numberOfSlots the number of slots to set */
-	public void setNumberOfSlots(int numberOfSlots);
+	public void setNumberOfSlots (int numberOfSlots);
 
 	/** Returns the location of the given slot index. */
-	public Location<T> calculateSlotLocation(Location<T> outLocation, int slotNumber);
+	public Location<T> calculateSlotLocation (Location<T> outLocation, int slotNumber);
 
 	/** Returns true if the pattern can support the given number of slots
 	 * @param slotCount the number of slots
 	 * @return {@code true} if this pattern can support the given number of slots; {@code false} othervwise. */
-	public boolean supportsSlots(int slotCount);
+	public boolean supportsSlots (int slotCount);
 }

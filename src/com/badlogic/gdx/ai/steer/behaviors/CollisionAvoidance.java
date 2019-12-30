@@ -77,7 +77,7 @@ public class CollisionAvoidance<T extends Vector<T>> extends GroupBehavior<T> im
 		//
 		// NOTE: You might think that the condition below always evaluates to true since
 		// firstNeighbor has been set to null when entering this method. In fact, we have just
-		// executed findNeighbors(this) that has possibly set firstNeighbor to a non null value
+		// executed findNeighbors(this) that has possibly set firstNeighbor to a non null id
 		// through the method reportNeighbor defined below.
 		if (neighborCount == 0 || firstNeighbor == null) return steering.setZero();
 

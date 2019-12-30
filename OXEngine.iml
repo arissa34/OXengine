@@ -29,25 +29,27 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Gradle: gdx-freetype-1.9.10" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: gdx-bullet-1.9.10" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: gdx-box2d-1.9.10" level="project" />
     <orderEntry type="library" exported="" name="Gradle: gdx-1.9.10" level="project" />
     <orderEntry type="library" exported="" name="Gradle: nitrite-3.1.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: gdx-websocket-1.9.1.9.6" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: kryo-5.0.0-RC4" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: faker-1.2.8" level="project" />
     <orderEntry type="library" exported="" name="Gradle: podam-7.2.0.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="Gradle: slf4j-api-1.7.25" level="project" />
     <orderEntry type="library" exported="" name="Gradle: h2-mvstore-1.4.197" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: objenesis-3.0.1" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: objenesis-2.6" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jackson-databind-2.9.5" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jackson-annotations-2.9.5" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jasypt-1.9.2" level="project" />
     <orderEntry type="library" exported="" name="Gradle: okhttp-3.9.1" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: reflectasm-1.11.8" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: minlog-1.3.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jackson-core-2.9.5" level="project" />
     <orderEntry type="library" exported="" name="Gradle: okio-1.13.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jcip-annotations-1.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jsr250-api-1.0" level="project" />
     <orderEntry type="library" exported="" name="Gradle: validation-api-1.1.0.Final" level="project" />
     <orderEntry type="library" exported="" name="Gradle: commons-lang3-3.6" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: snake-yaml-v1.18-android" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: joda-time-2.9.1" level="project" />
   </component>
 </module>

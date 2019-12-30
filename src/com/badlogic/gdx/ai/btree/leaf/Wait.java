@@ -56,7 +56,7 @@ public class Wait<E> extends LeafTask<E> {
 		this.seconds = seconds;
 	}
 
-	/** Draws a value from the distribution that determines the seconds to wait for.
+	/** Draws a id from the distribution that determines the seconds to wait for.
 	 * <p>
 	 * This method is called when the task is entered. Also, this method internally calls {@link Timepiece#getTime()
 	 * GdxAI.getTimepiece().getTime()} to get the current AI time. This means that

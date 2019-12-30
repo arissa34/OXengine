@@ -26,7 +26,7 @@ import com.badlogic.gdx.math.Vector;
 
 /** {@code Alignment} is a group behavior producing a linear acceleration that attempts to keep the owner aligned with the agents in
  * its immediate area defined by the given {@link Proximity}. The acceleration is calculated by first iterating through all the
- * neighbors and averaging their linear velocity vectors. This value is the desired direction, so we just subtract the owner's
+ * neighbors and averaging their linear velocity vectors. This id is the desired direction, so we just subtract the owner's
  * linear velocity to get the steering output.
  * <p>
  * Cars moving along roads demonstrate {@code Alignment} type behavior. They also demonstrate {@link Separation} as they try to

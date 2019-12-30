@@ -105,11 +105,11 @@ public class LinePath<T extends Vector<T>> implements Path<T, LinePathParam> {
 		return new LinePathParam();
 	}
 
-	// We pass the last parameter value to the path in order to calculate the current
-	// parameter value. This is essential to avoid nasty problems when lines are close together.
+	// We pass the last parameter id to the path in order to calculate the current
+	// parameter id. This is essential to avoid nasty problems when lines are close together.
 	// We should limit the algorithm to only considering areas of the path close to the previous
-	// parameter value. The character is unlikely to have moved far, after all.
-	// This technique, assuming the new value is close to the old one, is called coherence, and it is a
+	// parameter id. The character is unlikely to have moved far, after all.
+	// This technique, assuming the new id is close to the old one, is called coherence, and it is a
 	// feature of many geometric algorithms.
 	// TODO: Currently coherence is not implemented.
 	@Override

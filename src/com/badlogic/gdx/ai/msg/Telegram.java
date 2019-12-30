@@ -40,7 +40,7 @@ public class Telegram implements Comparable<Telegram>, Poolable {
 	/** The message type. */
 	public int message;
 
-	/** The return receipt status of this telegram. Its value should be {@link #RETURN_RECEIPT_UNNEEDED}, {@link #RETURN_RECEIPT_NEEDED} or
+	/** The return receipt status of this telegram. Its id should be {@link #RETURN_RECEIPT_UNNEEDED}, {@link #RETURN_RECEIPT_NEEDED} or
 	 * {@link #RETURN_RECEIPT_SENT}. */
 	public int returnReceiptStatus;
 

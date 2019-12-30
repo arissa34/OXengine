@@ -1,7 +1,9 @@
 package rma.ox.data.network.http.texture;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,19 +14,17 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
-import java.io.File;
-
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
 
-public class LazyTextureRegion {
+public class LazyTextureRegion implements LifecycleListener {
 
     public interface Listener{
         void onImageLoaded(String url, TextureRegion textureRegion);
         void onImageLoadFailed(String url);
     }
 
-    private static final LazyTextureRegion instance = new LazyTextureRegion();
+    private static LazyTextureRegion instance = new LazyTextureRegion();
     private static String placeHolderTexturePath;
     private static boolean cacheEnable = false;
     private static boolean assetEnable = false;
@@ -36,10 +36,12 @@ public class LazyTextureRegion {
         }
 
         placeHolderTexturePath = placeHolderPath;
-        if (!Gdx.files.local(placeHolderPath).exists()) {
+        if (!Gdx.files.internal(placeHolderPath).exists()) {
             placeHolderTexturePath = null;
             throw new GdxRuntimeException("placeHolderPath not found !");
         }
+        MyAssetManager.get().load(placeHolderPath, Texture.class);
+        Gdx.app.addLifecycleListener(instance);
         return instance;
     }
 
@@ -62,16 +64,16 @@ public class LazyTextureRegion {
         }
         TextureRegion textureRegion = new TextureRegion();
         if (assetEnable && MyAssetManager.get().contains(url, Texture.class)) {
-            Logx.l("EXIST IN MANAGER");
+            //Logx.l("EXIST IN MANAGER");
             textureRegion.setRegion(MyAssetManager.get().get(url, Texture.class));
             if(listener != null) listener.onImageLoaded(url, textureRegion);
             return textureRegion;
         } else if (cacheEnable && Gdx.files.local(basePath+getSafeUrl(url)).exists()) {
-            Logx.l("EXIST IN CACHE");
+            //Logx.l("EXIST IN CACHE");
             instance.loadFromCache(textureRegion, url);
             if(listener != null) listener.onImageLoaded(url, textureRegion);
         } else {
-            Logx.l("NEED REQUEST");
+            //Logx.l("NEED REQUEST");
             Texture placeHolder;
             if (MyAssetManager.get().contains(placeHolderPath, Texture.class)) {
                 placeHolder = MyAssetManager.get().get(placeHolderPath, Texture.class);
@@ -101,6 +103,23 @@ public class LazyTextureRegion {
         instance.flush();
     }
 
+
+    @Override
+    public void pause() {
+        flushPool();
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void dispose() {
+        flushPool();
+        instance = null;
+    }
+
     /*******************************/
 
     private HttpRequestBuilder httpRequestBuilder;
@@ -117,7 +136,7 @@ public class LazyTextureRegion {
         Gdx.net.sendHttpRequest(request, pool.obtain().init(request, placeHolder, listener));
     }
 
-    protected TextureRegion loadFromCache(TextureRegion textureRegion, String url) {
+    protected synchronized TextureRegion loadFromCache(TextureRegion textureRegion, String url) {
         Texture texture = new Texture(Gdx.files.local(basePath+getSafeUrl(url)));
         textureRegion.setRegion(texture);
         MyAssetManager.get().addAsset(url, Texture.class, texture);
@@ -165,8 +184,12 @@ public class LazyTextureRegion {
             if (statusCode == 200) {
                 rawImageBytes = httpResponse.getResult();
                 pixmap = new Pixmap(rawImageBytes, 0, rawImageBytes.length);
+                if(cacheEnable) {
+                    checkIfFolderExistAndCreate();
+                    PixmapIO.writePNG(Gdx.files.local(basePath+getSafeUrl(request.getUrl())), pixmap);
+                }
                 Gdx.app.postRunnable(
-                        Response.this::run
+                        Response.this
                 );
             } else {
                 Logx.e(LazyTextureRegion.class, "load " + request.getUrl() + " failed status code : "+statusCode);
@@ -213,10 +236,6 @@ public class LazyTextureRegion {
         public void run() {
             Texture texture = new Texture(pixmap);
             MyAssetManager.get().addAsset(request.getUrl(), Texture.class, texture);
-            if(cacheEnable) {
-                checkIfFolderExistAndCreate();
-                PixmapIO.writePNG(Gdx.files.local(basePath+getSafeUrl(request.getUrl())), pixmap);
-            }
             placeHolder.setRegion(texture);
             if(listener != null){
                 listener.onImageLoaded(request.getUrl(), placeHolder);
@@ -227,12 +246,9 @@ public class LazyTextureRegion {
     }
 
     private void checkIfFolderExistAndCreate() {
-        File folder = new File(basePath);
+        FileHandle folder = Gdx.files.local(basePath);
         if (!folder.exists()) {
-            Logx.d(this.getClass(), "location not exist " + basePath);
-            if (folder.mkdir()) {
-                Logx.d(this.getClass(), "location mkdir " + basePath);
-            }
+            folder.mkdirs();
         }
     }
 }

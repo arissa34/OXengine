@@ -16,12 +16,12 @@
 
 package com.badlogic.gdx.ai;
 
+import java.io.File;
+
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
-import java.io.File;
 
 /** @author davebaol */
 public class StandaloneFileSystem implements FileSystem {

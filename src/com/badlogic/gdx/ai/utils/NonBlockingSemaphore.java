@@ -26,24 +26,24 @@ public interface NonBlockingSemaphore {
 	 * <p>
 	 * An invocation of this method yields exactly the same result as {@code acquire(1)}
 	 * @return {@code true} if the resource has been acquired; {@code false} otherwise. */
-	public boolean acquire();
+	public boolean acquire ();
 
 	/** Acquires the specified number of resources if they all are available.
 	 * @return {@code true} if all the requested resources have been acquired; {@code false} otherwise. */
-	public boolean acquire(int resources);
+	public boolean acquire (int resources);
 
 	/** Releases a resource returning it to this semaphore.
 	 * <p>
 	 * An invocation of this method yields exactly the same result as {@code release(1)}
 	 * @return {@code true} if the resource has been released; {@code false} otherwise. */
-	public boolean release();
+	public boolean release ();
 
 	/** Releases the specified number of resources returning it to this semaphore.
 	 * @return {@code true} if all the requested resources have been released; {@code false} otherwise. */
-	public boolean release(int resources);
+	public boolean release (int resources);
 
 	/** Abstract factory for creating concrete instances of classes implementing {@link NonBlockingSemaphore}.
-	 *
+	 * 
 	 * @author davebaol */
 	public interface Factory {
 
@@ -51,7 +51,7 @@ public interface NonBlockingSemaphore {
 		 * @param name the name of the semaphore
 		 * @param maxResources the maximum number of resource
 		 * @return the newly created semaphore. */
-		public NonBlockingSemaphore createSemaphore(String name, int maxResources);
+		public NonBlockingSemaphore createSemaphore (String name, int maxResources);
 	}
 
 }

@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /** {@code SoftRoleSlotAssignmentStrategy} is a concrete implementation of {@link BoundedSlotAssignmentStrategy} that supports soft
  * roles, i.e. roles that can be broken. Rather than a member having a list of roles it can fulfill, it has a set of values
- * representing how difficult it would find it to fulfill every role. The value is known as the slot cost. To make a slot
+ * representing how difficult it would find it to fulfill every role. The id is known as the slot cost. To make a slot
  * impossible for a member to fill, its slot cost should be infinite (you can even set a threshold to ignore all slots whose cost
  * is too high; this will reduce computation time when several costs are exceeding). To make a slot ideal for a member, its slot
  * cost should be zero. We can have different levels of unsuitable assignment for one member.

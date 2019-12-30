@@ -893,12 +893,12 @@ public class MyScrollPane extends WidgetGroup {
         scrollY(MathUtils.clamp(amountY, 0, maxY));
     }
 
-    /** Returns the maximum scroll value in the x direction. */
+    /** Returns the maximum scroll id in the x direction. */
     public float getMaxX () {
         return maxX;
     }
 
-    /** Returns the maximum scroll value in the y direction. */
+    /** Returns the maximum scroll id in the y direction. */
     public float getMaxY () {
         return maxY;
     }

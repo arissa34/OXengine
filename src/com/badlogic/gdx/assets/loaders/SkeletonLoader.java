@@ -11,12 +11,15 @@ import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonData;
 import com.esotericsoftware.spine.SkeletonJson;
 
+import rma.ox.engine.ressource.MyAssetManager;
+
 public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLoader.SkeletonParameter> {
 
     private static final String TAG = SkeletonLoader.class.getSimpleName();
 
     private FileHandle atlasFile;
     private FileHandle jsonFile;
+    private String atlasFileName;
 
     public SkeletonLoader (FileHandleResolver resolver) {
         super(resolver);
@@ -30,19 +33,33 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
         int i = fileName.lastIndexOf('.');
-        String atlasFileName = fileName.substring(0,i) + ".atlas";
+        if(parameter==null || parameter.atlasFileName == null){
+            atlasFileName = fileName.substring(0,i) + ".atlas";
+        }else {
+            atlasFileName = parameter.atlasFileName;
+        }
         atlasFile = Gdx.files.internal(atlasFileName);
         jsonFile = Gdx.files.internal(fileName);
     }
 
     @Override
     public Skeleton loadSync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
-        TextureAtlas atlas = new TextureAtlas(atlasFile);
+        TextureAtlas atlas;
+        if(!MyAssetManager.get().contains(atlasFileName)){
+            atlas = new TextureAtlas(atlasFile);
+            MyAssetManager.get().addAsset(atlasFileName, TextureAtlas.class, atlas);
+        }else{
+            atlas = MyAssetManager.get().get(atlasFileName, TextureAtlas.class);
+        }
         SkeletonData skeletonData = new SkeletonJson(atlas).readSkeletonData(jsonFile);
         return new Skeleton(skeletonData);
     }
 
     static public class SkeletonParameter extends AssetLoaderParameters<Skeleton> {
+        protected String atlasFileName;
 
+        public SkeletonParameter(String atlasFileName){
+            this.atlasFileName = atlasFileName;
+        }
     }
 }

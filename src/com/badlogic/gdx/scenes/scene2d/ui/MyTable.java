@@ -399,7 +399,7 @@ public class MyTable extends Table {
         return cellDefaults;
     }
 
-    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified value. */
+    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified id. */
     public MyTable pad (Value pad) {
         if (pad == null) throw new IllegalArgumentException("pad cannot be null.");
         padTop = pad;
@@ -455,7 +455,7 @@ public class MyTable extends Table {
         return this;
     }
 
-    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified value. */
+    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified id. */
     public MyTable pad (float pad) {
         pad(Value.Fixed.valueOf(pad));
         return this;

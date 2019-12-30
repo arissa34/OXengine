@@ -17,7 +17,6 @@
 package com.badlogic.gdx.ai.steer;
 
 import com.badlogic.gdx.math.Vector;
-import com.badlogic.gdx.math.Vector3;
 
 /** {@code SteeringAcceleration} is a movement requested by the steering system. It is made up of two components, linear and angular
  * acceleration.
@@ -28,7 +27,6 @@ import com.badlogic.gdx.math.Vector3;
 public class SteeringAcceleration<T extends Vector<T>> {
 	/** The linear component of this steering acceleration. */
 	public T linear;
-	public Vector3 angular2 = new Vector3();
 
 	/** The angular component of this steering acceleration. */
 	public float angular;
@@ -39,7 +37,6 @@ public class SteeringAcceleration<T extends Vector<T>> {
 	public SteeringAcceleration (T linear) {
 		this(linear, 0f);
 	}
-
 
 	/** Creates a {@code SteeringAcceleration} with the given linear and angular components.
 	 * 

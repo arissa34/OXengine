@@ -279,7 +279,7 @@ public class SkeletonData {
 		this.version = version;
 	}
 
-	/** The skeleton data hash. This value will change if any of the skeleton data has changed.
+	/** The skeleton data hash. This id will change if any of the skeleton data has changed.
 	 * @return May be null. */
 	public String getHash () {
 		return hash;

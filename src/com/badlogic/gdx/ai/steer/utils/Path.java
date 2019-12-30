@@ -32,43 +32,43 @@ import com.badlogic.gdx.math.Vector;
 public interface Path<T extends Vector<T>, P extends PathParam> {
 
 	/** Returns a new instance of the path parameter. */
-	public P createParam();
+	public P createParam ();
 
 	/** Returns {@code true} if this path is open; {@code false} otherwise. */
-	public boolean isOpen();
+	public boolean isOpen ();
 
 	/** Returns the length of this path. */
-	public float getLength();
+	public float getLength ();
 
 	/** Returns the first point of this path. */
-	public T getStartPoint();
+	public T getStartPoint ();
 
 	/** Returns the last point of this path. */
-	public T getEndPoint();
+	public T getEndPoint ();
 
 	/** Maps the given position to the nearest point along the path using the path parameter to ensure coherence and returns the
 	 * distance of that nearest point from the start of the path.
 	 * @param position a location in game space
 	 * @param param the path parameter
 	 * @return the distance of the nearest point along the path from the start of the path itself. */
-	public float calculateDistance(T position, P param);
+	public float calculateDistance (T position, P param);
 
 	/** Calculates the target position on the path based on its distance from the start and the path parameter.
 	 * @param out the target position to calculate
 	 * @param param the path parameter
 	 * @param targetDistance the distance of the target position from the start of the path */
-	public void calculateTargetPosition(T out, P param, float targetDistance);
+	public void calculateTargetPosition (T out, P param, float targetDistance);
 
 	/** A path parameter used by path following behaviors to keep the path status.
-	 *
+	 * 
 	 * @author davebaol */
 	public static interface PathParam {
 
 		/** Returns the distance from the start of the path */
-		public float getDistance();
+		public float getDistance ();
 
 		/** Sets the distance from the start of the path
 		 * @param distance the distance to set */
-		public void setDistance(float distance);
+		public void setDistance (float distance);
 	}
 }

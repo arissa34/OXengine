@@ -18,6 +18,7 @@ import rma.ox.engine.core.observer.DataNotify;
 import rma.ox.engine.core.observer.Observable;
 import rma.ox.engine.core.observer.ObservableState;
 import rma.ox.engine.core.observer.Observer;
+import rma.ox.engine.core.threading.RunnableThread;
 import rma.ox.engine.renderable.manager.StageManager;
 import rma.ox.engine.settings.Config;
 import rma.ox.engine.ui.gui.IGui;
@@ -124,6 +125,7 @@ public class DevBar extends Table implements IGui, Observer {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 count++;
+
                 InAppNotification.Builder.setListener(new InAppNotification.Listener() {
                     @Override
                     public void onClick() {
@@ -143,9 +145,21 @@ public class DevBar extends Table implements IGui, Observer {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 count++;
+
+                InAppNotification.Builder.setHeader("badlogic.jpg", "Header blabla "+count, bitmapFont).setIcon("badlogic.jpg").setTitle("New version !", bitmapFont).setDescription("Click here to download the new version of Clash of Clan", bitmapFont).build().show();
+                RunnableThread.get().add(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
                 //InAppNotification.show("badlogic.jpg", "title : "+count, "subTitlesubTitlesubTitlesu : "+count).setFont(bitmapFont);
                 //InAppNotification.Builder.setHeader("badlogic.jpg", "HEADER").setTitle("TITLE "+count, bitmapFont).build().show();
-                InAppNotification.Builder.setHeader("badlogic.jpg", "Header blabla "+count, bitmapFont).setIcon("badlogic.jpg").setTitle("New version !", bitmapFont).setDescription("Click here to download the new version of Clash of Clan").build().show();
+
             }
         });
         logBtn.addListener(new ClickListener(){

@@ -85,7 +85,7 @@ public class Formation<T extends Vector<T>> {
 	 * @param motionModerator the motion moderator. Can be {@code null} if moderation is not needed
 	 * @throws IllegalArgumentException if the anchor point is {@code null} */
 	public Formation (Location<T> anchor, FormationPattern<T> pattern, SlotAssignmentStrategy<T> slotAssignmentStrategy,
-                      FormationMotionModerator<T> motionModerator) {
+		FormationMotionModerator<T> motionModerator) {
 		if (anchor == null) throw new IllegalArgumentException("The anchor point cannot be null");
 		this.anchor = anchor;
 		this.pattern = pattern;
@@ -250,7 +250,7 @@ public class Formation<T extends Vector<T>> {
 		for (int i = 0; i < slotAssignments.size; i++) {
 			SlotAssignment<T> slotAssignment = slotAssignments.get(i);
 
-			// Retrieve the location reference of the formation member to calculate the new value
+			// Retrieve the location reference of the formation member to calculate the new id
 			Location<T> relativeLoc = slotAssignment.member.getTargetLocation();
 
 			// Ask for the location of the slot relative to the anchor point

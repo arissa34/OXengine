@@ -16,11 +16,11 @@
 
 package com.badlogic.gdx.ai;
 
+import java.io.File;
+
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
-
-import java.io.File;
 
 /** The {@code FileSystem} interface exposes the underlying file system(s).
  * @author davebaol */

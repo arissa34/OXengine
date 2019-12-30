@@ -23,5 +23,5 @@ public interface Schedulable {
 
 	/** Method invoked by the {@link Scheduler} when this schedulable needs to be run.
 	 * @param nanoTimeToRun the maximum time in nanoseconds this scheduler should run on the current frame. */
-	public void run(long nanoTimeToRun);
+	public void run (long nanoTimeToRun);
 }

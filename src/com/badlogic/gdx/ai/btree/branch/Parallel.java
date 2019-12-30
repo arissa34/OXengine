@@ -18,6 +18,7 @@ package com.badlogic.gdx.ai.btree.branch;
 
 import com.badlogic.gdx.ai.btree.BranchTask;
 import com.badlogic.gdx.ai.btree.Task;
+import com.badlogic.gdx.ai.btree.Task.Status;
 import com.badlogic.gdx.ai.btree.annotation.TaskAttribute;
 import com.badlogic.gdx.utils.Array;
 
@@ -47,11 +48,9 @@ import com.badlogic.gdx.utils.Array;
 public class Parallel<E> extends BranchTask<E> {
 
 	/** Optional task attribute specifying the parallel policy (defaults to {@link Policy#Sequence}) */
-	@TaskAttribute
-    public Policy policy;
+	@TaskAttribute public Policy policy;
 	/** Optional task attribute specifying the execution policy (defaults to {@link Orchestrator#Resume}) */
-	@TaskAttribute
-    public Orchestrator orchestrator;
+	@TaskAttribute public Orchestrator orchestrator;
 
 	private boolean noRunningTasks;
 	private Boolean lastResult;

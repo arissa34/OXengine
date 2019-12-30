@@ -18,7 +18,7 @@ public class AxeModel implements Disposable {
     public static float GRID_MIN_Y = -200f;
     public static float GRID_MIN_Z = -200f;
     public static float GRID_MAX_X = 200f;
-    public static float GRID_MAX_Z = 0f;
+    public static float GRID_MAX_Z = 200f;
     public static float GRID_MAX_Y = 0f;
     public static float GRID_STEP = 10f;
     public Model axesModel, gridModel;
@@ -35,12 +35,12 @@ public class AxeModel implements Disposable {
         for(float z = GRID_MIN_Z; z <= GRID_MAX_Z; z += GRID_STEP){
             builder.line(GRID_MIN_Z, 0, z, GRID_MAX_X, 0, z);
         }
-        for(float x = GRID_MIN_X; x <= GRID_MAX_X; x += GRID_STEP){
-            builder.line(x, GRID_MIN_Y, 0, x, GRID_MAX_Y, 0);
-        }
-        for(float y = GRID_MIN_Z; y <= GRID_MAX_Z; y += GRID_STEP){
-            builder.line(GRID_MIN_X, y, 0, GRID_MAX_X, y, 0);
-        }
+        //for(float x = GRID_MIN_X; x <= GRID_MAX_X; x += GRID_STEP){
+        //    builder.line(x, GRID_MIN_Y, 0, x, GRID_MAX_Y, 0);
+        //}
+        //for(float y = GRID_MIN_Z; y <= GRID_MAX_Z; y += GRID_STEP){
+        //    builder.line(GRID_MIN_X, y, 0, GRID_MAX_X, y, 0);
+        //}
 
         gridModel = modelBuilderGrid.end();
 

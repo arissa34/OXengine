@@ -18,12 +18,20 @@ public class FlushableManager {
     public Array<FlushablePool> listBDDFlushable;
     public Array<FlushablePool> listUiFlushable;
     public Array<FlushablePool> listRequestFlushable;
+    public Array<FlushablePool> listEntityFlushable;
 
     public FlushableManager(){
         listActionFlushable = new Array<>();
         listBDDFlushable = new Array<>();
         listUiFlushable = new Array<>();
         listRequestFlushable = new Array<>();
+        listEntityFlushable = new Array<>();
+    }
+
+    public void registerEntity(FlushablePool pool){
+        if(!listEntityFlushable.contains(pool, true)) {
+            listEntityFlushable.add(pool);
+        }
     }
 
     public void registerUi(FlushablePool pool){
@@ -35,6 +43,12 @@ public class FlushableManager {
     public void flushUi(){
         for(int i =0; i < listUiFlushable.size; i++){
             listUiFlushable.get(i).flush();
+        }
+    }
+
+    public void flushEntities(){
+        for(int i =0; i < listEntityFlushable.size; i++){
+            listEntityFlushable.get(i).flush();
         }
     }
 }

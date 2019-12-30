@@ -84,7 +84,7 @@ public class Pursue<T extends Vector<T>> extends SteeringBehavior<T> {
 		float predictionTime = maxPredictionTime;
 
 		if (squareSpeed > 0) {
-			// Calculate prediction time if speed is not too small to give a reasonable value
+			// Calculate prediction time if speed is not too small to give a reasonable id
 			float squarePredictionTime = squareDistance / squareSpeed;
 			if (squarePredictionTime < maxPredictionTime * maxPredictionTime)
 				predictionTime = (float)Math.sqrt(squarePredictionTime);

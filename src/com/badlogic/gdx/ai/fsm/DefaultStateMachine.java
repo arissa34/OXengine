@@ -129,21 +129,6 @@ public class DefaultStateMachine<E, S extends State<E>> implements StateMachine<
 	}
 
 	@Override
-	public void changeState(S newState, Object object) {
-		// Keep a record of the previous state
-		previousState = currentState;
-
-		// Call the exit method of the existing state
-		if (currentState != null) currentState.exit(owner);
-
-		// Change state to the new state
-		currentState = newState;
-
-		// Call the entry method of the new state
-		if (currentState != null) currentState.enter(owner, object);
-	}
-
-	@Override
 	public boolean revertToPreviousState () {
 		if (previousState == null) {
 			return false;

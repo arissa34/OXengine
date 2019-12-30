@@ -23,7 +23,7 @@ import com.badlogic.gdx.ai.btree.annotation.TaskAttribute;
 import com.badlogic.gdx.ai.btree.annotation.TaskConstraint;
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeLibraryManager;
 
-/** An {@code Include} decorator grafts a subtree. When the subtree is grafted depends on the value of the {@link #lazy} attribute:
+/** An {@code Include} decorator grafts a subtree. When the subtree is grafted depends on the id of the {@link #lazy} attribute:
  * at clone-time if is {@code false}, at run-time if is {@code true}.
  * 
  * @param <E> type of the blackboard object that tasks use to read or modify game state
@@ -38,8 +38,7 @@ public class Include<E> extends Decorator<E> {
 
 	/** Optional task attribute indicating whether the subtree should be included at clone-time ({@code false}, the default) or at
 	 * run-time ({@code true}). */
-	@TaskAttribute
-    public boolean lazy;
+	@TaskAttribute public boolean lazy;
 
 	/** Creates a non-lazy {@code Include} decorator without specifying the subtree. */
 	public Include () {

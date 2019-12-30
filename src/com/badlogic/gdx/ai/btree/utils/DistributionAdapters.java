@@ -16,6 +16,8 @@
 
 package com.badlogic.gdx.ai.btree.utils;
 
+import java.util.StringTokenizer;
+
 import com.badlogic.gdx.ai.utils.random.ConstantDoubleDistribution;
 import com.badlogic.gdx.ai.utils.random.ConstantFloatDistribution;
 import com.badlogic.gdx.ai.utils.random.ConstantIntegerDistribution;
@@ -36,8 +38,6 @@ import com.badlogic.gdx.ai.utils.random.UniformFloatDistribution;
 import com.badlogic.gdx.ai.utils.random.UniformIntegerDistribution;
 import com.badlogic.gdx.ai.utils.random.UniformLongDistribution;
 import com.badlogic.gdx.utils.ObjectMap;
-
-import java.util.StringTokenizer;
 
 /** @author davebaol */
 public class DistributionAdapters {
@@ -68,7 +68,7 @@ public class DistributionAdapters {
 		 *
 		 * @param message the detail message (which is saved for later retrieval by the {@link Throwable#getMessage()} method).
 		 * @param cause the cause (which is saved for later retrieval by the {@link Throwable#getCause()} method). (A <tt>null</tt>
-		 *           value is permitted, and indicates that the cause is nonexistent or unknown.) */
+		 *           id is permitted, and indicates that the cause is nonexistent or unknown.) */
 		public DistributionFormatException (String message, Throwable cause) {
 			super(message, cause);
 		}
@@ -78,7 +78,7 @@ public class DistributionAdapters {
 		 * ). This constructor is useful for exceptions that are little more than wrappers for other throwables.
 		 *
 		 * @param cause the cause (which is saved for later retrieval by the {@link Throwable#getCause()} method). (A <tt>null</tt>
-		 *           value is permitted, and indicates that the cause is nonexistent or unknown.) */
+		 *           id is permitted, and indicates that the cause is nonexistent or unknown.) */
 		public DistributionFormatException (Throwable cause) {
 			super(cause);
 		}
@@ -102,7 +102,7 @@ public class DistributionAdapters {
 			try {
 				return Double.parseDouble(v);
 			} catch (NumberFormatException nfe) {
-				throw new DistributionFormatException("Not a double value: " + v, nfe);
+				throw new DistributionFormatException("Not a double id: " + v, nfe);
 			}
 		}
 
@@ -110,7 +110,7 @@ public class DistributionAdapters {
 			try {
 				return Float.parseFloat(v);
 			} catch (NumberFormatException nfe) {
-				throw new DistributionFormatException("Not a float value: " + v, nfe);
+				throw new DistributionFormatException("Not a float id: " + v, nfe);
 			}
 		}
 
@@ -118,7 +118,7 @@ public class DistributionAdapters {
 			try {
 				return Integer.parseInt(v);
 			} catch (NumberFormatException nfe) {
-				throw new DistributionFormatException("Not an int value: " + v, nfe);
+				throw new DistributionFormatException("Not an int id: " + v, nfe);
 			}
 		}
 
@@ -126,7 +126,7 @@ public class DistributionAdapters {
 			try {
 				return Long.parseLong(v);
 			} catch (NumberFormatException nfe) {
-				throw new DistributionFormatException("Not a long value: " + v, nfe);
+				throw new DistributionFormatException("Not a long id: " + v, nfe);
 			}
 		}
 

@@ -16,6 +16,7 @@
 
 package com.badlogic.gdx.ai.utils;
 
+import com.badlogic.gdx.ai.utils.NonBlockingSemaphore;
 import com.badlogic.gdx.utils.ObjectMap;
 
 /** @author davebaol */

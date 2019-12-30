@@ -29,23 +29,21 @@ public interface State<E> {
 	/** This method will execute when the state is entered.
 	 * 
 	 * @param entity the entity entering the state */
-	public void enter(E entity);
-
-	public void enter(E entity, Object object);
+	public void enter (E entity);
 
 	/** This is the state's normal update function
-	 *
+	 * 
 	 * @param entity the entity lasting the state */
-	public void update(E entity);
+	public void update (E entity);
 
 	/** This method will execute when the state is exited.
-	 *
+	 * 
 	 * @param entity the entity exiting the state */
-	public void exit(E entity);
+	public void exit (E entity);
 
 	/** This method executes if the {@code entity} receives a {@code telegram} from the message dispatcher while it is in this
 	 * state.
-	 *
+	 * 
 	 * @param entity the entity that received the message
 	 * @param telegram the message sent to the entity
 	 * @return true if the message has been successfully handled; false otherwise. */

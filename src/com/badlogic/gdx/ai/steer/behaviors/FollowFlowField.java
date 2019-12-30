@@ -155,6 +155,6 @@ public class FollowFlowField<T extends Vector<T>> extends SteeringBehavior<T> {
 	public interface FlowField<T extends Vector<T>> {
 		/** Returns the flow vector for the specified position in space.
 		 * @param position the position to map */
-		public T lookup(T position);
+		public T lookup (T position);
 	}
 }

@@ -25,5 +25,5 @@ import com.badlogic.gdx.math.Vector;
  * 
  * @author davebaol */
 public interface RayConfiguration<T extends Vector<T>> {
-	Ray<T>[] updateRays();
+	Ray<T>[] updateRays ();
 }

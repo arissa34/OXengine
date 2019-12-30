@@ -30,7 +30,7 @@ import com.badlogic.gdx.math.Vector;
  * {@code ReachOrientation} behaves in a similar way to {@link Arrive} since it tries to reach the target orientation and tries to
  * have zero rotation when it gets there. Like arrive, it uses two radii: {@code decelerationRadius} for slowing down and
  * {@code alignTolerance} to make orientations near the target acceptable without letting small errors keep the owner swinging.
- * Because we are dealing with a single scalar value, rather than a 2D or 3D vector, the radius acts as an interval.
+ * Because we are dealing with a single scalar id, rather than a 2D or 3D vector, the radius acts as an interval.
  * <p>
  * Similarly to {@code Arrive}, there is a {@code timeToTarget} that defaults to 0.1 seconds.
  * 
