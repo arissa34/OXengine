@@ -20,8 +20,8 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
     private int STRAFE_RIGHT = Input.Keys.D;
     private int FORWARD = Input.Keys.W;
     private int BACKWARD = Input.Keys.S;
-    private int UP = Input.Keys.Q;
-    private int DOWN = Input.Keys.E;
+    private int UP = Input.Keys.E;
+    private int DOWN = Input.Keys.Q;
     private int SHIFT = Input.Keys.SHIFT_LEFT;
 
     public GodCamera(float fieldOfView, float viewportWidth, float viewportHeight) {

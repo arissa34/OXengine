@@ -20,7 +20,7 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
     protected Skeleton skeleton;
     protected Matrix4 transform;
     protected Vector3 position;
-    protected SkeletonAnimation animation;
+    public SkeletonAnimation animation;
     private boolean isVisibleInFrustrum = false;
     private Direction direction;
 

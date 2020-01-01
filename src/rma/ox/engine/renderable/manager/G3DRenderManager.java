@@ -102,13 +102,14 @@ public class G3DRenderManager {
         synchronized (this) {
             listSkeleton.sort(zComparator);
         }
-       // Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         polygonBatch.begin();
         for (int i = 0; i < listSkeleton.size; i++) {
             listSkeleton.get(i).draw(polygonBatch, skeletonRenderer);
         }
         polygonBatch.end();
-        //Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
 
     }
 

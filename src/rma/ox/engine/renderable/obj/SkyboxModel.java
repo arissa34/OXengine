@@ -1,8 +1,6 @@
 package rma.ox.engine.renderable.obj;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -14,10 +12,8 @@ import com.badlogic.gdx.math.Vector3;
 import rma.ox.engine.camera.helper.CameraHelper;
 import rma.ox.engine.renderable.manager.G3DRenderManager;
 import rma.ox.engine.renderable.utils.MaterialUtils;
-import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.update.UpdatableMainThread;
 import rma.ox.engine.update.UpdateManager;
-import rma.ox.engine.utils.Logx;
 
 public class SkyboxModel implements UpdatableMainThread {
 
@@ -38,7 +34,6 @@ public class SkyboxModel implements UpdatableMainThread {
         MaterialUtils.addMaterialCulling(modelInstance);
     }
 
-
     public SkyboxModel createSkyBox(Texture xpos, Texture xneg, Texture ypos, Texture yneg, Texture zpos, Texture zneg) {
         modelInstance.materials.get(0).set(TextureAttribute.createDiffuse(xpos));
         modelInstance.materials.get(1).set(TextureAttribute.createDiffuse(xneg));
@@ -48,13 +43,6 @@ public class SkyboxModel implements UpdatableMainThread {
         modelInstance.materials.get(4).set(TextureAttribute.createDiffuse(zneg));
         wrapTexture();
         return this;
-
-        //modelInstance.materials.get(0).set(TextureAttribute.createDiffuse(atlas.findRegion("right"  )));
-        //modelInstance.materials.get(1).set(TextureAttribute.createDiffuse(atlas.findRegion("left"   )));
-        //modelInstance.materials.get(2).set(TextureAttribute.createDiffuse(atlas.findRegion("down"   )));
-        //modelInstance.materials.get(3).set(TextureAttribute.createDiffuse(atlas.findRegion("up"     )));
-        //modelInstance.materials.get(4).set(TextureAttribute.createDiffuse(atlas.findRegion("front"  )));
-        //modelInstance.materials.get(5).set(TextureAttribute.createDiffuse(atlas.findRegion("back"   )));
     }
 
     public SkyboxModel attachToWorld() {

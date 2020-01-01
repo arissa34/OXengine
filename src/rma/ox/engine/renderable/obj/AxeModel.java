@@ -59,7 +59,7 @@ public class AxeModel implements Disposable {
 
     public AxeModel registerForRender(){
         G3DRenderManager.get().addModelToCacheNoEnv(new ModelInstance(gridModel));
-        G3DRenderManager.get().addModelToCacheNoEnv(new ModelInstance(axesModel));
+        //G3DRenderManager.get().addModelToCacheNoEnv(new ModelInstance(axesModel));
         return this;
     }
 
