@@ -23,6 +23,7 @@ public class CustomCheckBox {
 
     private CheckBox checkBox;
     private MyAssetManager mAssets;
+    private InputListener listener;
 
     public CustomCheckBox(String atlasName, String pathOn, String pathOff, String pathDisable) {
         mAssets = MyAssetManager.get();
@@ -95,6 +96,21 @@ public class CustomCheckBox {
         checkBox.getImage().setScaling(Scaling.fit);
     }
 
+    public CustomCheckBox(TextureAtlas atlas, String textureUpString, String textureDownString, BitmapFont font, boolean isNinePatch){
+
+        CheckBox.CheckBoxStyle style = new CheckBox.CheckBoxStyle();
+        style.font = font;
+        if(!isNinePatch) {
+            style.checkboxOn = new TextureRegionDrawable(atlas.findRegion(textureUpString));
+            style.checkboxOff = new TextureRegionDrawable(atlas.findRegion(textureDownString));
+        }else{
+
+        }
+        checkBox = new CheckBox("", style);
+        checkBox.getImage().setScaling(Scaling.fit);
+        setChecked(false);
+    }
+
     public CustomCheckBox(String pathOn, String pathOff) {
         mAssets = MyAssetManager.get();
         Texture textureOn = mAssets.get(pathOn, Texture.class);
@@ -108,12 +124,12 @@ public class CustomCheckBox {
     }
 
     public CustomCheckBox setChecked(boolean checked) {
-        checkBox.setChecked(checked);
+        checkBox.setChecked(!checked);
         return this;
     }
 
     public boolean isChecked(){
-        return checkBox.isChecked(); // FIXME WTF ??!!!
+        return !checkBox.isChecked(); // FIXME WTF ??!!!
     }
 
     public CustomCheckBox setCoord(float x, float y){
@@ -136,6 +152,7 @@ public class CustomCheckBox {
     public CustomCheckBox addListener(InputListener listener){
         if(checkBox.isDisabled()) return this;
         checkBox.addListener(listener);
+        this.listener = listener;
         return this;
     }
 
@@ -147,6 +164,10 @@ public class CustomCheckBox {
     public CustomCheckBox putInStage(Stage stage) {
         stage.addActor(checkBox);
         return this;
+    }
+
+    public InputListener getListener() {
+        return listener;
     }
 
     public CustomCheckBox setText(CharSequence txt){

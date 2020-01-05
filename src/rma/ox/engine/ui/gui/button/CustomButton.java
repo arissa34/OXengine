@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -14,10 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import rma.ox.engine.ressource.MyAssetManager;
+import rma.ox.engine.utils.Logx;
 
 public class CustomButton {
 
     public Button button;
+    public Label label;
     public MyAssetManager mAssets;
 
     public CustomButton(String atlasName, String pathUp, String pathDown, String pathDisable){
@@ -76,6 +79,32 @@ public class CustomButton {
         button = new Button(btnStyle);
     }
 
+    public CustomButton(TextureRegionDrawable textureUp, TextureRegionDrawable textureDown){
+        mAssets = MyAssetManager.get();
+        Button.ButtonStyle btnStyle = new Button.ButtonStyle();
+        btnStyle.down = textureDown;
+        btnStyle.up = textureUp;
+        button = new Button(btnStyle);
+    }
+
+
+    public CustomButton(TextureAtlas atlas, String textureUpString, String textureDownString, boolean isNinePatch){
+        Button.ButtonStyle btnStyle = new Button.ButtonStyle();
+        if(!isNinePatch){
+            btnStyle.down = new TextureRegionDrawable(atlas.findRegion(textureDownString));
+            btnStyle.up = new TextureRegionDrawable(atlas.findRegion(textureUpString));
+        }else{
+            NinePatch upNinePatch = atlas.createPatch(textureUpString);
+            NinePatchDrawable upPatchDrawable = new NinePatchDrawable(upNinePatch);
+            btnStyle.up = upPatchDrawable;
+
+            NinePatch downNinePatch = atlas.createPatch(textureDownString);
+            NinePatchDrawable downPatchDrawable = new NinePatchDrawable(downNinePatch);
+            btnStyle.down = downPatchDrawable;
+        }
+        button = new Button(btnStyle);
+    }
+
     public CustomButton(String pathUp){
         mAssets = MyAssetManager.get();
         Texture textureUp = mAssets.get(pathUp, Texture.class);
@@ -96,6 +125,7 @@ public class CustomButton {
 
     public CustomButton addListener(InputListener listener){
         if(button.isDisabled()) return this;
+        Logx.l(this.getClass(), "=======> addListener ");
         button.addListener(listener);
         return this;
     }
@@ -137,19 +167,43 @@ public class CustomButton {
         return this;
     }
 
-    public CustomButton setText(CharSequence txt){
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = new BitmapFont();
-        button.add(new Label(txt, labelStyle));
+    public CustomButton setText(CharSequence txt, BitmapFont font){
+        if(label == null) {
+            Label.LabelStyle labelStyle = new Label.LabelStyle();
+            labelStyle.font = font;
+            button.add(label = new Label(txt, labelStyle));
+        }else {
+            label.setText(txt);
+        }
+        return this;
+    }
+    public CustomButton addLabels(int padB, Actor...labels){
+        button.add(labels).padBottom(padB);
         return this;
     }
 
-    public CustomButton setText(CharSequence txt, float scale){
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = new BitmapFont();
-        Label label = new Label(txt, labelStyle);
-        label.setFontScale(scale);
-        button.add(label);
+    public CustomButton setText(CharSequence txt, BitmapFont font, int padB){
+        if(label == null) {
+            Label.LabelStyle labelStyle = new Label.LabelStyle();
+            labelStyle.font = font;
+            button.add(label = new Label(txt, labelStyle)).padBottom(padB);
+        }else {
+            label.setText(txt);
+        }
+        return this;
+    }
+
+    public CustomButton setText(CharSequence txt, float scale, BitmapFont font){
+        if(label == null) {
+            Label.LabelStyle labelStyle = new Label.LabelStyle();
+            labelStyle.font = font;
+            Label label = new Label(txt, labelStyle);
+            label.setFontScale(scale);
+            button.add(label);
+        }else {
+            label.setFontScale(scale);
+            label.setText(txt);
+        }
         return this;
     }
 

@@ -158,7 +158,7 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
                 btnPress,
                 btnDisable
         )
-                .setText(textBtn)
+                .setText(textBtn, new BitmapFont())
                 .addListener(listener);
         cellCancel = getButtonTable().add(cancelBtn.button);
         return (D) this;
@@ -177,7 +177,7 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
                 btnPress,
                 btnDisable
         )
-                .setText(textBtn)
+                .setText(textBtn, new BitmapFont())
                 .addListener(listener);
         cellValid = getButtonTable().add(validBtn.button);
         return (D) this;

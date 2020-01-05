@@ -114,8 +114,8 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
     public Vector3 tmp2 = new Vector3();
     public Vector3 tmp3 = new Vector3();
     public void drag() {
-        float deltaX = -Gdx.input.getDeltaX() * degreesPerPixel;
-        float deltaY = -Gdx.input.getDeltaY() * degreesPerPixel;
+        float deltaX = Gdx.input.getDeltaX() * degreesPerPixel;
+        float deltaY = Gdx.input.getDeltaY() * degreesPerPixel;
 
         targetDirection.rotate(up, deltaX);
 
