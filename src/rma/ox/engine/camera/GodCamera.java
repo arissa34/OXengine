@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.IntIntMap;
 
+import rma.ox.engine.settings.Config;
+
 public class GodCamera extends GhostCamera implements GestureDetector.GestureListener, InputProcessor {
 
     private float degreesPerPixel = 0.2f;
@@ -116,6 +118,11 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
     public void drag() {
         float deltaX = Gdx.input.getDeltaX() * degreesPerPixel;
         float deltaY = Gdx.input.getDeltaY() * degreesPerPixel;
+
+        if(Config.isDesktop()){
+            deltaX = -deltaX;
+            deltaY = -deltaY;
+        }
 
         targetDirection.rotate(up, deltaX);
 

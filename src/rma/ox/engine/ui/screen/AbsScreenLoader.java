@@ -1,19 +1,23 @@
 package rma.ox.engine.ui.screen;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
-
 import rma.ox.engine.ressource.MyAssetManager;
 
-public abstract class AbsScreenLoader implements Screen {
+public abstract class AbsScreenLoader extends AbsScreen {
 
-    protected LoaderListener nextScreen;
+    protected AbsScreen nextScreen;
     protected float progress;
-    protected Game game;
 
-    public AbsScreenLoader(Game game, LoaderListener nextScreen){
-        this.game = game;
+    public AbsScreenLoader( AbsScreen nextScreen){
+        super();
         this.nextScreen = nextScreen;
+    }
+
+    @Override
+    public void show() {
+        initBeforeShow(); 
+        progress = 0f;
+        nextScreen.initAssets();
     }
 
     @Override
@@ -22,14 +26,18 @@ public abstract class AbsScreenLoader implements Screen {
         update();
     }
 
-    protected abstract void renderAndProgress(float delta);
-
     //Need to be called in the end of your render(float delta)
     protected void update() {
         if (MyAssetManager.get().update()) {
+            System.gc();
             nextScreen.loadingFinished(game);
-            dispose();
+            ScreenHelper.get().setScreen(nextScreen);
+            nextScreen = null;
         }
         progress = MyAssetManager.get().getProgress();
     }
+
+    protected abstract void initBeforeShow();
+    protected abstract void renderAndProgress(float delta);
+    protected abstract void initAssets();
 }

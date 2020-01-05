@@ -125,7 +125,6 @@ public class CustomButton {
 
     public CustomButton addListener(InputListener listener){
         if(button.isDisabled()) return this;
-        Logx.l(this.getClass(), "=======> addListener ");
         button.addListener(listener);
         return this;
     }
