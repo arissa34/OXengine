@@ -33,17 +33,24 @@ public class Toast {
     private static ToastMsgPool toastMsgPool = new ToastMsgPool();
     private static ToastDialog toastDialog;
     private static Array<ToastMsg> listToast = new Array<>();
+    private static BitmapFont font = new BitmapFont();
+
+    public static void show(Stage stage, String msg, BitmapFont font, Duration duration) {
+        show(stage, msg, font, duration.timeDuration);
+    }
 
     public static void show(Stage stage, String msg, Duration duration) {
-        show(stage, msg, duration.timeDuration);
+        show(stage, msg, null, duration.timeDuration);
     }
-    public static void show(Stage stage, String msg, float timeDuration) {
+
+    public static void show(Stage stage, String msg, BitmapFont font, float timeDuration) {
 
         if(stage == null || msg == null || timeDuration <= 0 ) return;
 
         ToastMsg toastMsg = toastMsgPool.obtain();
         toastMsg.msg = msg;
         toastMsg.stage = stage;
+        toastMsg.font = font == null ? Toast.font : font;
         toastMsg.timeDuration = timeDuration;
         listToast.add(toastMsg);
 
@@ -60,7 +67,7 @@ public class Toast {
 
         if(toastMsg.stage == null || toastMsg.msg == null || toastMsg.timeDuration <= 0 ) return;
 
-        toastDialog.setText(toastMsg.msg)
+        toastDialog.setText(toastMsg.msg, toastMsg.font)
                 .center(toastMsg.stage).down(toastMsg.stage)
                 .show(toastMsg.stage);
 
@@ -90,10 +97,12 @@ public class Toast {
         public String msg;
         public Stage stage;
         public float timeDuration;
+        public BitmapFont font;
 
         @Override
         public void reset() {
             msg = null;
+            font = null;
             stage = null;
             timeDuration = -1;
         }
@@ -109,9 +118,9 @@ public class Toast {
 
     static class ToastDialog extends Dialog {
 
-        private static BitmapFont font = new BitmapFont();
         private static WindowStyle windowStyle = new Window.WindowStyle(font, Color.WHITE, DrawableUtils.getColorDrawable(Color.BLACK));
         private Label msgLabel;
+        private Label.LabelStyle labelStyle;
 
         public ToastDialog() {
             super("", windowStyle);
@@ -121,12 +130,15 @@ public class Toast {
             setMovable(false);
             setKeepWithinStage(true);
 
-            Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+            //font.getData().setScale(1.3f);
+            labelStyle = new Label.LabelStyle(font, Color.WHITE);
             msgLabel = new Label("", labelStyle);
             getContentTable().add(msgLabel).pad(8, 16, 3, 16);
         }
 
-        public ToastDialog setText(String text) {
+        public ToastDialog setText(String text, BitmapFont font) {
+            labelStyle.font = font;
+            msgLabel.setStyle(labelStyle);
             msgLabel.setText(text);
             pack();
             return this;

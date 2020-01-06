@@ -4,11 +4,13 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.FontGeneratorLoader;
 import com.badlogic.gdx.assets.loaders.NoSqlDBLoader;
 import com.badlogic.gdx.assets.loaders.SkeletonLoader;
+import com.badlogic.gdx.assets.loaders.SkyboxLoader;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.esotericsoftware.spine.Skeleton;
 
 import rma.ox.data.bdd.NoSqlDB;
+import rma.ox.engine.renderable.obj.SkyboxModel;
 
 public class CustomManager extends AssetManager {
 
@@ -17,6 +19,7 @@ public class CustomManager extends AssetManager {
         setLoader(Skeleton.class, new SkeletonLoader(resolver));
         setLoader(NoSqlDB.class, new NoSqlDBLoader(resolver));
         setLoader(BitmapFont.class, new FontGeneratorLoader(resolver));
+        setLoader(SkyboxModel.class, new SkyboxLoader(resolver));
     }
 
     public <T> void addAsset (final String fileName, Class<T> type, T asset) {

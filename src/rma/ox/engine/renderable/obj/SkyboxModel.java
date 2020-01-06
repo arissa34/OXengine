@@ -53,6 +53,12 @@ public class SkyboxModel implements UpdatableMainThread {
         return this;
     }
 
+    public SkyboxModel dettachToWorld() {
+        G3DRenderManager.get().setSkybox(null);
+        UpdateManager.get().remove(this);
+        return this;
+    }
+
     private void wrapTexture() {
         for (int i = 0; i < modelInstance.materials.size; i++) {
             if (modelInstance.materials.get(i).has(TextureAttribute.Diffuse)) {
