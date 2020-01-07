@@ -42,8 +42,8 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
     protected ScrollPane scroll;
     protected boolean isShowing;
 
-    public AbsDialog(Stage stage) {
-        super("", new WindowStyle(new BitmapFont(), Color.WHITE, null));
+    public AbsDialog(Stage stage, BitmapFont font) {
+        super("", new WindowStyle(font, Color.WHITE, null));
         this.stage = stage;
         getTitleTable().clearChildren();
         getContentTable().clearChildren();
@@ -58,13 +58,13 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         getButtonTable().clearChildren();
     }
 
-    public D addTitle(String title) {
-        return addTitle(title, Align.center);
+    public D addTitle(String title, BitmapFont font) {
+        return addTitle(title, font, Align.center);
     }
 
-    public D addTitle(String title, int align) {
+    public D addTitle(String title, BitmapFont font, int align) {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = new BitmapFont();
+        labelStyle.font = font;
         labelTitle = new Label(title, labelStyle);
         labelTitle.setAlignment(align);
 
@@ -83,9 +83,9 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         }
         return (D) this;
     }
-/*
-    public D addCloseBtn(){
-        CustomButton closeBtn = new CustomButton(LevelAssets.popup_btn_close_n, LevelAssets.popup_btn_close_f);
+
+    public D addCloseBtn(CustomButton closeBtn){
+        //CustomButton closeBtn = new CustomButton(LevelAssets.popup_btn_close_n, LevelAssets.popup_btn_close_f);
         cellClose = getTitleTable().add(closeBtn.getActor()).right();
         closeBtn.addListener(new ClickListener(){
             @Override
@@ -95,7 +95,7 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
             }
         });
         return (D) this;
-    }*/
+    }
 
     public D setNineDrawableBckgTitle(String atlasName, String bckgName) {
         if(titleContenair == null){
@@ -109,8 +109,8 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         return (D) this;
     }
 
-    public D addText(String text) {
-        Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
+    public D addText(String text, BitmapFont font) {
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         labelText = new Label(text, labelStyle);
         labelText.setWrap(true);
         scroll = new ScrollPane(labelText);
@@ -145,20 +145,28 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         return (D) this;
     }
 
+    public D setNineDrawableBckg(TextureAtlas atlas, String bckgName) {
+        NinePatch onNinePatch = atlas.createPatch(bckgName);
+        NinePatchDrawable ninePatchDrawable = new NinePatchDrawable(onNinePatch);
+        setBackground(ninePatchDrawable);
+
+        return (D) this;
+    }
+
     public D addCancelBtn(CustomButton cancelBtn) {
         this.cancelBtn = cancelBtn;
         cellCancel = getButtonTable().add(this.cancelBtn.button);
         return (D) this;
     }
 
-    public D addCancelBtn(String textBtn, String atlasName, String btnNopress, String btnPress, String btnDisable, ClickListener listener) {
+    public D addCancelBtn(String textBtn, String atlasName, String btnNopress, String btnPress, String btnDisable, BitmapFont font, ClickListener listener) {
         cancelBtn = new CustomButton(
                 atlasName,
                 btnNopress,
                 btnPress,
                 btnDisable
         )
-                .setText(textBtn, new BitmapFont())
+                .setText(textBtn, font)
                 .addListener(listener);
         cellCancel = getButtonTable().add(cancelBtn.button);
         return (D) this;
@@ -170,14 +178,14 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         return (D) this;
     }
 
-    public D addValidateBtn(String textBtn, String atlasName, String btnNopress, String btnPress, String btnDisable, ClickListener listener) {
+    public D addValidateBtn(String textBtn, String atlasName, String btnNopress, String btnPress, String btnDisable, BitmapFont font, ClickListener listener) {
         validBtn = new CustomButton(
                 atlasName,
                 btnNopress,
                 btnPress,
                 btnDisable
         )
-                .setText(textBtn, new BitmapFont())
+                .setText(textBtn, font)
                 .addListener(listener);
         cellValid = getButtonTable().add(validBtn.button);
         return (D) this;
@@ -220,14 +228,14 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
         setY(0);
         return (D) this;
     }
-
+/*
     public D show() {
         setPosition(getCenterX(), getCenterY());
         show(stage, Actions.sequence());
         isShowing = true;
         return (D) this;
     }
-
+*/
     public void hide() {
         super.hide(Actions.sequence());
         isShowing = false;
