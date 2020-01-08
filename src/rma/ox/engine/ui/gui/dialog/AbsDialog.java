@@ -1,5 +1,6 @@
 package rma.ox.engine.ui.gui.dialog;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -91,6 +92,8 @@ public class AbsDialog<D extends AbsDialog> extends Dialog {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                Gdx.input.setOnscreenKeyboardVisible(false);
+                stage.unfocusAll();
                 hide();
             }
         });
