@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -105,6 +106,21 @@ public class CustomButton {
         button = new Button(btnStyle);
     }
 
+
+    public CustomButton(TextureAtlas atlas, String textureUpString, String textureDownString, String textureDisabledString, boolean isNinePatch){
+        Button.ButtonStyle btnStyle = new Button.ButtonStyle();
+        if(!isNinePatch){
+            btnStyle.down = new TextureRegionDrawable(atlas.findRegion(textureDownString));
+            btnStyle.up = new TextureRegionDrawable(atlas.findRegion(textureUpString));
+            btnStyle.disabled = new TextureRegionDrawable(atlas.findRegion(textureDisabledString));
+        }else{
+            btnStyle.up = new NinePatchDrawable(atlas.createPatch(textureUpString));
+            btnStyle.down = new NinePatchDrawable(atlas.createPatch(textureDownString));
+            btnStyle.disabled = new NinePatchDrawable(atlas.createPatch(textureDisabledString));
+        }
+        button = new Button(btnStyle);
+    }
+
     public CustomButton(String pathUp){
         mAssets = MyAssetManager.get();
         Texture textureUp = mAssets.get(pathUp, Texture.class);
@@ -121,6 +137,10 @@ public class CustomButton {
     public CustomButton addTextBehind(CharSequence text){
         button.add(text);
         return this;
+    }
+
+    public boolean isDisabled(){
+        return button.isDisabled();
     }
 
     public CustomButton addListener(InputListener listener){
@@ -176,6 +196,7 @@ public class CustomButton {
         }
         return this;
     }
+
     public CustomButton addLabels(int padB, Actor...labels){
         button.add(labels).padBottom(padB);
         return this;
@@ -204,6 +225,31 @@ public class CustomButton {
             label.setText(txt);
         }
         return this;
+    }
+
+    private boolean isLoading = false;
+    private Actor actorSaved;
+
+    public void setLoader(Actor actor){
+        if(button.getCells().size > 0 && actorSaved == null) {
+            actorSaved = button.getCells().get(0).getActor();
+            button.getCells().get(0).setActor(actor).padTop(10);
+            setDisable(true);
+            isLoading = true;
+        }
+    }
+
+    public void loadingFinished(){
+        if(button.getCells().size > 0 && actorSaved != null ) {
+            button.getCells().get(0).setActor(actorSaved).padTop(0);
+            actorSaved = null;
+            setDisable(false);
+            isLoading = false;
+        }
+    }
+
+    public boolean isLoading() {
+        return isLoading;
     }
 
     public float getHeight(){

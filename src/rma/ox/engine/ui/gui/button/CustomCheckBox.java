@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Scaling;
 
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.ui.gui.utils.LabelUtils;
+import rma.ox.engine.utils.Logx;
 
 
 public class CustomCheckBox {
@@ -104,10 +105,41 @@ public class CustomCheckBox {
             style.checkboxOn = new TextureRegionDrawable(atlas.findRegion(textureUpString));
             style.checkboxOff = new TextureRegionDrawable(atlas.findRegion(textureDownString));
         }else{
-
+            NinePatch onNinePatch = atlas.createPatch(textureUpString);
+            NinePatchDrawable onPatchDrawable = new NinePatchDrawable(onNinePatch);
+            style.checkboxOn = onPatchDrawable;
+            NinePatch offNinePatch = atlas.createPatch(textureDownString);
+            NinePatchDrawable offPatchDrawable = new NinePatchDrawable(offNinePatch);
+            style.checkboxOff = offPatchDrawable;
         }
         checkBox = new CheckBox("", style);
         checkBox.getImage().setScaling(Scaling.fit);
+        setChecked(false);
+    }
+
+    public CustomCheckBox(TextureAtlas atlas, String textureUpString, String textureDownString, String textureDisableString, BitmapFont font, boolean isNinePatch){
+
+        CheckBox.CheckBoxStyle style = new CheckBox.CheckBoxStyle();
+        style.font = font;
+        if(!isNinePatch) {
+            style.checkboxOn = new TextureRegionDrawable(atlas.findRegion(textureUpString));
+            style.checkboxOff = new TextureRegionDrawable(atlas.findRegion(textureDownString));
+            style.checkboxOffDisabled = new TextureRegionDrawable(atlas.findRegion(textureDisableString));
+            style.checkboxOnDisabled = new TextureRegionDrawable(atlas.findRegion(textureDisableString));
+        }else{
+            NinePatch onNinePatch = atlas.createPatch(textureUpString);
+            NinePatchDrawable onPatchDrawable = new NinePatchDrawable(onNinePatch);
+            style.checkboxOn = onPatchDrawable;
+            NinePatch offNinePatch = atlas.createPatch(textureDownString);
+            NinePatchDrawable offPatchDrawable = new NinePatchDrawable(offNinePatch);
+            style.checkboxOff = offPatchDrawable;
+            NinePatch disableNinePatch = atlas.createPatch(textureDownString);
+            NinePatchDrawable disablePatchDrawable = new NinePatchDrawable(disableNinePatch);
+            style.checkboxOffDisabled = disablePatchDrawable;
+            style.checkboxOnDisabled = style.checkboxOffDisabled;
+        }
+        checkBox = new CheckBox("", style);
+        checkBox.getImage().setScaling(Scaling.stretch);
         setChecked(false);
     }
 

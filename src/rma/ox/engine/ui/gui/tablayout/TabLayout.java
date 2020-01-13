@@ -5,14 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 
-public class TabLayout{/* extends Stack implements TabGroup.TabListener{
+public class TabLayout extends Stack implements TabGroup.TabListener{
 
-    private TabGroup tabGroup;
     private Array<Container> listLayout;
 
     public TabLayout(TabGroup tabGroup){
-        this.tabGroup = tabGroup;
-        this.tabGroup.addTabLayoutListener(this);
+        tabGroup.addTabLayoutListener(this);
         listLayout = new Array<>();
     }
 
@@ -29,5 +27,5 @@ public class TabLayout{/* extends Stack implements TabGroup.TabListener{
             listLayout.get(i).setVisible(false);
         }
         listLayout.get(index).setVisible(true);
-    }*/
+    }
 }

@@ -6,5 +6,5 @@ import com.esotericsoftware.spine.SkeletonRenderer;
 public interface SkeletonRender {
     void draw(PolygonSpriteBatch polygonBatch, SkeletonRenderer skeletonRenderer);
 
-    float getZ();
+    float getZIndex();
 }

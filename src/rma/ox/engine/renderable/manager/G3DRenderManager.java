@@ -22,7 +22,6 @@ import rma.ox.engine.camera.helper.CameraHelper;
 import rma.ox.engine.renderable.skeleton.SkeletonRender;
 import rma.ox.engine.shader.ShaderHelper;
 import rma.ox.engine.shader.ShaderLoader;
-import rma.ox.engine.utils.Logx;
 
 public class G3DRenderManager {
 
@@ -139,7 +138,7 @@ public class G3DRenderManager {
         public int compare(SkeletonRender e1, SkeletonRender e2) {
             if (e1 == null) return 0;
             if (e2 == null) return 0;
-            return Float.compare(e1.getZ(), e2.getZ());
+            return Float.compare(e2.getZIndex(), e1.getZIndex());
         }
     };
 

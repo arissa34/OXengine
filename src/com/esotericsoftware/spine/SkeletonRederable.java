@@ -9,6 +9,7 @@ import rma.ox.engine.core.threading.FrustrumThread;
 import rma.ox.engine.camera.helper.CameraHelper;
 import rma.ox.engine.core.utils.MatrixUtils;
 import rma.ox.engine.renderable.manager.G3DRenderManager;
+import rma.ox.engine.renderable.obj.ModelUtils;
 import rma.ox.engine.renderable.skeleton.SkeletonRender;
 import rma.ox.engine.skeleton.Direction;
 import rma.ox.engine.update.UpdatableMainThread;
@@ -53,6 +54,7 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
 
     @Override
     public void updateOnMainThread(float delta) {
+        ModelUtils.faceToCamera(transform);
         updateAnimation(delta);
     }
 
@@ -85,9 +87,13 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
         return MatrixUtils.getY(transform);
     }
 
-    @Override
     public float getZ(){
         return MatrixUtils.getZ(transform);
+    }
+
+    @Override
+    public float getZIndex(){
+        return getPosition().dst(CameraHelper.get().getCamera().position);
     }
 
     public void checkIfIsInFrustrum() {
