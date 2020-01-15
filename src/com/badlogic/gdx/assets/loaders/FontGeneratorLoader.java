@@ -24,7 +24,9 @@ public class FontGeneratorLoader  extends AsynchronousAssetLoader<BitmapFont, Fo
 
     @Override
     public BitmapFont loadSync(AssetManager manager, String fileName, FileHandle file, FontGeneratorLoaderarameter parameter) {
-        return generator.generateFont(parameter.freeTypeFontParameter);
+        BitmapFont font = generator.generateFont(parameter.freeTypeFontParameter);
+        font.getData().markupEnabled = true;
+        return font;
     }
 
     @Override
