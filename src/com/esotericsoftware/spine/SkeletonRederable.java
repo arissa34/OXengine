@@ -9,15 +9,17 @@ import rma.ox.engine.core.threading.FrustrumThread;
 import rma.ox.engine.camera.helper.CameraHelper;
 import rma.ox.engine.core.utils.MatrixUtils;
 import rma.ox.engine.renderable.manager.G3DRenderManager;
-import rma.ox.engine.renderable.obj.ModelUtils;
+import rma.ox.engine.renderable.utils.ModelUtils;
 import rma.ox.engine.renderable.skeleton.SkeletonRender;
 import rma.ox.engine.skeleton.Direction;
 import rma.ox.engine.update.UpdatableMainThread;
 import rma.ox.engine.update.UpdatableThread;
 import rma.ox.engine.update.UpdateManager;
+import rma.ox.engine.utils.RandomUtils;
 
 public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, SkeletonRender {
 
+    private boolean isInit;
     protected Skeleton skeleton;
     protected Matrix4 transform;
     protected Vector3 position;
@@ -25,13 +27,19 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
     private boolean isVisibleInFrustrum = false;
     private Direction direction;
 
-    public SkeletonRederable(Skeleton skeleton) {
+    public SkeletonRederable() {
+        isInit = false;
+    }
+
+    public SkeletonRederable init(Skeleton skeleton){
         this.skeleton = skeleton;
         transform = new Matrix4();
         position = new Vector3();
         direction = Direction.RIGHT;
         animation = new SkeletonAnimation(skeleton);
         animation.playLoopAnimation("blink");
+        isInit = true;
+        return this;
     }
 
     public Skeleton getSkeleton() {
@@ -43,9 +51,12 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
     }
 
     public void setPosition(float x, float y, float z){
+        if(!isInit){ return;}
         transform.setTranslation(x, y, z);
     }
+
     public void setScale(float x, float y, float z){
+        if(!isInit){ return;}
         if(direction == Direction.LEFT)
             transform.scale(-x, y, z);
         else
@@ -54,22 +65,26 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
 
     @Override
     public void updateOnMainThread(float delta) {
-        ModelUtils.faceToCamera(transform);
+        if(!isInit){ return;}
+        //ModelUtils.faceToCamera(transform);
         updateAnimation(delta);
     }
 
     private void updateAnimation(float delta){
+        if(!isInit){ return;}
         animation.update(delta);
         animation.apply(isVisibleInFrustrum);
     }
 
     @Override
     public void updateOnThread() {
+        if(!isInit){ return;}
         checkIfIsInFrustrum();
     }
 
     @Override
     public void draw(PolygonSpriteBatch polygonBatch, SkeletonRenderer skeletonRenderer) {
+        if(!isInit){ return;}
         if(!isVisibleInFrustrum){ return;}
         polygonBatch.setTransformMatrix(transform);
         skeletonRenderer.draw(polygonBatch, skeleton);
@@ -93,6 +108,7 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
 
     @Override
     public float getZIndex(){
+        if(!isInit){ return 0;}
         return getPosition().dst(CameraHelper.get().getCamera().position);
     }
 
@@ -113,7 +129,14 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
         }
     }
 
+    public void randomPos(){
+        setPosition(RandomUtils.getRandomFloat(-150, 150),
+                0,
+                RandomUtils.getRandomFloat(-150, 150));
+    }
+
     public SkeletonRederable attachToWorld() {
+        if(!isInit){ return this;}
         FrustrumThread.get().register(this);
         UpdateManager.get().register(this);
         G3DRenderManager.get().addSkeleton(this);
@@ -121,6 +144,7 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
     }
 
     public SkeletonRederable removeToWorld() {
+        if(!isInit){ return this;}
         FrustrumThread.get().remove(this);
         UpdateManager.get().remove(this);
         G3DRenderManager.get().removeSkeleton(this);

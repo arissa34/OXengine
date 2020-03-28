@@ -39,6 +39,7 @@ public class DevBar extends Table implements IGui, Observer {
     private BitmapFont bitmapFont;
 
     private DevMainMenu devMainMenu;
+    private DevGLProfile devGlProfile;
     private DevLogMenu devLogMenu;
 
     private GLProfiler glProfiler;
@@ -46,12 +47,13 @@ public class DevBar extends Table implements IGui, Observer {
 
     public DevBar(Stage stage){
         this.stage = stage;
-        initializeUi();
-        layoutUi();
-        eventsUi();
 
         glProfiler = new GLProfiler(Gdx.graphics);
         glProfiler.enable();
+
+        initializeUi();
+        layoutUi();
+        eventsUi();
 
         Logx.observable.subscribe(this);
     }
@@ -80,6 +82,7 @@ public class DevBar extends Table implements IGui, Observer {
         fpsLabel = newLabel("FPS : 00");
 
         devMainMenu = new DevMainMenu(stage, "OXEngine", bitmapFont);
+        devGlProfile = new DevGLProfile(stage, "GL Profile", bitmapFont, glProfiler);
         devLogMenu = new DevLogMenu(stage, "Log", bitmapFont);
     }
 
@@ -124,21 +127,8 @@ public class DevBar extends Table implements IGui, Observer {
         fpsLabel.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                count++;
 
-                InAppNotification.Builder.setListener(new InAppNotification.Listener() {
-                    @Override
-                    public void onClick() {
-                        Logx.d("Notif onClick");
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Logx.d("Notif onCancel");
-                    }
-                }).setHeader("badlogic.jpg", "Click here to download the new version of Clash of Clan "+count, bitmapFont).build().show();
-                //InAppNotification.show("badlogic.jpg", "title title title title title title title title title title : "+count, "subTitlesubTitlesubTitlesu bTitlesub Titl esubTit lesubTi tle ubTitle subTitlesubT itle : "+count);
-                Toast.show(StageManager.get().getMainStage(), "TEST", Toast.Duration.SHORT);
+                devGlProfile.show(0, getHeight());
             }
         });
         versionLabel.addListener(new ClickListener(){

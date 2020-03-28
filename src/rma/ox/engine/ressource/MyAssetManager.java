@@ -11,6 +11,14 @@ public class MyAssetManager extends CustomManager {
         return instance;
     }
 
+    public static synchronized <T> T pull(String fileName, Class<T> type) {
+        return get().get(fileName, type);
+    }
+
+    public static synchronized <T> T pull(String fileName) {
+        return get().get(fileName);
+    }
+
     /*******************************/
 
 

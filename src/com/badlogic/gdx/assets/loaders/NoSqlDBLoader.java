@@ -7,10 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
-import java.io.File;
-
 import rma.ox.data.bdd.NoSqlDB;
-import rma.ox.engine.utils.Logx;
 
 public class NoSqlDBLoader extends AsynchronousAssetLoader<NoSqlDB, NoSqlDBLoader.NoSqlDBLoaderParameter> {
 
@@ -22,7 +19,7 @@ public class NoSqlDBLoader extends AsynchronousAssetLoader<NoSqlDB, NoSqlDBLoade
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, NoSqlDBLoaderParameter parameter) {
-        checkIfFolderExistAndCreate(fileName);
+        checkIfFolderExistAndCreateInLocal(fileName);
         boolean isWritable = parameter != null ? parameter.isWritable : true;
         boolean compressed = parameter != null ? parameter.compressed : true;
         Array<Class<?>> repositoriesAllowed = parameter != null ? parameter.repositoriesAllowed : null;
@@ -56,7 +53,7 @@ public class NoSqlDBLoader extends AsynchronousAssetLoader<NoSqlDB, NoSqlDBLoade
         }
     }
 
-    public static void checkIfFolderExistAndCreate(String pathDataBase) {
+    public static void checkIfFolderExistAndCreateInLocal(String pathDataBase) {
         // CHECK IF FILE EXIST IN INTERNAL AND THEM COPY IT TO LOCAL
         // BECAUSE NITRITE CAN OPEN ONLY FILE IN LOCAL
         FileHandle localHandler = Gdx.files.local(pathDataBase);

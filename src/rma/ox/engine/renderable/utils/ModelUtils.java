@@ -1,4 +1,4 @@
-package rma.ox.engine.renderable.obj;
+package rma.ox.engine.renderable.utils;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Matrix4;

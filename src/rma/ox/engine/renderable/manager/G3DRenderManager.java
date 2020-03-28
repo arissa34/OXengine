@@ -22,6 +22,7 @@ import rma.ox.engine.camera.helper.CameraHelper;
 import rma.ox.engine.renderable.skeleton.SkeletonRender;
 import rma.ox.engine.shader.ShaderHelper;
 import rma.ox.engine.shader.ShaderLoader;
+import rma.ox.engine.utils.Logx;
 
 public class G3DRenderManager {
 
@@ -76,7 +77,7 @@ public class G3DRenderManager {
         skeletonRenderer = new SkeletonRenderer();
         skeletonRenderer.setPremultipliedAlpha(true);
         environment = new Environment();
-        environment.set(ambientColor = new ColorAttribute(ColorAttribute.AmbientLight, 0.35f, 0.35f, 0.35f, 1f));
+        environment.set(ambientColor = new ColorAttribute(ColorAttribute.AmbientLight, .35f, .35f, .35f, 1f));
         lights = new Array<>();
         listModelsDynamic = new Array<>();
         listModelsDynamicNoEnv = new Array<>();
@@ -109,6 +110,7 @@ public class G3DRenderManager {
         }
         polygonBatch.end();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDisable(GL20.GL_CULL_FACE);
 
     }
 

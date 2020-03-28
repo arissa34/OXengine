@@ -44,6 +44,10 @@ public class CustomTextField {
         textField = new TextField("", style);
     }
 
+    public String getText(){
+        return textField.getText();
+    }
+
     public TextField getActor(){
         return textField;
     }
@@ -57,12 +61,7 @@ public class CustomTextField {
         textField.setPasswordCharacter('*');
     }
 
-    public void setTextField(){
-        textField.setTextFieldListener(new TextField.TextFieldListener() {
-            @Override
-            public void keyTyped(TextField textField, char c) {
-
-            }
-        });
+    public void addListener(TextField.TextFieldListener listener){
+        textField.setTextFieldListener(listener);
     }
 }

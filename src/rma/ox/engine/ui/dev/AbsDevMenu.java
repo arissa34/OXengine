@@ -71,6 +71,7 @@ public abstract class AbsDevMenu extends Dialog {
     public float getPrefWidth() {
         return 300;
     }
+
     @Override
     public float getPrefHeight() {
         return stage.getHeight() < 500 ? stage.getHeight() - 30 : 500;

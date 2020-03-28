@@ -13,21 +13,39 @@ import rma.ox.engine.ressource.MyAssetManager;
 
 public abstract class AbsDrawer extends Table {
 
+    public interface Listener{
+        void onClosed();
+    }
+
     protected final MyAssetManager assets = MyAssetManager.get();
 
     private final float time = 0.2f;
     private boolean isShown = false;
+    private boolean isFirstLaunch = true;
     private int align;
+    private Listener listener;
 
     public AbsDrawer(int align){
         this.align = align;
         top();
     }
 
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
     protected Drawable getBckg(String atlasName, String txtName){
         TextureAtlas atlas = assets.get(atlasName, TextureAtlas.class);
         NinePatch onNinePatch = atlas.createPatch(txtName);
         return new NinePatchDrawable(onNinePatch);
+    }
+
+    public void toggle(){
+        if(isShown){
+            hide();
+        }else {
+            show();
+        }
     }
 
     public void show() {
@@ -86,22 +104,59 @@ public abstract class AbsDrawer extends Table {
         }
     }
 
+    public boolean isShown() {
+        return isShown;
+    }
+
     private Action completeAction = new Action(){
         public boolean act( float delta ) {
             isShown = false;
             setVisible(false);
+            if(listener != null){
+                listener.onClosed();
+            }
             return true;
         }
     };
 
-    private void forceHide(){
-        setPosition(-getWidth(), 0);
+    protected void forceHide(){
+        if(Align.isLeft(align)){
+            setPosition(-getWidth(), 0);
+        }else if(Align.isRight(align)){
+            setPosition(getStage().getWidth(), 0);
+        }else if(Align.isBottom(align)){
+
+        }else if(Align.isTop(align)){
+
+        }
         isShown = false;
+    }
+
+    protected void forceShow(){
+        if(Align.isLeft(align)){
+            setPosition(0, 0);
+        }else if(Align.isRight(align)){
+            setPosition(getStage().getWidth()-getWidth(), 0);
+        }else if(Align.isBottom(align)){
+
+        }else if(Align.isTop(align)){
+
+        }
+        isShown = true;
     }
 
     @Override
     public void layout() {
+        if(isFirstLaunch){
+            forceHide();
+            isFirstLaunch = false;
+        }else if(isShown){
+            if(Align.isLeft(align)){
+                setPosition(0, 0);
+            }else if(Align.isRight(align)){
+                setPosition(getStage().getWidth()-getWidth(), 0);
+            }
+        }
         super.layout();
-        forceHide();
     }
 }

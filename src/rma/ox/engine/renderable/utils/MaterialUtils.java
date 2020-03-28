@@ -63,9 +63,13 @@ public class MaterialUtils {
     }
 
     public static void addMaterialAlphaTest(ModelInstance modelInstance){
+        addMaterialAlphaTest(modelInstance, 0.5f);
+    }
+
+    public static void addMaterialAlphaTest(ModelInstance modelInstance, float value){
         if(modelInstance == null) return;
         for(int i = 0; i < modelInstance.materials.size; i++){
-            modelInstance.materials.get(i).set(new FloatAttribute(FloatAttribute.AlphaTest, 0.5f));
+            modelInstance.materials.get(i).set(new FloatAttribute(FloatAttribute.AlphaTest, value));
         }
     }
 

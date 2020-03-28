@@ -34,6 +34,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
+import rma.ox.engine.utils.Logx;
+
 public class MyDefaultShader extends BaseShader {
 
     public static class Config {
@@ -494,7 +496,6 @@ public class MyDefaultShader extends BaseShader {
 
     protected final boolean lighting;
     protected final boolean environmentCubemap;
-    protected final boolean shadowMap;
     protected final AmbientCubemap ambientCubemap = new AmbientCubemap();
     protected final DirectionalLight directionalLights[];
     protected final PointLight pointLights[];
@@ -534,7 +535,6 @@ public class MyDefaultShader extends BaseShader {
         this.lighting = renderable.environment != null;
         this.environmentCubemap = attributes.has(CubemapAttribute.EnvironmentMap)
                 || (lighting && attributes.has(CubemapAttribute.EnvironmentMap));
-        this.shadowMap = lighting && renderable.environment.shadowMap != null;
         this.renderable = renderable;
         attributesMask = attributes.getMask() | optionalAttributes;
         vertexMask = renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked();
@@ -662,8 +662,14 @@ public class MyDefaultShader extends BaseShader {
         if (or(vertexMask, VertexAttributes.Usage.ColorUnpacked | VertexAttributes.Usage.ColorPacked)) prefix += "#define colorFlag\n";
         if (and(vertexMask, VertexAttributes.Usage.BiNormal)) prefix += "#define binormalFlag\n";
         if (and(vertexMask, VertexAttributes.Usage.Tangent)) prefix += "#define tangentFlag\n";
-        if (and(vertexMask, VertexAttributes.Usage.Normal)) prefix += "#define normalFlag\n";
-        if (and(vertexMask, VertexAttributes.Usage.Normal) || and(vertexMask, VertexAttributes.Usage.Tangent | VertexAttributes.Usage.BiNormal)) {
+        if (and(vertexMask, VertexAttributes.Usage.Normal)){
+            //Logx.l("====> Normal");
+            prefix += "#define normalFlag\n";
+        }
+        if (and(vertexMask, VertexAttributes.Usage.Normal)
+                || and(vertexMask, VertexAttributes.Usage.Tangent | VertexAttributes.Usage.BiNormal)
+                //|| (attributesMask & TextureAttribute.Normal) == TextureAttribute.Normal
+        ) {
             if (renderable.environment != null) {
                 prefix += "#define lightingFlag\n";
                 prefix += "#define ambientCubemapFlag\n";
@@ -677,7 +683,6 @@ public class MyDefaultShader extends BaseShader {
                 if (attributes.has(DayNightAttribute.DayNight)) {
                     prefix += "#define dayNightFlag\n";
                 }
-                if (renderable.environment.shadowMap != null) prefix += "#define shadowMapFlag\n";
                 if (attributes.has(CubemapAttribute.EnvironmentMap)) prefix += "#define environmentCubemapFlag\n";
             }
         }
@@ -701,6 +706,11 @@ public class MyDefaultShader extends BaseShader {
         if ((attributesMask & TextureAttribute.Normal) == TextureAttribute.Normal) {
             prefix += "#define " + TextureAttribute.NormalAlias + "Flag\n";
             prefix += "#define " + TextureAttribute.NormalAlias + "Coord texCoord0\n"; // FIXME implement UV mapping
+
+            prefix += "#define lightingFlag\n";
+            prefix += "#define numDirectionalLights " + config.numDirectionalLights + "\n";
+            prefix += "#define numPointLights " + config.numPointLights + "\n";
+            prefix += "#define numSpotLights " + config.numSpotLights + "\n";
         }
         if ((attributesMask & TextureAttribute.Emissive) == TextureAttribute.Emissive) {
             prefix += "#define " + TextureAttribute.EmissiveAlias + "Flag\n";
@@ -825,7 +835,6 @@ public class MyDefaultShader extends BaseShader {
             else if (!config.ignoreUnimplemented) throw new GdxRuntimeException("Unknown material attribute: " + attr.toString());
         }
 
-
         context.setCullFace(cullFace);
         context.setDepthTest(depthFunc, depthRangeNear, depthRangeFar);
         context.setDepthMask(depthMask);
@@ -909,12 +918,6 @@ public class MyDefaultShader extends BaseShader {
 
         if (attributes.has(ColorAttribute.Fog)) {
             set(u_fogColor, ((ColorAttribute)attributes.get(ColorAttribute.Fog)).color);
-        }
-
-        if (lights != null && lights.shadowMap != null) {
-            set(u_shadowMapProjViewTrans, lights.shadowMap.getProjViewTrans());
-            set(u_shadowTexture, lights.shadowMap.getDepthMap());
-            set(u_shadowPCFOffset, 1.f / (2f * lights.shadowMap.getDepthMap().texture.getWidth()));
         }
 
         lightsSet = true;

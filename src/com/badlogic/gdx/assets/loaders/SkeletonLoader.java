@@ -12,6 +12,7 @@ import com.esotericsoftware.spine.SkeletonData;
 import com.esotericsoftware.spine.SkeletonJson;
 
 import rma.ox.engine.ressource.MyAssetManager;
+import rma.ox.engine.utils.Logx;
 
 public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLoader.SkeletonParameter> {
 
@@ -32,6 +33,7 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
+        Logx.e(getClass(), "+++ loadAsync fileName "+fileName);
         int i = fileName.lastIndexOf('.');
         if(parameter==null || parameter.atlasFileName == null){
             atlasFileName = fileName.substring(0,i) + ".atlas";
@@ -44,6 +46,7 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
 
     @Override
     public Skeleton loadSync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
+        Logx.e(getClass(), "+++ loadSync fileName "+fileName);
         TextureAtlas atlas;
         if(!MyAssetManager.get().contains(atlasFileName)){
             atlas = new TextureAtlas(atlasFile);

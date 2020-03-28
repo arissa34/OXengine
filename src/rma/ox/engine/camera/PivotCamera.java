@@ -4,88 +4,47 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.IntIntMap;
 
-import rma.ox.engine.settings.Config;
+import rma.ox.engine.utils.Logx;
 
-public class GodCamera extends GhostCamera implements GestureDetector.GestureListener, InputProcessor {
+public class PivotCamera extends GhostCamera implements GestureDetector.GestureListener, InputProcessor {
 
     private float degreesPerPixel = 0.2f;
-    private float velocity = 50;
-    private float factor = 1;
     private int buttonTouchDown;
 
-    private final IntIntMap keys = new IntIntMap();
-    private int STRAFE_LEFT = Input.Keys.A;
-    private int STRAFE_RIGHT = Input.Keys.D;
-    private int FORWARD = Input.Keys.W;
-    private int BACKWARD = Input.Keys.S;
-    private int UP = Input.Keys.E;
-    private int DOWN = Input.Keys.Q;
-    private int SHIFT = Input.Keys.SHIFT_LEFT;
+    private Vector3 targetRotation;
 
-    public GodCamera(float fieldOfView, float viewportWidth, float viewportHeight) {
+    public PivotCamera(float fieldOfView, float viewportWidth, float viewportHeight) {
         super(fieldOfView, viewportWidth, viewportHeight);
 
         targetDirection.set(0, 0, -1);
         targetUp.set(0, 1, 0);
         targetPosition.set(0, 0, 0);
 
+        near = 0.1f;
+        far = 10000f;
+
         addInputAndGestureListener(this, this);
     }
 
-    @Override
-    public void update(float delta) {
-        updateKey(delta);
-        super.update(delta);
+    public void setTargetRotation(Vector3 targetRotation){
+        this.targetRotation = targetRotation;
+        moveToLooktAt(tmp.set(targetRotation).sub(targetPosition).nor());
     }
 
     /**** InputProcessor ****/
 
-    public void updateKey (float deltaTime) {
-        if (keys.containsKey(SHIFT)) {
-            factor = 4;
-        }else{
-            factor = 1;
-        }
-        if (keys.containsKey(FORWARD)) {
-            tmp.set(targetDirection).nor().scl(deltaTime * velocity * factor);
-            targetPosition.add(tmp);
-        }
-        if (keys.containsKey(BACKWARD)) {
-            tmp.set(targetDirection).nor().scl(-deltaTime * velocity * factor);
-            targetPosition.add(tmp);
-        }
-        if (keys.containsKey(STRAFE_LEFT)) {
-            tmp.set(targetDirection).crs(targetUp).nor().scl(-deltaTime * velocity * factor);
-            targetPosition.add(tmp);
-        }
-        if (keys.containsKey(STRAFE_RIGHT)) {
-            tmp.set(targetDirection).crs(targetUp).nor().scl(deltaTime * velocity * factor);
-            targetPosition.add(tmp);
-        }
-        if (keys.containsKey(UP)) {
-            tmp.set(targetUp).nor().scl(deltaTime * velocity * factor);
-            targetPosition.add(tmp);
-        }
-        if (keys.containsKey(DOWN)) {
-            tmp.set(targetUp).nor().scl(-deltaTime * velocity * factor);
-            targetPosition.add(tmp);
-        }
-    }
-
-
     @Override
     public boolean keyDown(int keycode) {
-        keys.put(keycode, keycode);
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        keys.remove(keycode, 0);
         return false;
     }
 
@@ -94,12 +53,9 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
         return false;
     }
 
-    private float startX, startY;
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         buttonTouchDown = button;
-        startX = screenX;
-        startY = screenY;
         return false;
     }
 
@@ -111,24 +67,32 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if (buttonTouchDown == Input.Buttons.LEFT) {
-            drag(screenX, screenY);
+            drag();
         }
         return false;
     }
 
+    private final Quaternion deltaRotation = new Quaternion();
+
     public Vector3 tmp2 = new Vector3();
-    public void drag(float screenX, float screenY) {
-        float deltaX = (screenX - startX) / Gdx.graphics.getWidth();
-        float deltaY = (startY - screenY) / Gdx.graphics.getHeight();
-        startX = screenX;
-        startY = screenY;
+    public void drag() {
+        float deltaX = -Gdx.input.getDeltaX() * degreesPerPixel;
+        float deltaY = -Gdx.input.getDeltaY() * degreesPerPixel;
         if(targetUp.y < 0){
             deltaX = -deltaX;
-            //deltaY = -deltaY;
         }
         tmp.set(targetDirection).crs(targetUp).nor();
-        rotateAround(targetPosition, tmp.nor(), deltaY * 360);
-        rotateAround(targetPosition, Vector3.Y, deltaX * -360);
+        deltaRotation.setEulerAngles(deltaX, deltaY * tmp.x, deltaY * tmp.z);
+        rotateAround(targetRotation, deltaRotation);
+    }
+
+    public void rotateAround(Vector3 point, Quaternion quat) {
+        tmp.set(point).sub(targetPosition);
+        targetPosition.add(tmp);
+        quat.transform(targetDirection);
+        quat.transform(targetUp);
+        quat.transform(tmp);
+        targetPosition.add(-tmp.x, -tmp.y, -tmp.z);
     }
 
     public void rotateAround (Vector3 point, Vector3 axis, float angle) {
@@ -156,7 +120,13 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
 
     @Override
     public boolean scrolled(int amount) {
+        zoom(amount * 8f);
         return false;
+    }
+
+    private void zoom(float value){
+        tmp.set(targetDirection).nor().scl(-value);
+        targetPosition.add(tmp);
     }
 
     @Override
@@ -181,7 +151,7 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        drag(x, y);
+        drag();
         return false;
     }
 
@@ -195,9 +165,14 @@ public class GodCamera extends GhostCamera implements GestureDetector.GestureLis
         return false;
     }
 
+    float lastZoom;
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-        return false;
+        if(lastZoom == 0) lastZoom = pointer1.dst(pointer2);
+        if(lastZoom > pointer1.dst(pointer2)) zoom(2);
+        if(lastZoom < pointer1.dst(pointer2)) zoom(-2);
+        lastZoom = pointer1.dst(pointer2);
+        return true;
     }
 
     @Override

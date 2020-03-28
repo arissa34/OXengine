@@ -17,7 +17,7 @@ import rma.ox.engine.ui.gui.utils.LabelUtils;
 public class TabGroup extends ScrollPane {
 
     public interface TabListener{
-        void onSelected(int index);
+        boolean onSelected(int index);
     }
 
     private Table table;

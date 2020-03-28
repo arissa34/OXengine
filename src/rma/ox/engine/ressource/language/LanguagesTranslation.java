@@ -5,18 +5,20 @@ import com.badlogic.gdx.utils.I18NBundle;
 import java.util.Locale;
 import rma.ox.engine.settings.SettingsHelper;
 
-public class Languages {
+public class LanguagesTranslation {
 
-    private static String PATH_STRINGS = "data/lang/strings";
-    private static I18NBundle bundle;
-    private static Locale locale;
+    private String path;
+    private I18NBundle bundle;
+    private Locale locale;
+    private boolean isInternal;
 
-    public static void init() {
-        init(PATH_STRINGS);
+    public LanguagesTranslation(String path, boolean isInternal){
+        this.path = path;
+        this.isInternal = isInternal;
+        init();
     }
 
-    public static void init(String path) {
-        PATH_STRINGS = path;
+    private void init() {
         I18NBundle.setExceptionOnMissingKey(false);
         I18NBundle.setSimpleFormatter(true);
         String language = SettingsHelper.get().getLanguage();
@@ -25,32 +27,40 @@ public class Languages {
         } else {
             locale = new Locale(language);
         }
-        bundle = I18NBundle.createBundle(Gdx.files.internal(PATH_STRINGS), locale);
+        createBundle();
     }
 
     /**
      * @param language example "en" or "fr"
      */
-    public static void changeLanguage(String language){
+    public void changeLanguage(String language){
         if(language == null || language.isEmpty()) return;
 
         locale = new Locale(language);
         SettingsHelper.get().setLanguage(locale);
-        bundle = I18NBundle.createBundle(Gdx.files.internal(PATH_STRINGS), locale);
+        createBundle();
+    }
+
+    private void createBundle(){
+        if(isInternal){
+            bundle = I18NBundle.createBundle(Gdx.files.internal(path), locale);
+        }else {
+            bundle = I18NBundle.createBundle(Gdx.files.local(path), locale);
+        }
     }
 
     /**
      * Libgdx file syntaxe (use {0} for args, start at 0):
      * myKey=Best - My key is {0}
      * <p>
-     * in java call: Languages.get("myKey", "Coucou");
+     * in java call: LanguagesTranslation.get("myKey", "Coucou");
      * result: "My key is Coucou"
      * <p>
      * assets/strings/
      * -strings.properties (default file)
      * -strings_fr.properties OR strings_fr_FR.properties
      */
-    public static String get(String key, Object... args) {
+    public String get(String key, Object... args) {
         if (bundle == null) {
             return "BUNDLE NULL";
         }

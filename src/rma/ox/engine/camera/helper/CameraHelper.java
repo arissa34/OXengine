@@ -1,11 +1,17 @@
 package rma.ox.engine.camera.helper;
 
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ArrayMap;
 
 import rma.ox.engine.camera.FrontalCamera;
 import rma.ox.engine.camera.GhostCamera;
 import rma.ox.engine.camera.GodCamera;
+import rma.ox.engine.camera.PivotCamera;
+import rma.ox.engine.camera.controler.AbsController;
+import rma.ox.engine.camera.controler.FrontalController;
+import rma.ox.engine.camera.controler.GodController;
+import rma.ox.engine.camera.controler.PivotController;
 import rma.ox.engine.settings.SettingsHelper;
 
 public class CameraHelper {
@@ -19,50 +25,83 @@ public class CameraHelper {
 
     /*******************************/
 
-    private GhostCamera defaultCamera;
-    private FrontalCamera frontalCamera;
-    private GodCamera godCamera;
+    private GhostCamera camera;
+    private AbsController defaultController;
+
+    private PivotController pivotController;
+    private GodController godController;
+    private FrontalController frontalController;
 
     public CameraHelper(){
+        camera = new GhostCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
+        camera.targetPosition.set(0, 50, 600);
+        camera.snapToTarget();
         setGodCamera();
-        defaultCamera.targetPosition.set(0, 50, 200);
-    }
-
-    public void update(float delta){
-        getCamera().update(delta);
     }
 
     public GhostCamera getCamera(){
-        return defaultCamera;
+        return camera;
     }
 
-    public void setFrontalCamera(Matrix4 targetToFollow){
-        if(frontalCamera == null){
-            frontalCamera  = new FrontalCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
+    public void update(float delta){
+        if(defaultController != null) {
+            defaultController.update(delta);
         }
-        if(defaultCamera != null){
-            passInfo(godCamera, defaultCamera);
-        }
-        defaultCamera = frontalCamera;
-        frontalCamera.setTransformToFollow(targetToFollow);
-        frontalCamera.initPosition();
+        getCamera().update(delta);
     }
 
-    public void setGodCamera(){
-        if(godCamera == null){
-            godCamera = new GodCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
+    public GhostCamera setGodCamera(){
+        if(godController == null){
+            godController = new GodController(camera);
         }
-        if(defaultCamera != null){
-            passInfo(godCamera, defaultCamera);
-        }
-        defaultCamera = godCamera;
+        camera.far = 1000f;
+        activateController(godController);
+        return camera;
     }
 
-    private void passInfo(GhostCamera newCam, GhostCamera oldCam){
-        newCam.targetPosition.set(oldCam.targetPosition);
-        newCam.targetDirection.set(oldCam.targetDirection);
-        newCam.targetUp.set(oldCam.targetUp);
-        newCam.snapToTarget();
+    public GhostCamera setFrontalCamera(Matrix4 targetToFollow){
+        if(frontalController == null){
+            frontalController = new FrontalController(camera);
+        }
+        camera.far = 1000f;
+        frontalController.setTransformToFollow(targetToFollow);
+        frontalController.initPosition();
+        activateController(frontalController);
+        return camera;
+    }
+
+    public GhostCamera setPivotCamera(Vector3 pivotPos){
+        if(pivotController == null){
+            pivotController = new PivotController(camera);
+        }
+        camera.far = 10000f;
+        pivotController.setTargetRotation(pivotPos);
+        activateController(pivotController);
+        return camera;
+    }
+
+    private void activateController(AbsController newController){
+        if(defaultController != null) {
+            defaultController.disable();
+        }
+        defaultController = newController;
+        defaultController.enable();
+    }
+
+    public void disableTouch(){
+        if(defaultController != null) {
+            defaultController.disable();
+        }
+    }
+
+    public void enableTouch(){
+        if(defaultController != null) {
+            defaultController.enable();
+        }
+    }
+
+    public AbsController getDefaultController(){
+        return defaultController;
     }
 
 }
