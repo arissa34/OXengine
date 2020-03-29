@@ -37,7 +37,7 @@ public class GhostCamera extends Camera {
         targetFieldOfView = fieldOfView;
         isLerping = true;
 
-        near = 1f;
+        near = 0.1f;
         far = 1000f;
 
         update();
