@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import rma.ox.engine.camera.GhostCamera;
+import rma.ox.engine.utils.Logx;
 
 public class PivotController extends AbsController {
 
@@ -28,6 +29,8 @@ public class PivotController extends AbsController {
     public void update(float delta) {
 
     }
+
+    /**** InputProcessor ****/
 
     @Override
     public boolean keyDown(int keycode) {
@@ -65,7 +68,6 @@ public class PivotController extends AbsController {
 
     private final Quaternion deltaRotation = new Quaternion();
 
-    public Vector3 tmp2 = new Vector3();
     public void drag() {
         float deltaX = -Gdx.input.getDeltaX() * degreesPerPixel;
         float deltaY = -Gdx.input.getDeltaY() * degreesPerPixel;
@@ -142,6 +144,7 @@ public class PivotController extends AbsController {
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
+        drag();
         return false;
     }
 
@@ -155,9 +158,14 @@ public class PivotController extends AbsController {
         return false;
     }
 
+    float lastZoom;
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-        return false;
+        if(lastZoom == 0) lastZoom = pointer1.dst(pointer2);
+        if(lastZoom > pointer1.dst(pointer2)) zoom(2);
+        if(lastZoom < pointer1.dst(pointer2)) zoom(-2);
+        lastZoom = pointer1.dst(pointer2);
+        return true;
     }
 
     @Override

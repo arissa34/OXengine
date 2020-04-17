@@ -109,7 +109,6 @@ public class GodController extends AbsController {
         return false;
     }
 
-    public Vector3 tmp2 = new Vector3();
     public void drag(float screenX, float screenY) {
         float deltaX = (screenX - startX) / Gdx.graphics.getWidth();
         float deltaY = (startY - screenY) / Gdx.graphics.getHeight();

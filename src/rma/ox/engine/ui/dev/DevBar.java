@@ -13,17 +13,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.StringBuilder;
 
 import rma.ox.engine.core.observer.DataNotify;
 import rma.ox.engine.core.observer.Observable;
 import rma.ox.engine.core.observer.ObservableState;
 import rma.ox.engine.core.observer.Observer;
 import rma.ox.engine.core.threading.RunnableThread;
-import rma.ox.engine.renderable.manager.StageManager;
 import rma.ox.engine.settings.Config;
 import rma.ox.engine.ui.gui.IGui;
 import rma.ox.engine.ui.gui.notification.InAppNotification;
-import rma.ox.engine.ui.gui.toast.Toast;
 import rma.ox.engine.ui.gui.utils.DrawableUtils;
 import rma.ox.engine.ui.gui.utils.LabelUtils;
 import rma.ox.engine.utils.Logx;
@@ -32,7 +31,7 @@ public class DevBar extends Table implements IGui, Observer {
 
     private Label.LabelStyle labelStyle;
     private Label fpsLabel;
-    private StringBuffer fpsString;
+    private StringBuilder fpsString;
     private Button versionLabel;
     private Button logBtn;
     private Button OxBtn;
@@ -78,7 +77,7 @@ public class DevBar extends Table implements IGui, Observer {
 
         labelStyle = new Label.LabelStyle(bitmapFont, Color.WHITE);
 
-        fpsString = new StringBuffer();
+        fpsString = new StringBuilder();
         fpsLabel = newLabel("FPS : 00");
 
         devMainMenu = new DevMainMenu(stage, "OXEngine", bitmapFont);
@@ -180,7 +179,7 @@ public class DevBar extends Table implements IGui, Observer {
         } else {
             fpsLabel.setColor(Color.RED);
         }
-        fpsString.setLength(0);
+        fpsString.clear();
         fpsString.append("FPS : ");
         fpsString.append(fps);
         fpsLabel.setText(fpsString);

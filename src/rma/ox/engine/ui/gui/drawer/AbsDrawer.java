@@ -110,8 +110,7 @@ public abstract class AbsDrawer extends Table {
 
     private Action completeAction = new Action(){
         public boolean act( float delta ) {
-            isShown = false;
-            setVisible(false);
+            setVisible(isShown = false);
             if(listener != null){
                 listener.onClosed();
             }
@@ -120,6 +119,8 @@ public abstract class AbsDrawer extends Table {
     };
 
     protected void forceHide(){
+        if(getStage() == null) return;
+        isShown = false;
         if(Align.isLeft(align)){
             setPosition(-getWidth(), 0);
         }else if(Align.isRight(align)){
@@ -129,34 +130,39 @@ public abstract class AbsDrawer extends Table {
         }else if(Align.isTop(align)){
 
         }
-        isShown = false;
     }
 
-    protected void forceShow(){
-        if(Align.isLeft(align)){
+    protected void forceShow() {
+        if (getStage() == null) return;
+        isShown = true;
+        if (Align.isLeft(align)) {
             setPosition(0, 0);
-        }else if(Align.isRight(align)){
-            setPosition(getStage().getWidth()-getWidth(), 0);
-        }else if(Align.isBottom(align)){
+        } else if (Align.isRight(align)) {
+            setPosition(getStage().getWidth() - getWidth(), 0);
+        } else if (Align.isBottom(align)) {
 
-        }else if(Align.isTop(align)){
+        } else if (Align.isTop(align)) {
 
         }
-        isShown = true;
     }
 
     @Override
+    public void invalidate() {
+        super.invalidate();
+    }
+
+    @Override
+    public void invalidateHierarchy() {
+        super.invalidateHierarchy();
+    }
+
+
+    @Override
     public void layout() {
-        if(isFirstLaunch){
+        if(isShown)
+            forceShow();
+        else
             forceHide();
-            isFirstLaunch = false;
-        }else if(isShown){
-            if(Align.isLeft(align)){
-                setPosition(0, 0);
-            }else if(Align.isRight(align)){
-                setPosition(getStage().getWidth()-getWidth(), 0);
-            }
-        }
         super.layout();
     }
 }

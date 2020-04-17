@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.StringBuilder;
 
 import rma.ox.engine.update.UpdatableMainThread;
 import rma.ox.engine.update.UpdateManager;
@@ -111,12 +112,12 @@ public class DevGLProfile extends AbsDevMenu implements UpdatableMainThread {
         javaHeap = (int) (Gdx.app.getJavaHeap() / mb);
         nativeHeap = (int) (Gdx.app.getNativeHeap() / mb);
 
-        callsSB.setLength(0);
-        drawCallsSB.setLength(0);
-        shadersSB.setLength(0);
-        textureSB.setLength(0);
-        javaHeapSB.setLength(0);
-        nativeHeapSB.setLength(0);
+        callsSB.clear();
+        drawCallsSB.clear();
+        shadersSB.clear();
+        textureSB.clear();
+        javaHeapSB.clear();
+        nativeHeapSB.clear();
 
         callsLbl.setText(callsSB.append("Calls : ").append(calls));
         drawCallsLbl.setText(drawCallsSB.append("Draw calls : ").append(drawCalls));

@@ -6,13 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Align;
@@ -20,7 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
-public class MyTable extends Table {
+public class CustomTable extends Table {
     static public Color debugTableColor = new Color(0, 0, 1, 1);
     static public Color debugCellColor = new Color(1, 0, 0, 1);
     static public Color debugActorColor = new Color(0, 1, 0, 1);
@@ -49,20 +42,23 @@ public class MyTable extends Table {
     private float[] expandWidth, expandHeight;
 
     Value padTop = backgroundTop, padLeft = backgroundLeft, padBottom = backgroundBottom, padRight = backgroundRight;
-    public int align = Align.center;
+    protected int align = Align.center;
+
+    CustomTable.Debug debug = CustomTable.Debug.none;
+    Array<CustomTable.DebugRect> debugRects;
 
     Drawable background;
     private boolean clip;
     private Skin skin;
     boolean round = true;
 
-    public MyTable () {
+    public CustomTable () {
         this(null);
     }
 
     /** Creates a table with a skin, which enables the {@link #add(CharSequence)} and {@link #add(CharSequence, String)} methods to
      * be used. */
-    public MyTable (Skin skin) {
+    public CustomTable (Skin skin) {
         this.skin = skin;
 
         cellDefaults = obtainCell();
@@ -110,10 +106,10 @@ public class MyTable extends Table {
     }
 
     /** Sets the background drawable from the skin and adjusts the table's padding to match the background. This may only be called
-     * if {@link Table#Table(Skin)} or {@link #setSkin(Skin)} was used.
+     * if {@link CustomTable#CustomTable(Skin)} or {@link #setSkin(Skin)} was used.
      * @see #setBackground(Drawable) */
     public void setBackground (String drawableName) {
-        if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
+        if (skin == null) throw new IllegalStateException("CustomTable must have a skin set to use this method.");
         setBackground(skin.getDrawable(drawableName));
     }
 
@@ -127,6 +123,18 @@ public class MyTable extends Table {
             invalidateHierarchy();
         else if (padTopOld != padTopNew || padLeftOld != padLeftNew || padBottomOld != padBottomNew || padRightOld != padRightNew)
             invalidate();
+    }
+
+    /** @see #setBackground(Drawable) */
+    public CustomTable background (Drawable background) {
+        setBackground(background);
+        return this;
+    }
+
+    /** @see #setBackground(String) */
+    public CustomTable background (String drawableName) {
+        setBackground(drawableName);
+        return this;
     }
 
     public Drawable getBackground () {
@@ -199,7 +207,6 @@ public class MyTable extends Table {
             cell.column = 0;
             cell.row = 0;
         }
-
         cells.add(cell);
 
         cell.set(cellDefaults);
@@ -214,33 +221,33 @@ public class MyTable extends Table {
         return cell;
     }
 
-    public MyTable add (Actor... actors) {
+    public CustomTable add (Actor... actors) {
         for (int i = 0, n = actors.length; i < n; i++)
             add(actors[i]);
         return this;
     }
 
-    /** Adds a new cell with a label. This may only be called if {@link Table#Table(Skin)} or {@link #setSkin(Skin)} was used. */
+    /** Adds a new cell with a label. This may only be called if {@link CustomTable#CustomTable(Skin)} or {@link #setSkin(Skin)} was used. */
     public Cell<Label> add (CharSequence text) {
-        if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
+        if (skin == null) throw new IllegalStateException("CustomTable must have a skin set to use this method.");
         return add(new Label(text, skin));
     }
 
-    /** Adds a new cell with a label. This may only be called if {@link Table#Table(Skin)} or {@link #setSkin(Skin)} was used. */
+    /** Adds a new cell with a label. This may only be called if {@link CustomTable#CustomTable(Skin)} or {@link #setSkin(Skin)} was used. */
     public Cell<Label> add (CharSequence text, String labelStyleName) {
-        if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
+        if (skin == null) throw new IllegalStateException("CustomTable must have a skin set to use this method.");
         return add(new Label(text, skin.get(labelStyleName, Label.LabelStyle.class)));
     }
 
-    /** Adds a new cell with a label. This may only be called if {@link Table#Table(Skin)} or {@link #setSkin(Skin)} was used. */
+    /** Adds a new cell with a label. This may only be called if {@link CustomTable#CustomTable(Skin)} or {@link #setSkin(Skin)} was used. */
     public Cell<Label> add (CharSequence text, String fontName, Color color) {
-        if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
+        if (skin == null) throw new IllegalStateException("CustomTable must have a skin set to use this method.");
         return add(new Label(text, new Label.LabelStyle(skin.getFont(fontName), color)));
     }
 
-    /** Adds a new cell with a label. This may only be called if {@link Table#Table(Skin)} or {@link #setSkin(Skin)} was used. */
+    /** Adds a new cell with a label. This may only be called if {@link CustomTable#CustomTable(Skin)} or {@link #setSkin(Skin)} was used. */
     public Cell<Label> add (CharSequence text, String fontName, String colorName) {
-        if (skin == null) throw new IllegalStateException("Table must have a skin set to use this method.");
+        if (skin == null) throw new IllegalStateException("CustomTable must have a skin set to use this method.");
         return add(new Label(text, new Label.LabelStyle(skin.getFont(fontName), skin.getColor(colorName))));
     }
 
@@ -299,7 +306,7 @@ public class MyTable extends Table {
         padBottom = backgroundBottom;
         padRight = backgroundRight;
         align = Align.center;
-        debug(Table.Debug.none);
+        debug(CustomTable.Debug.none);
         cellDefaults.reset();
         for (int i = 0, n = columnDefaults.size; i < n; i++) {
             Cell columnCell = columnDefaults.get(i);
@@ -399,8 +406,8 @@ public class MyTable extends Table {
         return cellDefaults;
     }
 
-    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified id. */
-    public MyTable pad (Value pad) {
+    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified value. */
+    public CustomTable pad (Value pad) {
         if (pad == null) throw new IllegalArgumentException("pad cannot be null.");
         padTop = pad;
         padLeft = pad;
@@ -410,7 +417,7 @@ public class MyTable extends Table {
         return this;
     }
 
-    public MyTable pad (Value top, Value left, Value bottom, Value right) {
+    public CustomTable pad (Value top, Value left, Value bottom, Value right) {
         if (top == null) throw new IllegalArgumentException("top cannot be null.");
         if (left == null) throw new IllegalArgumentException("left cannot be null.");
         if (bottom == null) throw new IllegalArgumentException("bottom cannot be null.");
@@ -424,7 +431,7 @@ public class MyTable extends Table {
     }
 
     /** Padding at the top edge of the table. */
-    public MyTable padTop (Value padTop) {
+    public CustomTable padTop (Value padTop) {
         if (padTop == null) throw new IllegalArgumentException("padTop cannot be null.");
         this.padTop = padTop;
         sizeInvalid = true;
@@ -432,7 +439,7 @@ public class MyTable extends Table {
     }
 
     /** Padding at the left edge of the table. */
-    public MyTable padLeft (Value padLeft) {
+    public CustomTable padLeft (Value padLeft) {
         if (padLeft == null) throw new IllegalArgumentException("padLeft cannot be null.");
         this.padLeft = padLeft;
         sizeInvalid = true;
@@ -440,7 +447,7 @@ public class MyTable extends Table {
     }
 
     /** Padding at the bottom edge of the table. */
-    public MyTable padBottom (Value padBottom) {
+    public CustomTable padBottom (Value padBottom) {
         if (padBottom == null) throw new IllegalArgumentException("padBottom cannot be null.");
         this.padBottom = padBottom;
         sizeInvalid = true;
@@ -448,20 +455,20 @@ public class MyTable extends Table {
     }
 
     /** Padding at the right edge of the table. */
-    public MyTable padRight (Value padRight) {
+    public CustomTable padRight (Value padRight) {
         if (padRight == null) throw new IllegalArgumentException("padRight cannot be null.");
         this.padRight = padRight;
         sizeInvalid = true;
         return this;
     }
 
-    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified id. */
-    public MyTable pad (float pad) {
+    /** Sets the padTop, padLeft, padBottom, and padRight around the table to the specified value. */
+    public CustomTable pad (float pad) {
         pad(Value.Fixed.valueOf(pad));
         return this;
     }
 
-    public MyTable pad (float top, float left, float bottom, float right) {
+    public CustomTable pad (float top, float left, float bottom, float right) {
         padTop = Value.Fixed.valueOf(top);
         padLeft = Value.Fixed.valueOf(left);
         padBottom = Value.Fixed.valueOf(bottom);
@@ -471,28 +478,28 @@ public class MyTable extends Table {
     }
 
     /** Padding at the top edge of the table. */
-    public MyTable padTop (float padTop) {
+    public CustomTable padTop (float padTop) {
         this.padTop = Value.Fixed.valueOf(padTop);
         sizeInvalid = true;
         return this;
     }
 
     /** Padding at the left edge of the table. */
-    public MyTable padLeft (float padLeft) {
+    public CustomTable padLeft (float padLeft) {
         this.padLeft = Value.Fixed.valueOf(padLeft);
         sizeInvalid = true;
         return this;
     }
 
     /** Padding at the bottom edge of the table. */
-    public MyTable padBottom (float padBottom) {
+    public CustomTable padBottom (float padBottom) {
         this.padBottom = Value.Fixed.valueOf(padBottom);
         sizeInvalid = true;
         return this;
     }
 
     /** Padding at the right edge of the table. */
-    public MyTable padRight (float padRight) {
+    public CustomTable padRight (float padRight) {
         this.padRight = Value.Fixed.valueOf(padRight);
         sizeInvalid = true;
         return this;
@@ -500,65 +507,98 @@ public class MyTable extends Table {
 
     /** Alignment of the logical table within the table actor. Set to {@link Align#center}, {@link Align#top}, {@link Align#bottom}
      * , {@link Align#left}, {@link Align#right}, or any combination of those. */
-    public MyTable align (int align) {
+    public CustomTable align (int align) {
         this.align = align;
         return this;
     }
 
     /** Sets the alignment of the logical table within the table actor to {@link Align#center}. This clears any other alignment. */
-    public MyTable center () {
+    public CustomTable center () {
         align = Align.center;
         return this;
     }
 
     /** Adds {@link Align#top} and clears {@link Align#bottom} for the alignment of the logical table within the table actor. */
-    public MyTable top () {
+    public CustomTable top () {
         align |= Align.top;
         align &= ~Align.bottom;
         return this;
     }
 
     /** Adds {@link Align#left} and clears {@link Align#right} for the alignment of the logical table within the table actor. */
-    public MyTable left () {
+    public CustomTable left () {
         align |= Align.left;
         align &= ~Align.right;
         return this;
     }
 
     /** Adds {@link Align#bottom} and clears {@link Align#top} for the alignment of the logical table within the table actor. */
-    public MyTable bottom () {
+    public CustomTable bottom () {
         align |= Align.bottom;
         align &= ~Align.top;
         return this;
     }
 
     /** Adds {@link Align#right} and clears {@link Align#left} for the alignment of the logical table within the table actor. */
-    public MyTable right () {
+    public CustomTable right () {
         align |= Align.right;
         align &= ~Align.left;
         return this;
     }
 
     public void setDebug (boolean enabled) {
-        debug(enabled ? Table.Debug.all : Table.Debug.none);
+        debug(enabled ? CustomTable.Debug.all : CustomTable.Debug.none);
     }
 
-    public MyTable debug () {
+    public CustomTable debug () {
         super.debug();
         return this;
     }
 
-    public MyTable debugAll () {
+    public CustomTable debugAll () {
         super.debugAll();
         return this;
     }
 
     /** Turns on table debug lines. */
-    public MyTable debugTable () {
+    public CustomTable debugTable () {
         super.setDebug(true);
-        if (debug != Table.Debug.table) {
-            this.debug = Table.Debug.table;
+        if (debug != CustomTable.Debug.table) {
+            this.debug = CustomTable.Debug.table;
             invalidate();
+        }
+        return this;
+    }
+
+    /** Turns on cell debug lines. */
+    public CustomTable debugCell () {
+        super.setDebug(true);
+        if (debug != CustomTable.Debug.cell) {
+            this.debug = CustomTable.Debug.cell;
+            invalidate();
+        }
+        return this;
+    }
+
+    /** Turns on actor debug lines. */
+    public CustomTable debugActor () {
+        super.setDebug(true);
+        if (debug != CustomTable.Debug.actor) {
+            this.debug = CustomTable.Debug.actor;
+            invalidate();
+        }
+        return this;
+    }
+
+    /** Turns debug lines on or off. */
+    public CustomTable debug (CustomTable.Debug debug) {
+        super.setDebug(debug != CustomTable.Debug.none);
+        if (this.debug != debug) {
+            this.debug = debug;
+            if (debug == CustomTable.Debug.none)
+                clearDebugRects();
+            else
+                invalidate();
         }
         return this;
     }
@@ -722,7 +762,7 @@ public class MyTable extends Table {
         }
     }
 
-    public void computeSize () {
+    private void computeSize () {
         sizeInvalid = false;
 
         Array<Cell> cells = this.cells;
@@ -872,7 +912,6 @@ public class MyTable extends Table {
         tableMinHeight = 0;
         tablePrefWidth = 0;
         tablePrefHeight = 0;
-
         for (int i = 0; i < columns; i++) {
             tableMinWidth += columnMinWidth[i];
             tablePrefWidth += columnPrefWidth[i];
@@ -919,7 +958,7 @@ public class MyTable extends Table {
             columnWeightedWidth = columnMinWidth;
         else {
             float extraWidth = Math.min(totalGrowWidth, Math.max(0, layoutWidth - tableMinWidth));
-            columnWeightedWidth = MyTable.columnWeightedWidth = ensureSize(MyTable.columnWeightedWidth, columns);
+            columnWeightedWidth = CustomTable.columnWeightedWidth = ensureSize(CustomTable.columnWeightedWidth, columns);
             float[] columnMinWidth = this.columnMinWidth, columnPrefWidth = this.columnPrefWidth;
             for (int i = 0; i < columns; i++) {
                 float growWidth = columnPrefWidth[i] - columnMinWidth[i];
@@ -933,7 +972,7 @@ public class MyTable extends Table {
         if (totalGrowHeight == 0)
             rowWeightedHeight = rowMinHeight;
         else {
-            rowWeightedHeight = MyTable.rowWeightedHeight = ensureSize(MyTable.rowWeightedHeight, rows);
+            rowWeightedHeight = CustomTable.rowWeightedHeight = ensureSize(CustomTable.rowWeightedHeight, rows);
             float extraHeight = Math.min(totalGrowHeight, Math.max(0, layoutHeight - tableMinHeight));
             float[] rowMinHeight = this.rowMinHeight, rowPrefHeight = this.rowPrefHeight;
             for (int i = 0; i < rows; i++) {
@@ -944,8 +983,7 @@ public class MyTable extends Table {
         }
 
         // Determine actor and cell sizes (before expand or fill).
-        for (int i = cellCount-1; i >= 0; i--) {
-       // for (int i = 0; i < cellCount; i++) {
+        for (int i = 0; i < cellCount; i++) {
             Cell c = cells.get(i);
             int column = c.column, row = c.row;
             Actor a = c.actor;
@@ -1011,8 +1049,7 @@ public class MyTable extends Table {
         }
 
         // Distribute any additional width added by colspanned cells to the columns spanned.
-        for (int i = cellCount-1; i >= 0; i--) {
-        //for (int i = 0; i < cellCount; i++) {
+        for (int i = 0; i < cellCount; i++) {
             Cell c = cells.get(i);
             int colspan = c.colspan;
             if (colspan == 1) continue;
@@ -1052,8 +1089,7 @@ public class MyTable extends Table {
 
         // Position actors within cells.
         float currentX = x, currentY = y;
-        for (int i = cellCount-1; i >= 0; i--) {
-        //for (int i = 0; i < cellCount; i++) {
+        for (int i = 0; i < cellCount; i++) {
             Cell c = cells.get(i);
 
             float spannedCellWidth = 0;
@@ -1098,20 +1134,19 @@ public class MyTable extends Table {
         }
 
         // Store debug rectangles.
-        if (debug == Table.Debug.none) return;
+        if (debug == CustomTable.Debug.none) return;
         clearDebugRects();
         currentX = x;
         currentY = y;
-        if (debug == Table.Debug.table || debug == Table.Debug.all) {
+        if (debug == CustomTable.Debug.table || debug == CustomTable.Debug.all) {
             addDebugRect(layoutX, layoutY, layoutWidth, layoutHeight, debugTableColor);
             addDebugRect(x, y, tableWidth - hpadding, tableHeight - vpadding, debugTableColor);
         }
-        for (int i = cellCount-1; i >= 0; i--) {
-        //for (int i = 0; i < cellCount; i++) {
+        for (int i = 0; i < cellCount; i++) {
             Cell c = cells.get(i);
 
             // Actor bounds.
-            if (debug == Table.Debug.actor || debug == Table.Debug.all)
+            if (debug == CustomTable.Debug.actor || debug == CustomTable.Debug.all)
                 addDebugRect(c.actorX, c.actorY, c.actorWidth, c.actorHeight, debugActorColor);
 
             // Cell bounds.
@@ -1120,7 +1155,7 @@ public class MyTable extends Table {
                 spannedCellWidth += columnWidth[column];
             spannedCellWidth -= c.computedPadLeft + c.computedPadRight;
             currentX += c.computedPadLeft;
-            if (debug == Table.Debug.cell || debug == Table.Debug.all) {
+            if (debug == CustomTable.Debug.cell || debug == CustomTable.Debug.all) {
                 addDebugRect(currentX, currentY + c.computedPadTop, spannedCellWidth,
                         rowHeight[c.row] - c.computedPadTop - c.computedPadBottom, debugCellColor);
             }
@@ -1135,13 +1170,13 @@ public class MyTable extends Table {
 
     private void clearDebugRects () {
         if (debugRects == null) return;
-        Table.DebugRect.pool.freeAll(debugRects);
+        CustomTable.DebugRect.pool.freeAll(debugRects);
         debugRects.clear();
     }
 
     private void addDebugRect (float x, float y, float w, float h, Color color) {
         if (debugRects == null) debugRects = new Array();
-        Table.DebugRect rect = Table.DebugRect.pool.obtain();
+        CustomTable.DebugRect rect = CustomTable.DebugRect.pool.obtain();
         rect.color = color;
         rect.set(x, getHeight() - y - h, w, h);
         debugRects.add(rect);
@@ -1186,7 +1221,7 @@ public class MyTable extends Table {
             y = getY();
         }
         for (int i = 0, n = debugRects.size; i < n; i++) {
-            Table.DebugRect debugRect = debugRects.get(i);
+            CustomTable.DebugRect debugRect = debugRects.get(i);
             shapes.setColor(debugRect.color);
             shapes.rect(x + debugRect.x, y + debugRect.y, debugRect.width, debugRect.height);
         }
@@ -1197,11 +1232,22 @@ public class MyTable extends Table {
         return skin;
     }
 
+    /** @author Nathan Sweet */
+    static public class DebugRect extends Rectangle {
+        static Pool<CustomTable.DebugRect> pool = Pools.get(CustomTable.DebugRect.class);
+        Color color;
+    }
+
+    /** @author Nathan Sweet */
+    static public enum Debug {
+        none, all, table, cell, actor
+    }
+
     /** Value that is the top padding of the table's background.
      * @author Nathan Sweet */
     static public Value backgroundTop = new Value() {
         public float get (Actor context) {
-            Drawable background = ((MyTable)context).background;
+            Drawable background = ((CustomTable)context).background;
             return background == null ? 0 : background.getTopHeight();
         }
     };
@@ -1210,7 +1256,7 @@ public class MyTable extends Table {
      * @author Nathan Sweet */
     static public Value backgroundLeft = new Value() {
         public float get (Actor context) {
-            Drawable background = ((MyTable)context).background;
+            Drawable background = ((CustomTable)context).background;
             return background == null ? 0 : background.getLeftWidth();
         }
     };
@@ -1219,7 +1265,7 @@ public class MyTable extends Table {
      * @author Nathan Sweet */
     static public Value backgroundBottom = new Value() {
         public float get (Actor context) {
-            Drawable background = ((MyTable)context).background;
+            Drawable background = ((CustomTable)context).background;
             return background == null ? 0 : background.getBottomHeight();
         }
     };
@@ -1228,7 +1274,7 @@ public class MyTable extends Table {
      * @author Nathan Sweet */
     static public Value backgroundRight = new Value() {
         public float get (Actor context) {
-            Drawable background = ((MyTable)context).background;
+            Drawable background = ((CustomTable)context).background;
             return background == null ? 0 : background.getRightWidth();
         }
     };

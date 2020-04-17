@@ -9,10 +9,12 @@ import com.badlogic.gdx.math.Vector3;
 
 import rma.ox.engine.camera.GhostCamera;
 import rma.ox.engine.settings.Config;
+import rma.ox.engine.utils.Logx;
 
 public abstract class AbsController implements GestureDetector.GestureListener, InputProcessor {
 
     protected static Vector3 tmp = new Vector3();
+    protected static Vector3 tmp2 = new Vector3();
 
     protected GhostCamera camera;
 
