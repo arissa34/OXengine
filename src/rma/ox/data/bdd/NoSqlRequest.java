@@ -124,12 +124,13 @@ public class NoSqlRequest<T> implements Pool.Poolable {
                     isRequestSuccess = NoSqlUtils.remove(db, object);
                     break;
             }
-            if(isRequestSuccess) {
+            if(isRequestSuccess && server != null) {
                 MessageManager.getInstance().dispatchMessage(server, command.id, result);
-            }else {
+            }else if(server != null) {
                 MessageManager.getInstance().dispatchMessage(server, NoSqlCommand.ERROR.id, NoSqlUtils.getError());
             }
         }
+        db.commit();
         noSqlPool.free(this);
         return true;
     }

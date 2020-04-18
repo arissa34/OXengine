@@ -31,6 +31,7 @@ public class NoSqlDB implements LifecycleListener {
 
         NitriteBuilder builder = Nitrite.builder();
         builder.filePath(dbPath);
+
         if(!isWritable) builder.readOnly();
         if(compressed) builder.disableAutoCompact();
 
@@ -111,6 +112,10 @@ public class NoSqlDB implements LifecycleListener {
                 NoSqlRequest.obtain(this, server)
                 .remove(object)
         );
+    }
+
+    public void commit(){
+        db.commit();
     }
 
     @Override
