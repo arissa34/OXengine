@@ -167,17 +167,17 @@ public class FrontalController extends AbsController {
     }
 
     public void dragX(float deltaX){
-        if (getXpos() + deltaX > getMinX() && getXpos() + deltaX < getMaxX()) {
+        //if (getXpos() + deltaX > getMinX() && getXpos() + deltaX < getMaxX()) {
             //camera.targetDirection.mulAdd(directionToFollow, -(deltaX));
             camera.targetPosition.mulAdd(directionToFollow, (deltaX));
-        }
+        //}
     }
 
     public void dragY(float deltaY){
-        if (getYpos() - deltaY > getMinY() && getYpos() - deltaY < getMaxY()) {
+        //if (getYpos() - deltaY > getMinY() && getYpos() - deltaY < getMaxY()) {
             //camera.targetDirection.mulAdd(camera.targetUp, (-deltaY));
             camera.targetPosition.mulAdd(camera.targetUp, (-deltaY));
-        }
+        //}
     }
 
     /**** GESTURE ****/
@@ -198,10 +198,10 @@ public class FrontalController extends AbsController {
         //Logx.d(this.getClass(), "zoomValue : "+zoomValue);
         //Logx.d(this.getClass(), "------------------");
         camera.update();
-        if (getZpos() + zoomValue >= minZ && getZpos() + zoomValue <= maxZ) {
+        //if (getZpos() + zoomValue >= minZ && getZpos() + zoomValue <= maxZ) {
             tmp.set(camera.targetPosition).mulAdd(leftToFollow, zoomValue);
             camera.targetPosition.set(tmp);
-        }
+        //}
     }
 
     @Override

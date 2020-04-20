@@ -132,7 +132,7 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
     public void randomPos(){
         setPosition(RandomUtils.getRandomFloat(-150, 150),
                 0,
-                RandomUtils.getRandomFloat(-150, 150));
+                RandomUtils.getRandomFloat(-150, 10));
     }
 
     public SkeletonRederable attachToWorld() {

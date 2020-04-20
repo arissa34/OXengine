@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -11,9 +12,9 @@ import rma.ox.engine.core.math.Vector3Utils;
 import rma.ox.engine.settings.Config;
 import rma.ox.engine.utils.Logx;
 
-public class GhostCamera extends Camera {
+public class GhostCamera extends PerspectiveCamera {
     /** the field of view of the height, in degrees **/
-    public float fieldOfView = 67;
+    public float fieldOfView;
 
     protected static Vector3 tmp = new Vector3();
     public Vector3 targetPosition;
@@ -59,19 +60,19 @@ public class GhostCamera extends Camera {
         updateTargetView();
     }
 
-    public void update(boolean updateFrustum){
-        float aspect = viewportWidth / viewportHeight;
-        projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
-        view.setToLookAt(position, tmp.set(position).add(direction), up);
-        combined.set(projection);
-        Matrix4.mul(combined.val, view.val);
+   //public void update(boolean updateFrustum){
+   //    float aspect = viewportWidth / viewportHeight;
+   //    projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
+   //    view.setToLookAt(position, tmp.set(position).add(direction), up);
+   //    combined.set(projection);
+   //    Matrix4.mul(combined.val, view.val);
 
-        if (updateFrustum) {
-            invProjectionView.set(combined);
-            Matrix4.inv(invProjectionView.val);
-            frustum.update(invProjectionView);
-        }
-    }
+   //    if (updateFrustum) {
+   //        invProjectionView.set(combined);
+   //        Matrix4.inv(invProjectionView.val);
+   //        frustum.update(invProjectionView);
+   //    }
+   //}
 
     public void updateTargetView(){
         targetView.setToLookAt(targetPosition, targetDirection, targetUp);
