@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.loaders.FontGeneratorLoader;
 import com.badlogic.gdx.assets.loaders.NoSqlDBLoader;
 import com.badlogic.gdx.assets.loaders.SkeletonLoader;
 import com.badlogic.gdx.assets.loaders.SkyboxLoader;
-import com.badlogic.gdx.assets.loaders.TextureAtlasLoader2;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -22,7 +21,6 @@ public class CustomManager extends AssetManager {
         setLoader(NoSqlDB.class, new NoSqlDBLoader(resolver));
         setLoader(BitmapFont.class, new FontGeneratorLoader(resolver));
         setLoader(SkyboxModel.class, new SkyboxLoader(resolver));
-        setLoader(TextureAtlas.class, new TextureAtlasLoader2(resolver));
     }
 
     public <T> void addAsset (final String fileName, Class<T> type, T asset) {

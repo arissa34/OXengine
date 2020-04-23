@@ -78,7 +78,7 @@ public class DevBar extends Table implements IGui, Observer {
         labelStyle = new Label.LabelStyle(bitmapFont, Color.WHITE);
 
         fpsString = new StringBuilder();
-        fpsLabel = newLabel("FPS : 00");
+        fpsLabel = newLabel("FPS : 999");
 
         devMainMenu = new DevMainMenu(stage, "OXEngine", bitmapFont);
         devGlProfile = new DevGLProfile(stage, "GL Profile", bitmapFont, glProfiler);

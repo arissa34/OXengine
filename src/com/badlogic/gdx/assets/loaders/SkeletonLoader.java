@@ -11,7 +11,6 @@ import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonData;
 import com.esotericsoftware.spine.SkeletonJson;
 
-import rma.ox.engine.core.utils.MainTextureAtlas;
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
 
@@ -21,7 +20,7 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
 
     //private FileHandle atlasFile;
     private FileHandle jsonFile;
-    //private String atlasFileName;
+    private String atlasFileName;
 
     public SkeletonLoader (FileHandleResolver resolver) {
         super(resolver);
@@ -30,7 +29,6 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
     @Override
     public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, SkeletonParameter parameter) {
         Array<AssetDescriptor> dependencies = new Array();
-        String atlasFileName;
         int i = fileName.lastIndexOf('.');
         if(parameter==null || parameter.atlasFileName == null){
             atlasFileName = fileName.substring(0,i) + ".atlas";
@@ -38,7 +36,7 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
             atlasFileName = parameter.atlasFileName;
         }
         Logx.e(getClass(), "+++ loadAsync SKELETON ATLAS "+atlasFileName);
-        dependencies.add(new AssetDescriptor(atlasFileName, TextureAtlas.class, new TextureAtlasLoader2.TextureAtlasParameter(false, true)));
+        dependencies.add(new AssetDescriptor(atlasFileName, TextureAtlas.class));
         return dependencies;
     }
 
@@ -52,7 +50,8 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
     public Skeleton loadSync(AssetManager manager, String fileName, FileHandle file, SkeletonParameter parameter) {
         Logx.e(getClass(), "+++ loadSync fileName "+fileName);
         Logx.e(getClass(), "+++ loadSync fileName getMainAltas "+fileName);
-        SkeletonData skeletonData = new SkeletonJson(MainTextureAtlas.get().getMainAltas()).readSkeletonData(jsonFile);
+        //SkeletonData skeletonData = new SkeletonJson(MainTextureAtlas.get().getMainAltas()).readSkeletonData(jsonFile);
+        SkeletonData skeletonData = new SkeletonJson(manager.get(atlasFileName, TextureAtlas.class)).readSkeletonData(jsonFile);
         return new Skeleton(skeletonData);
     }
 

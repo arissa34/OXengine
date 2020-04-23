@@ -46,12 +46,12 @@ public class DevGLProfile extends AbsDevMenu implements UpdatableMainThread {
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
 
-        callsLbl        =    new Label("", labelStyle);
-        drawCallsLbl    =    new Label("", labelStyle);
-        shadersLbl      =    new Label("", labelStyle);
-        textureLbl      =    new Label("", labelStyle);
-        javaHeapLbl     =    new Label("", labelStyle);
-        nativeHeapLbl     =    new Label("", labelStyle);
+        callsLbl        =    new Label("9999999999", labelStyle);
+        drawCallsLbl    =    new Label("9999999999", labelStyle);
+        shadersLbl      =    new Label("9999999999", labelStyle);
+        textureLbl      =    new Label("9999999999", labelStyle);
+        javaHeapLbl     =    new Label("9999999999", labelStyle);
+        nativeHeapLbl     =    new Label("9999999999", labelStyle);
 
         callsSB     = new StringBuilder();
         drawCallsSB = new StringBuilder();
