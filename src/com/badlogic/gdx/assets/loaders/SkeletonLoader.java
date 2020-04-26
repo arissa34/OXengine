@@ -11,7 +11,6 @@ import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonData;
 import com.esotericsoftware.spine.SkeletonJson;
 
-import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
 
 public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLoader.SkeletonParameter> {

@@ -22,43 +22,23 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Region;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.tools.texturepacker.TexturePacker.ProgressListener;
-import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.Json;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-
+import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
+
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
 
 /**
  * @author Nathan Sweet
@@ -105,25 +85,29 @@ public class HotTexturePacker extends TexturePacker {
         Pixmap image;
         int packedWidth;
         int packedHeight;
+        int origW;
+        int origH;
         int regionX;
         int regionY;
+        int offsetX;
+        int offsetY;
+        boolean isRotated;
     }
 
-    public void addImage(Pixmap image, String name, int w, int h, int rX, int rY) {
+    public void addImage(Pixmap image, String name, int w, int h, int origW, int origH, int rX, int rY, float offsetX, float offsetY, boolean isRotated) {
         InputImage inputImage = new InputImage();
         inputImage.image = image;
         inputImage.name = name;
         inputImage.packedWidth = w;
         inputImage.packedHeight = h;
+        inputImage.origW = origW;
+        inputImage.origH = origH;
         inputImage.regionX = rX;
         inputImage.regionY = rY;
-        inputImages.add(inputImage);
-    }
-
-    public void addImage(Pixmap image, String name) {
-        InputImage inputImage = new InputImage();
-        inputImage.image = image;
-        inputImage.name = name;
+        inputImage.offsetX = (int) offsetX;
+        inputImage.offsetY = (int) offsetY;
+        //Logx.e("++++ name : "+name+" offsetX : "+offsetX+ " offsetY : "+offsetY);
+        inputImage.isRotated = isRotated;
         inputImages.add(inputImage);
     }
 
@@ -135,6 +119,11 @@ public class HotTexturePacker extends TexturePacker {
                 }
             };
         }
+
+        File fileAtlas = new File("cache/mainAtlas.atlas");
+        if (fileAtlas.exists()) fileAtlas.delete();
+        File filePng = new File("cache/mainAtlas.png");
+        if (filePng.exists()) filePng.delete();
 
         progress.start(1);
         int n = settings.scale.length;
@@ -171,13 +160,20 @@ public class HotTexturePacker extends TexturePacker {
             progress.end();
 
             progress.start(0.01f);
-            //try {
-            //    writePackFile(scaledPackFileName, pages);
-            //} catch (IOException ex) {
-            //    throw new RuntimeException("Error writing pack file.", ex);
-            //}
-
-            TextureAtlas atlas = new TextureAtlas();
+            try {
+                writePackFile(scaledPackFileName, pages);
+            } catch (IOException ex) {
+                throw new RuntimeException("Error writing pack file.", ex);
+            }
+            // Gdx.app.postRunnable(new Runnable() {
+            //     @Override
+            //     public void run() {
+            //TextureAtlas.TextureAtlasData atlasData = writeAtlasData(pages, canvasList);
+            TextureAtlas atlas = new TextureAtlas("cache/" + scaledPackFileName + ".atlas");
+            Logx.e(this.getClass(), "++++ Add in asset scaledPackFileName : " + scaledPackFileName);
+            MyAssetManager.get().addAsset(scaledPackFileName, TextureAtlas.class, atlas);
+            //    }
+            //});
             imageProcessor.clear();
             progress.end();
 
@@ -246,20 +242,14 @@ public class HotTexturePacker extends TexturePacker {
                 int iw = rect.regionWidth;
                 int ih = rect.regionHeight;
                 int rectX = page.x + rect.x, rectY = page.y + page.height - rect.y - (rect.regionHeight - settings.paddingY);
-                copy(image, rect.offsetX + 0, rect.offsetY + 0, iw, ih, canvas, rectX, rectY, rect.rotated);
-
+                copy(image, rect.offsetX + 0, rect.offsetY + 0, iw, ih, canvas, rectX, rectY, false);
+                //Logx.e("++++ name : "+rect.name+" rect.offsetX : "+rect.offX+ " rect.offsetY : "+rect.offY);
                 if (progress.update(r + 1, rn)) return canvasList;
             }
             progress.end();
 
             Logx.e("++++ TEXTURE ATLAS MERGE DONE");
-            //PixmapIO.writePNG(new FileHandle(outputFile), canvas);
-            //try {
-            //	//if (settings.premultiplyAlpha) canvas.getColorModel().coerceData(canvas.getRaster(), true);
-            //	//ImageIO.write(canvas, "png", outputFile);
-            //} catch (IOException ex) {
-            //	throw new RuntimeException("Error writing file: " + outputFile, ex);
-            //}
+            PixmapIO.writePNG(new FileHandle(outputFile), canvas);
 
             if (progress.update(p + 1, pn)) return canvasList;
             progress.count++;
@@ -313,34 +303,102 @@ public class HotTexturePacker extends TexturePacker {
         writer.close();
     }
 
+    private TextureAtlas.TextureAtlasData writeAtlasData(Array<Page> pages, Array<Pixmap> listImage) {
+        TextureAtlas.TextureAtlasData atlasData = new TextureAtlas.TextureAtlasData(null, null, false);
+        for (int i = 0; i < pages.size; i++) {
+            Page page = pages.get(i);
+            Texture texture = new Texture(listImage.get(i), settings.format, true);
+            TextureAtlas.TextureAtlasData.Page pageAtlas = new TextureAtlas.TextureAtlasData.Page(
+                    null,
+                    page.imageWidth,
+                    page.imageHeight,
+                    true,
+                    settings.format,
+                    settings.filterMin,
+                    settings.filterMag,
+                    getUWrap(getRepeatValue()),
+                    getVWrap(getRepeatValue())
+            );
+            pageAtlas.texture = texture;
+            atlasData.getPages().add(pageAtlas);
+
+            page.outputRects.sort();
+            for (Rect rect : page.outputRects) {
+                TextureAtlas.TextureAtlasData.Region region = new TextureAtlas.TextureAtlasData.Region();
+                region.page = pageAtlas;
+                region.left = (page.x + rect.x);
+                region.top = (page.y + page.height - rect.y - (rect.height - settings.paddingY));
+                region.width = rect.rotated ? rect.regionHeight : rect.regionWidth;
+                region.height = rect.rotated ? rect.regionWidth : rect.regionHeight;
+                region.name = Rect.getAtlasName(rect.name, settings.flattenPaths);
+                Logx.e(this.getClass(), "++++ " + rect.name + " rect.rotated : " + rect.rotated);
+                region.rotate = rect.rotated;
+                region.degrees = rect.rotated ? 90 : 0;
+                region.index = rect.index;
+                region.offsetX = 0;
+                region.offsetY = 0;
+                region.originalWidth = rect.rotated ? rect.regionHeight : rect.regionWidth;
+                region.originalHeight = rect.rotated ? rect.regionWidth : rect.regionHeight;
+                //if (rect.splits != null) {
+                //    region.splits = new int[] {rect.splits[0], rect.splits[1],
+                //            rect.splits[2], rect.splits[3]};
+                //}
+                if (rect.pads != null) {
+                    if (rect.splits == null)
+                        region.splits = new int[]{0, 0, 0, 0};
+                    region.pads = new int[]{rect.pads[0], rect.pads[1], rect.pads[2], rect.pads[3]};
+                }
+                atlasData.getRegions().add(region);
+
+                //writeRect(writer, page, rect, rect.name);
+                //Array<Alias> aliases = new Array(rect.aliases.toArray());
+                //aliases.sort();
+                //for (Alias alias : aliases) {
+                //    Rect aliasRect = new Rect();
+                //    aliasRect.set(rect);
+                //    alias.apply(aliasRect);
+                //    writeRect(writer, page, aliasRect, alias.name);
+                //}
+            }
+        }
+        return atlasData;
+    }
+
     private void writeRect(Writer writer, Page page, Rect rect, String name) throws IOException {
         writer.write(Rect.getAtlasName(name, settings.flattenPaths) + "\n");
         writer.write("  rotate: " + rect.rotated + "\n");
-        writer
-                .write("  xy: " + (page.x + rect.x) + ", " + (page.y + page.height - rect.y - (rect.height - settings.paddingY)) + "\n");
-
-        writer.write("  size: " + rect.regionWidth + ", " + rect.regionHeight + "\n");
-        if (rect.splits != null) {
-            writer.write("  split: " //
-                    + rect.splits[0] + ", " + rect.splits[1] + ", " + rect.splits[2] + ", " + rect.splits[3] + "\n");
-        }
-        if (rect.pads != null) {
-            if (rect.splits == null) writer.write("  split: 0, 0, 0, 0\n");
-            writer.write("  pad: " + rect.pads[0] + ", " + rect.pads[1] + ", " + rect.pads[2] + ", " + rect.pads[3] + "\n");
-        }
+        writer.write("  xy: " + (page.x + rect.x) + ", " + (page.y + page.height - rect.y - (rect.height - settings.paddingY)) + "\n");
+        writer.write("  size: " + (rect.rotated ? rect.regionHeight : rect.regionWidth) + ", " + (rect.rotated ? rect.regionWidth : rect.regionHeight) + "\n");
         writer.write("  orig: " + rect.originalWidth + ", " + rect.originalHeight + "\n");
-        writer.write("  offset: " + rect.offsetX + ", " + (rect.originalHeight - rect.regionHeight - rect.offsetY) + "\n");
+        writer.write("  offset: " + rect.offX + ", " + (rect.offY) + "\n");
         writer.write("  index: " + rect.index + "\n");
+        Logx.e("++++ name : " + rect.name + " rect.offsetX : " + rect.offX + " rect.offsetY : " + rect.offY);
     }
 
     private String getRepeatValue() {
         if (settings.wrapX == TextureWrap.Repeat && settings.wrapY == TextureWrap.Repeat)
             return "xy";
-        if (settings.wrapX == TextureWrap.Repeat && settings.wrapY == TextureWrap.ClampToEdge)
+        if (settings.wrapX == TextureWrap.Repeat && settings.wrapY == ClampToEdge)
             return "x";
-        if (settings.wrapX == TextureWrap.ClampToEdge && settings.wrapY == TextureWrap.Repeat)
+        if (settings.wrapX == ClampToEdge && settings.wrapY == TextureWrap.Repeat)
             return "y";
         return "none";
+    }
+
+    private TextureWrap getUWrap(String repeat) {
+        if (repeat.equals("xy") || repeat.equals("x")) {
+            return TextureWrap.Repeat;
+        } else {
+            return ClampToEdge;
+        }
+    }
+
+    private TextureWrap getVWrap(String repeat) {
+        if (repeat.equals("xy") || repeat.equals("y")) {
+            return TextureWrap.Repeat;
+        } else {
+            return ClampToEdge;
+        }
     }
 
     /**
@@ -478,6 +536,7 @@ public class HotTexturePacker extends TexturePacker {
     static public class Rect implements Comparable<Rect> {
         public String name;
         public int offsetX, offsetY, regionWidth, regionHeight, originalWidth, originalHeight;
+        public int offX, offY;
         public int x, y;
         public int width, height; // Portion of page taken by this region, including padding.
         public int index;

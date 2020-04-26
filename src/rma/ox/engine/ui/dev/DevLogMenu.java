@@ -33,7 +33,7 @@ public class DevLogMenu extends AbsDevMenu implements Observer {
         scrollPane = new ScrollPane(logLabel);
         getContentTable().add(scrollPane).padTop(30).expand().left().bottom();
 
-        Logx.observable.subscribe(this);
+       // Logx.observable.subscribe(this);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class DevLogMenu extends AbsDevMenu implements Observer {
 
     @Override
     public void show(float x, float y) {
-        logLabel.setText(logs);
-        scrollPane.scrollTo(0, 0, 0, 0);
+        //logLabel.setText(logs);
+        //scrollPane.scrollTo(0, 0, 0, 0);
         super.show(x, y);
     }
 
@@ -55,11 +55,11 @@ public class DevLogMenu extends AbsDevMenu implements Observer {
 
     @Override
     public void onNotify(ObservableState command, DataNotify dataNotify) {
-        logs = dataNotify.data.toString();
-        if(isShowing){
-            logLabel.setText(logs);
-            scrollPane.scrollTo(0, 0, 0, 0);
-        }
+        //logs = dataNotify.data.toString();
+        //if(isShowing){
+        //    logLabel.setText(logs);
+        //    scrollPane.scrollTo(0, 0, 0, 0);
+        //}
     }
 
     @Override

@@ -27,6 +27,8 @@ import com.badlogic.gdx.utils.Sort;
 
 import java.util.Comparator;
 
+import rma.ox.engine.utils.Logx;
+
 /** Packs pages of images using the maximal rectangles bin packing algorithm by Jukka Jylänki. A brute force binary search is
  * used to pack into the smallest bin possible.
  * @author Nathan Sweet */
@@ -341,6 +343,8 @@ public class MaxRectsPacker2 implements Packer {
 			bestNode.width = newNode.width;
 			bestNode.height = newNode.height;
 			bestNode.rotated = newNode.rotated;
+			bestNode.offX = newNode.offX;
+			bestNode.offY = newNode.offY;
 
 			usedRectangles.add(bestNode);
 			return bestNode;
@@ -367,6 +371,8 @@ public class MaxRectsPacker2 implements Packer {
 						bestNode.width = newNode.width;
 						bestNode.height = newNode.height;
 						bestNode.rotated = newNode.rotated;
+						bestNode.offX = newNode.offX;
+						bestNode.offY = newNode.offY;
 						bestRectIndex = i;
 					}
 				}
@@ -430,6 +436,11 @@ public class MaxRectsPacker2 implements Packer {
 			case ContactPointRule:
 				newNode = findPositionForNewNodeContactPoint(width, height, rotatedWidth, rotatedHeight, rotate);
 				newNode.score1 = -newNode.score1; // Reverse since we are minimizing, but for contact point score bigger is better.
+				newNode.rotated = rect.rotated; // Reverse since we are minimizing, but for contact point score bigger is better.
+				newNode.offX = rect.offX;
+				newNode.offY = rect.offY;
+				//Logx.e("++++ name : "+rect.name+" rect.offsetX : "+rect.offX+ " rect.offsetY : "+rect.offY);
+				//Logx.e("++++ name : "+newNode.name+" newNode.offsetX : "+newNode.offX+ " newNode.offsetY : "+newNode.offY);
 				break;
 			case BestLongSideFit:
 				newNode = findPositionForNewNodeBestLongSideFit(width, height, rotatedWidth, rotatedHeight, rotate);

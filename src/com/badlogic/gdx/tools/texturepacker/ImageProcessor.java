@@ -116,33 +116,6 @@ public class ImageProcessor {
 		rects.add(rect);
 		return rect;
 	}
-	/*
-	public Rect addImage (Pixmap image, String name) {
-		Rect rect = processImage(image, name);
-
-		if (rect == null) {
-			if (!settings.silent) System.out.println("Ignoring blank input image: " + name);
-			return null;
-		}
-
-		if (settings.alias) {
-			String crc = hash(rect.getImage(this));
-			Rect existing = crcs.get(crc);
-			if (existing != null) {
-				if (!settings.silent) {
-					String rectName = rect.name + (rect.index != -1 ? "_" + rect.index : "");
-					String existingName = existing.name + (existing.index != -1 ? "_" + existing.index : "");
-					System.out.println(rectName + " (alias of " + existingName + ")");
-				}
-				existing.aliases.add(new Alias(rect));
-				return null;
-			}
-			crcs.put(crc, rect);
-		}
-
-		rects.add(rect);
-		return rect;
-	}*/
 
 	public void setScale (float scale) {
 		this.scale = scale;

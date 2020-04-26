@@ -6,7 +6,6 @@ import com.badlogic.gdx.assets.loaders.NoSqlDBLoader;
 import com.badlogic.gdx.assets.loaders.SkeletonLoader;
 import com.badlogic.gdx.assets.loaders.SkyboxLoader;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.esotericsoftware.spine.Skeleton;
 

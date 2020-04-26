@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -38,8 +37,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Region;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
@@ -381,11 +379,11 @@ public class TexturePacker {
 
 		if (packFile.exists()) {
 			// Make sure there aren't duplicate names.
-			TextureAtlasData textureAtlasData = new TextureAtlasData(new FileHandle(packFile), new FileHandle(packFile), false);
+			TextureAtlas.TextureAtlasData textureAtlasData = new TextureAtlas.TextureAtlasData(new FileHandle(packFile), new FileHandle(packFile), false);
 			for (Page page : pages) {
 				for (Rect rect : page.outputRects) {
 					String rectName = Rect.getAtlasName(rect.name, settings.flattenPaths);
-					for (Region region : textureAtlasData.getRegions()) {
+					for (TextureAtlas.TextureAtlasData.Region region : textureAtlasData.getRegions()) {
 						if (region.name.equals(rectName)) {
 							throw new GdxRuntimeException(
 								"A region with the name \"" + rectName + "\" has already been packed: " + rect.name);

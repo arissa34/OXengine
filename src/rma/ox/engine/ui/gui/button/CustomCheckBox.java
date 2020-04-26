@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.Scaling;
 
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.ui.gui.utils.LabelUtils;
-import rma.ox.engine.utils.Logx;
 
 
 public class CustomCheckBox {

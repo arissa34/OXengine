@@ -1,20 +1,15 @@
 package rma.ox.engine.core.utils;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
-import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.tools.texturepacker.HotTexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 
 import rma.ox.engine.utils.Logx;
 
@@ -29,6 +24,7 @@ public class MainTextureAtlas {
             settings.fast = true;
             settings.pot = true;
             settings.multipleOfFour = false;
+            settings.duplicatePadding = false;
             settings.maxWidth = 4096;
             settings.maxHeight = 4096;
             settings.rotation = false;
@@ -77,7 +73,7 @@ public class MainTextureAtlas {
             TextureAtlas.AtlasRegion region = mainRegions.get(i);
             String name = region.name;
 
-            Logx.e(MainTextureAtlas.class, "===+++ packer.pack : " + name);
+            //Logx.e(MainTextureAtlas.class, "===+++ packer.pack : " + name+ " is rotated "+region.rotate);
             extractPixmapFromTextureRegion(pixmap, region);
         }
 
@@ -92,7 +88,7 @@ public class MainTextureAtlas {
 
     public static void extractPixmapFromTextureRegion(Pixmap pixmap, TextureAtlas.AtlasRegion region) {
 
-        texturePacker.addImage(pixmap, region.name, region.packedWidth, region.packedHeight, (int)region.getRegionX(), (int)region.getRegionY());
+        texturePacker.addImage(pixmap, region.name, region.packedWidth, region.packedHeight, region.originalWidth, region.originalHeight, region.getRegionX(), region.getRegionY(), region.offsetX, region.offsetY, region.rotate);
 
         //Pixmap pixmap = ;
        // Pixmap pixmap = new Pixmap(

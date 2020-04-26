@@ -2,11 +2,6 @@ package rma.ox.engine.settings;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-
-import rma.ox.engine.ressource.MyAssetManager;
 
 public class Config {
 

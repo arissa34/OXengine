@@ -42,6 +42,12 @@ public class PixmapProcessor {
         if (rect == null) return null;
 
         rect.name = inputImage.name;
+        rect.rotated = inputImage.isRotated;
+        rect.originalWidth = inputImage.origW;
+        rect.originalHeight = inputImage.origH;
+        rect.offX = inputImage.offsetX;
+        rect.offY = inputImage.offsetY;
+        //Logx.e("++++ name : "+rect.name+" rect.offsetX : "+rect.offX+ " rect.offsetY : "+rect.offY);
         rect.index = index;
         return rect;
     }
@@ -62,7 +68,12 @@ public class PixmapProcessor {
 
     /** Strips whitespace and returns the rect, or null if the image should be ignored. */
     protected HotTexturePacker.Rect stripWhitespace (HotTexturePacker.InputImage inputImage) {
-        return new HotTexturePacker.Rect(inputImage.image, inputImage.regionX, inputImage.regionY, inputImage.packedWidth, inputImage.packedHeight, false);
+        int left = inputImage.regionX ;
+        int top = inputImage.regionY;
+        int newWidth = inputImage.packedWidth;
+        int newHeight = inputImage.packedHeight;
+        Logx.e("++++ name : "+inputImage.name+" left : "+left+ " top : "+top+" newWidth : "+newWidth+" newHeight : "+newHeight);
+        return new HotTexturePacker.Rect(inputImage.image, left, top, newWidth, newHeight, false);
     }
 
 }

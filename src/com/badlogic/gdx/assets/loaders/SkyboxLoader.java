@@ -5,16 +5,11 @@ import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.UBJsonReader;
-import com.esotericsoftware.spine.Skeleton;
-import com.esotericsoftware.spine.SkeletonData;
-import com.esotericsoftware.spine.SkeletonJson;
 
 import rma.ox.engine.renderable.obj.SkyboxModel;
-import rma.ox.engine.ressource.MyAssetManager;
 
 public class SkyboxLoader extends AsynchronousAssetLoader<SkyboxModel, SkyboxLoader.SkyboxParameter> {
 

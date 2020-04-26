@@ -17,9 +17,7 @@
 package com.badlogic.gdx.tools.texturepacker;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Page;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData.Region;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -72,7 +70,7 @@ public class TextureUnpacker {
 	}
 
 	/** Splits an atlas into seperate image and ninepatch files. */
-	public void splitAtlas (TextureAtlasData atlas, String outputDir) {
+	public void splitAtlas (TextureAtlas.TextureAtlasData atlas, String outputDir) {
 		// create the output directory if it did not exist yet
 		File outputDirFile = new File(outputDir);
 		if (!outputDirFile.exists()) {
@@ -80,7 +78,7 @@ public class TextureUnpacker {
 			if (!quiet) System.out.println(String.format("Creating directory: %s", outputDirFile.getPath()));
 		}
 
-		for (Page page : atlas.getPages()) {
+		for (TextureAtlas.TextureAtlasData.Page page : atlas.getPages()) {
 			// load the image file belonging to this page as a Buffered Image
 			File file = page.textureFile.file();
 			if (!file.exists()) throw new RuntimeException("Unable to find atlas image: " + file.getAbsolutePath());
@@ -90,7 +88,7 @@ public class TextureUnpacker {
 			} catch (IOException e) {
 				printExceptionAndExit(e);
 			}
-			for (Region region : atlas.getRegions()) {
+			for (TextureAtlas.TextureAtlasData.Region region : atlas.getRegions()) {
 				if (!quiet) System.out.println(String.format("Processing image for %s: x[%s] y[%s] w[%s] h[%s], rotate[%s]",
 					region.name, region.left, region.top, region.width, region.height, region.rotate));
 
@@ -141,7 +139,7 @@ public class TextureUnpacker {
 	 * @param outputDirFile The output directory
 	 * @param padding padding (in pixels) to apply to the image
 	 * @return The extracted image */
-	private BufferedImage extractImage (BufferedImage page, Region region, File outputDirFile, int padding) {
+	private BufferedImage extractImage (BufferedImage page, TextureAtlas.TextureAtlasData.Region region, File outputDirFile, int padding) {
 		BufferedImage splitImage = null;
 
 		// get the needed part of the page and rotate if needed
@@ -175,7 +173,7 @@ public class TextureUnpacker {
 	 * @see <a href="http://developer.android.com/guide/topics/graphics/2d-graphics.html#nine-patch">ninepatch specification</a>
 	 * @param page The image file related to the page the region is in
 	 * @param region The region to extract */
-	private BufferedImage extractNinePatch (BufferedImage page, Region region, File outputDirFile) {
+	private BufferedImage extractNinePatch (BufferedImage page, TextureAtlas.TextureAtlasData.Region region, File outputDirFile) {
 		BufferedImage splitImage = extractImage(page, region, outputDirFile, NINEPATCH_PADDING);
 		Graphics2D g2 = splitImage.createGraphics();
 		g2.setColor(Color.BLACK);
@@ -236,7 +234,7 @@ public class TextureUnpacker {
 		if (outputDir == null) outputDir = (new File(atlasParentPath, DEFAULT_OUTPUT_PATH)).getAbsolutePath();
 
 		// Opens the atlas file from the specified filename
-		TextureAtlasData atlas = new TextureAtlasData(new FileHandle(atlasFile), new FileHandle(imageDir), false);
+		TextureAtlas.TextureAtlasData atlas = new TextureAtlas.TextureAtlasData(new FileHandle(atlasFile), new FileHandle(imageDir), false);
 		unpacker.splitAtlas(atlas, outputDir);
 	}
 }

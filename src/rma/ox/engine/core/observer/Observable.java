@@ -42,9 +42,9 @@ public class Observable<K> implements Component {
 
     public void  notifyObsv(ObservableState command, Object obj){
         dataNotify.data = obj;
-        for(int i = 0; i < observers.size; i++){
-            observers.get(i).onNotify(command, dataNotify);
-        }
+        //for(int i = 0; i < observers.size; i++){
+        //    observers.get(i).onNotify(command, dataNotify);
+        //}
     }
 
     public K getModel(){
