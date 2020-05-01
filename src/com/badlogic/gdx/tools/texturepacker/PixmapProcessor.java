@@ -24,7 +24,8 @@ public class PixmapProcessor {
         HotTexturePacker.Rect rect = processImage(inputImage);
 
         if (rect == null) {
-            if (!settings.silent) System.out.println("Ignoring blank input image: " + inputImage.name);
+            if (!settings.silent)
+                System.out.println("Ignoring blank input image: " + inputImage.name);
             return null;
         }
 
@@ -52,7 +53,7 @@ public class PixmapProcessor {
         return rect;
     }
 
-    public void clear () {
+    public void clear() {
         rects.clear();
     }
 
@@ -62,17 +63,19 @@ public class PixmapProcessor {
         public Array<HotTexturePacker.Page> pack(HotTexturePacker.ProgressListener progress, Array<HotTexturePacker.Rect> inputRects);
     }
 
-    public Array<HotTexturePacker.Rect> getImages () {
+    public Array<HotTexturePacker.Rect> getImages() {
         return rects;
     }
 
-    /** Strips whitespace and returns the rect, or null if the image should be ignored. */
-    protected HotTexturePacker.Rect stripWhitespace (HotTexturePacker.InputImage inputImage) {
-        int left = inputImage.regionX ;
-        int top = inputImage.regionY;
-        int newWidth = inputImage.packedWidth;
-        int newHeight = inputImage.packedHeight;
-        Logx.e("++++ name : "+inputImage.name+" left : "+left+ " top : "+top+" newWidth : "+newWidth+" newHeight : "+newHeight);
+    /**
+     * Strips whitespace and returns the rect, or null if the image should be ignored.
+     */
+    protected HotTexturePacker.Rect stripWhitespace(HotTexturePacker.InputImage inputImage) {
+        int left = inputImage.regionX - settings.paddingX;
+        int top = inputImage.regionY - settings.paddingY;
+        int newWidth = inputImage.packedWidth + settings.paddingX * 2;
+        int newHeight = inputImage.packedHeight + settings.paddingY * 2;
+        Logx.e("++++ name : " + inputImage.name + " left : " + left + " top : " + top + " newWidth : " + newWidth + " newHeight : " + newHeight);
         return new HotTexturePacker.Rect(inputImage.image, left, top, newWidth, newHeight, false);
     }
 

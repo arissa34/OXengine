@@ -29,8 +29,8 @@ public class MainTextureAtlas {
             settings.maxHeight = 4096;
             settings.rotation = false;
             settings.grid = false;
-            settings.paddingX = 0;
-            settings.paddingY = 0;
+            settings.paddingX = 1;
+            settings.paddingY = 1;
             settings.square = true;
             settings.bleed = false;
             settings.filterMin = Texture.TextureFilter.MipMap;
@@ -38,7 +38,7 @@ public class MainTextureAtlas {
             settings.premultiplyAlpha = true;
             settings.format = Pixmap.Format.RGBA8888;
             texturePacker = new HotTexturePacker(settings);
-        } ;
+        }
         return instance;
     }
 
@@ -71,10 +71,8 @@ public class MainTextureAtlas {
         Pixmap pixmap = textureData.consumePixmap();
         for (int i = 0; i < mainRegions.size; i++) {
             TextureAtlas.AtlasRegion region = mainRegions.get(i);
-            String name = region.name;
-
+            texturePacker.addImage(pixmap, region.name, region.packedWidth, region.packedHeight, region.originalWidth, region.originalHeight, region.getRegionX(), region.getRegionY(), region.offsetX, region.offsetY, region.rotate);
             //Logx.e(MainTextureAtlas.class, "===+++ packer.pack : " + name+ " is rotated "+region.rotate);
-            extractPixmapFromTextureRegion(pixmap, region);
         }
 
         listAtlas.put(path, atlas);
@@ -84,94 +82,6 @@ public class MainTextureAtlas {
         Logx.e(MainTextureAtlas.class, "===+++ updateTheMainTextureAtlas ");
         texturePacker.packOnMemory("mainAtlas");
         return mainAltas;
-    }
-
-    public static void extractPixmapFromTextureRegion(Pixmap pixmap, TextureAtlas.AtlasRegion region) {
-
-        texturePacker.addImage(pixmap, region.name, region.packedWidth, region.packedHeight, region.originalWidth, region.originalHeight, region.getRegionX(), region.getRegionY(), region.offsetX, region.offsetY, region.rotate);
-
-        //Pixmap pixmap = ;
-       // Pixmap pixmap = new Pixmap(
-       //         region.packedWidth,
-       //         region.packedHeight,
-       //         textureData.getFormat()
-       // );
-//
-       // pixmap.drawPixmap(
-       //         textureData.consumePixmap(), // The other Pixmap
-       //         0, // The target x-coordinate (top left corner)
-       //         0, // The target y-coordinate (top left corner)
-       //         region.getRegionX(), // The source x-coordinate (top left corner)
-       //         region.getRegionY(), // The source y-coordinate (top left corner)
-       //         region.packedWidth, // The width of the area from the other Pixmap in pixels
-       //         region.packedHeight // The height of the area from the other Pixmap in pixels
-       // );
-
-/*
-        BufferedImage bufferedImage = new BufferedImage(region.packedWidth,
-                region.packedHeight,
-                BufferedImage.TYPE_INT_ARGB);
-
-        Color color = new Color();
-        for (int x = 0; x < region.getRegionWidth(); x++) {
-            for (int y = 0; y < region.getRegionHeight(); y++) {
-                int colorInt = pixmap.getPixel(region.getRegionX() + x, region.getRegionY() + y);
-                color.set(colorInt);
-                plot(bufferedImage, x, y, Color.argb8888(color));
-                // you could now draw that color at (x, y) of another pixmap of the size (regionWidth, regionHeight)
-            }
-        }
- */
-        //if(region.rotate){
-        //    pixmap = flipPixmap(rotatePixmap(pixmap));
-        //}
-        //return pixmap;
-    }
-
-    static private void plot (BufferedImage dst, int x, int y, int argb) {
-        if (0 <= x && x < dst.getWidth() && 0 <= y && y < dst.getHeight()) dst.setRGB(x, y, argb);
-    }
-
-    private static Pixmap rotatePixmap(Pixmap srcPix) {
-        final int width = srcPix.getWidth();
-        final int height = srcPix.getHeight();
-        Pixmap rotatedPix = new Pixmap(height, width, srcPix.getFormat());
-
-        for (int x = 0; x < height; x++) {
-            for (int y = 0; y < width; y++) {
-                rotatedPix.drawPixel(x, y, srcPix.getPixel(y, x));
-            }
-        }
-
-        srcPix.dispose();
-        return rotatedPix;
-    }
-
-    public static Pixmap flipPixmap(Pixmap p) {
-        int w = p.getWidth();
-        int h = p.getHeight();
-        int hold;
-
-        //change blending to 'none' so that alpha areas will not show
-        //previous orientation of image
-        p.setBlending(Pixmap.Blending.None);
-        for (int y = 0; y < h / 2; y++) {
-            for (int x = 0; x < w / 2; x++) {
-                //get color of current pixel
-                hold = p.getPixel(x, y);
-                //draw color of pixel from opposite side of pixmap to current position
-                p.drawPixel(x, y, p.getPixel(w - x - 1, y));
-                //draw saved color to other side of pixmap
-                p.drawPixel(w - x - 1, y, hold);
-                //repeat for height/width inverted pixels
-                hold = p.getPixel(x, h - y - 1);
-                p.drawPixel(x, h - y - 1, p.getPixel(w - x - 1, h - y - 1));
-                p.drawPixel(w - x - 1, h - y - 1, hold);
-            }
-        }
-        //set blending back to default
-        p.setBlending(Pixmap.Blending.SourceOver);
-        return p;
     }
 
 }

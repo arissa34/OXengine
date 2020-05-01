@@ -18,6 +18,7 @@ package com.badlogic.gdx.tools.texturepacker;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
@@ -239,11 +240,10 @@ public class HotTexturePacker extends TexturePacker {
             for (int r = 0, rn = page.outputRects.size; r < rn; r++) {
                 Rect rect = page.outputRects.get(r);
                 Pixmap image = rect.getImage();
-                int iw = rect.regionWidth;
-                int ih = rect.regionHeight;
+                int iw = rect.width - settings.paddingX * 2;
+                int ih = rect.height - settings.paddingY * 2;
                 int rectX = page.x + rect.x, rectY = page.y + page.height - rect.y - (rect.regionHeight - settings.paddingY);
-                copy(image, rect.offsetX + 0, rect.offsetY + 0, iw, ih, canvas, rectX, rectY, false);
-                //Logx.e("++++ name : "+rect.name+" rect.offsetX : "+rect.offX+ " rect.offsetY : "+rect.offY);
+                copy(image, rect.offsetX + settings.paddingX, rect.offsetY + settings.paddingY, iw - settings.paddingX, ih - settings.paddingY, canvas, rectX, rectY);
                 if (progress.update(r + 1, rn)) return canvasList;
             }
             progress.end();
@@ -258,19 +258,16 @@ public class HotTexturePacker extends TexturePacker {
     }
 
     static private void plot(Pixmap dst, int x, int y, int argb) {
-        if (0 <= x && x < dst.getWidth() && 0 <= y && y < dst.getHeight())
+        if (0 <= x && x < dst.getWidth() && 0 <= y && y < dst.getHeight()) {
             dst.drawPixel(x, y, argb);
+        }
     }
 
-    static private void copy(Pixmap src, int x, int y, int w, int h, Pixmap dst, int dx, int dy, boolean rotated) {
-        if (rotated) {
-            for (int i = 0; i < w; i++)
-                for (int j = 0; j < h; j++)
-                    plot(dst, dx + j, dy + w - i - 1, src.getPixel(x + i, y + j));
-        } else {
-            for (int i = 0; i < w; i++)
-                for (int j = 0; j < h; j++)
-                    plot(dst, dx + i, dy + j, src.getPixel(x + i, y + j));
+    static private void copy(Pixmap src, int x, int y, int w, int h, Pixmap dst, int dx, int dy) {
+        for (int i = 0; i < w; i++) {
+            for (int j = 0; j < h; j++) {
+                plot(dst, dx + i, dy + j, src.getPixel(x + i, y + j));
+            }
         }
     }
 
@@ -370,7 +367,7 @@ public class HotTexturePacker extends TexturePacker {
         writer.write("  xy: " + (page.x + rect.x) + ", " + (page.y + page.height - rect.y - (rect.height - settings.paddingY)) + "\n");
         writer.write("  size: " + (rect.rotated ? rect.regionHeight : rect.regionWidth) + ", " + (rect.rotated ? rect.regionWidth : rect.regionHeight) + "\n");
         writer.write("  orig: " + rect.originalWidth + ", " + rect.originalHeight + "\n");
-        writer.write("  offset: " + rect.offX + ", " + (rect.offY) + "\n");
+        writer.write("  offset: " + (rect.offX) + ", " + (rect.offY) + "\n");
         writer.write("  index: " + rect.index + "\n");
         Logx.e("++++ name : " + rect.name + " rect.offsetX : " + rect.offX + " rect.offsetY : " + rect.offY);
     }
