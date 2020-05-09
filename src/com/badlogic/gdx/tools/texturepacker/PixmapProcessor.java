@@ -75,7 +75,7 @@ public class PixmapProcessor {
         int top = inputImage.regionY - settings.paddingY;
         int newWidth = inputImage.packedWidth + settings.paddingX * 2;
         int newHeight = inputImage.packedHeight + settings.paddingY * 2;
-        Logx.e("++++ name : " + inputImage.name + " left : " + left + " top : " + top + " newWidth : " + newWidth + " newHeight : " + newHeight);
+        //Logx.e("++++ name : " + inputImage.name + " left : " + left + " top : " + top + " newWidth : " + newWidth + " newHeight : " + newHeight);
         return new HotTexturePacker.Rect(inputImage.image, left, top, newWidth, newHeight, false);
     }
 

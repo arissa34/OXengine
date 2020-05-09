@@ -9,8 +9,6 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 
-import java.awt.image.BufferedImage;
-
 import rma.ox.engine.utils.Logx;
 
 public class MainTextureAtlas {
@@ -32,7 +30,7 @@ public class MainTextureAtlas {
             settings.paddingX = 1;
             settings.paddingY = 1;
             settings.square = true;
-            settings.bleed = false;
+            settings.bleed = true;
             settings.filterMin = Texture.TextureFilter.MipMap;
             settings.filterMag = Texture.TextureFilter.Linear;
             settings.premultiplyAlpha = true;
@@ -43,6 +41,7 @@ public class MainTextureAtlas {
     }
 
     /*******************************/
+
     private static TexturePacker.Settings settings;
     private ArrayMap<String, TextureAtlas> listAtlas = new ArrayMap<>();
     private static HotTexturePacker texturePacker ;

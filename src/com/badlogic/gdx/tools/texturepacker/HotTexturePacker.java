@@ -18,12 +18,11 @@ package com.badlogic.gdx.tools.texturepacker;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.HotTextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -36,6 +35,7 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
+import rma.ox.engine.core.tools.ChronoUtils;
 import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
 
@@ -49,11 +49,13 @@ public class HotTexturePacker extends TexturePacker {
     protected Packer packer;
     protected PixmapProcessor imageProcessor;
     protected Array<InputImage> inputImages = new Array();
+    private ChronoUtils chrono;
+    private HotTextureAtlas hotTextureAtlas = new HotTextureAtlas();
 
     public HotTexturePacker(Settings settings) {
         rootPath = Gdx.files.getLocalStoragePath() + "/cache";
         this.settings = settings;
-
+        chrono = new ChronoUtils();
         if (settings.pot) {
             if (settings.maxWidth != MathUtils.nextPowerOfTwo(settings.maxWidth))
                 throw new RuntimeException("If pot is true, maxWidth must be a power of two: " + settings.maxWidth);
@@ -121,21 +123,16 @@ public class HotTexturePacker extends TexturePacker {
             };
         }
 
-        File fileAtlas = new File("cache/mainAtlas.atlas");
-        if (fileAtlas.exists()) fileAtlas.delete();
-        File filePng = new File("cache/mainAtlas.png");
-        if (filePng.exists()) filePng.delete();
+        //File fileAtlas = new File("cache/mainAtlas.atlas");
+        //if (fileAtlas.exists()) fileAtlas.delete();
+        //File filePng = new File("cache/mainAtlas.png");
+        //if (filePng.exists()) filePng.delete();
 
         progress.start(1);
         int n = settings.scale.length;
         for (int i = 0; i < n; i++) {
+
             progress.start(1f / n);
-
-            //imageProcessor.setScale(settings.scale[i]);
-
-            //if (settings.scaleResampling != null && settings.scaleResampling.length > i && settings.scaleResampling[i] != null)
-            //	imageProcessor.setResampling(settings.scaleResampling[i]);
-
             progress.start(0.35f);
             progress.count = 0;
             progress.total = inputImages.size;
@@ -146,38 +143,40 @@ public class HotTexturePacker extends TexturePacker {
             }
             progress.end();
 
+            Logx.e("++++ PACK IMAGES START");
+            chrono.startTimer();
             progress.start(0.35f);
             progress.count = 0;
             progress.total = imageProcessor.getImages().size;
             Array<Page> pages = packer.pack(progress, imageProcessor.getImages());
             progress.end();
+            long chronoTime = chrono.stopTimer(ChronoUtils.TimeUnit.MILLISECONDE);
+            Logx.e("++++ PACK IMAGES END : "+chronoTime);
 
+            Logx.e("++++ WRITE IMAGES START");
+            chrono.startTimer();
             progress.start(0.29f);
             progress.count = 0;
             progress.total = pages.size;
             String scaledPackFileName = settings.getScaledPackFileName(packFileName, i);
             Array<Pixmap> canvasList = writeImages(scaledPackFileName, pages);
-            Logx.e(this.getClass(), "++++ packOnMemory canvasList : " + canvasList.size);
-            progress.end();
-
-            progress.start(0.01f);
-            try {
-                writePackFile(scaledPackFileName, pages);
-            } catch (IOException ex) {
-                throw new RuntimeException("Error writing pack file.", ex);
+            for (int ii = 0; ii < pages.size; ii++) {
+                pages.get(ii).texture = new Texture(canvasList.get(ii), true);
             }
-            // Gdx.app.postRunnable(new Runnable() {
-            //     @Override
-            //     public void run() {
-            //TextureAtlas.TextureAtlasData atlasData = writeAtlasData(pages, canvasList);
-            TextureAtlas atlas = new TextureAtlas("cache/" + scaledPackFileName + ".atlas");
-            Logx.e(this.getClass(), "++++ Add in asset scaledPackFileName : " + scaledPackFileName);
-            MyAssetManager.get().addAsset(scaledPackFileName, TextureAtlas.class, atlas);
-            //    }
-            //});
-            imageProcessor.clear();
             progress.end();
+            chronoTime = chrono.stopTimer(ChronoUtils.TimeUnit.MILLISECONDE);
+            Logx.e("++++ WRITE IMAGES END : "+chronoTime);
 
+            //try {
+            //    writePackFile(scaledPackFileName, pages);
+            //} catch (IOException ex) {
+            //    throw new RuntimeException("Error writing pack file.", ex);
+            //}
+
+            hotTextureAtlas.hotLoad(settings, pages);
+            MyAssetManager.get().addAsset(scaledPackFileName, TextureAtlas.class, hotTextureAtlas);
+
+            imageProcessor.clear();
             progress.end();
 
             if (progress.update(i + 1, n)) return;
@@ -187,11 +186,10 @@ public class HotTexturePacker extends TexturePacker {
 
     private Array<Pixmap> writeImages(String scaledPackFileName, Array<Page> pages) {
 
-        File packFileNoExt = new File(rootPath, scaledPackFileName);
-        File packDir = packFileNoExt.getParentFile();
-        String imageName = packFileNoExt.getName();
+        //File packFileNoExt = new File(rootPath, scaledPackFileName);
+        //File packDir = packFileNoExt.getParentFile();
+        //String imageName = packFileNoExt.getName();
 
-        Logx.e(this.getClass(), "++++ writeImages imageName : " + imageName);
         Array<Pixmap> canvasList = new Array();
         int fileIndex = 0;
         for (int p = 0, pn = pages.size; p < pn; p++) {
@@ -224,13 +222,14 @@ public class HotTexturePacker extends TexturePacker {
             page.imageWidth = width;
             page.imageHeight = height;
 
-            File outputFile;
-            while (true) {
-                outputFile = new File(packDir, imageName + (fileIndex++ == 0 ? "" : fileIndex) + "." + settings.outputFormat);
-                if (!outputFile.exists()) break;
-            }
-            new FileHandle(outputFile).parent().mkdirs();
-            page.imageName = outputFile.getName();
+           //File outputFile;
+           //while (true) {
+           //    outputFile = new File(packDir, imageName + (fileIndex++ == 0 ? "" : fileIndex) + "." + settings.outputFormat);
+           //    if (!outputFile.exists()) break;
+           //}
+           //new FileHandle(outputFile).parent().mkdirs();
+            //page.imageName = outputFile.getName();
+            page.imageName = scaledPackFileName;
 
             Pixmap canvas = new Pixmap(width, height, Format.RGBA8888);
             canvasList.add(canvas);
@@ -248,8 +247,7 @@ public class HotTexturePacker extends TexturePacker {
             }
             progress.end();
 
-            Logx.e("++++ TEXTURE ATLAS MERGE DONE");
-            PixmapIO.writePNG(new FileHandle(outputFile), canvas);
+            //PixmapIO.writePNG(new FileHandle(outputFile), canvas);
 
             if (progress.update(p + 1, pn)) return canvasList;
             progress.count++;
@@ -369,7 +367,6 @@ public class HotTexturePacker extends TexturePacker {
         writer.write("  orig: " + rect.originalWidth + ", " + rect.originalHeight + "\n");
         writer.write("  offset: " + (rect.offX) + ", " + (rect.offY) + "\n");
         writer.write("  index: " + rect.index + "\n");
-        Logx.e("++++ name : " + rect.name + " rect.offsetX : " + rect.offX + " rect.offsetY : " + rect.offY);
     }
 
     private String getRepeatValue() {
@@ -525,6 +522,7 @@ public class HotTexturePacker extends TexturePacker {
         public Array<Rect> outputRects, remainingRects;
         public float occupancy;
         public int x, y, width, height, imageWidth, imageHeight;
+        public Texture texture;
     }
 
     /**

@@ -44,6 +44,7 @@ public class StageManager {
 
     public void render() {
         for(int i = 0; i < listStage.size; i++){
+            listStage.get(i).getViewport().apply();
             listStage.get(i).render();
         }
     }

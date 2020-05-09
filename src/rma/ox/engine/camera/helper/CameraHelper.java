@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import rma.ox.engine.camera.FrontalCamera;
@@ -38,8 +39,6 @@ public class CameraHelper {
 
     public CameraHelper(){
         camera = new GhostCamera(SettingsHelper.get().getFOV(), SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
-        FillViewport extendViewport = new FillViewport(SettingsHelper.get().getWidth(), SettingsHelper.get().getHeight());
-        extendViewport.apply(true);
         camera.targetPosition.set(0, 50, 600);
         camera.snapToTarget();
         setGodCamera();

@@ -87,11 +87,10 @@ public class G3DRenderManager {
     }
 
     public void render() {
-        polygonBatch.setProjectionMatrix(CameraHelper.get().getCamera().combined);
 
         modelBatch.begin(CameraHelper.get().getCamera());
         {
-            if(skybox != null) modelBatch.render(skybox, environment);
+            if (skybox != null) modelBatch.render(skybox, environment);
             modelBatch.render(getModelCacheNoEnv());
             modelBatch.render(getModelCache(), environment);
             modelBatch.render(listModelsDynamicNoEnv);
@@ -99,10 +98,18 @@ public class G3DRenderManager {
         }
         modelBatch.end();
 
+        renderSkeleton();
+    }
+
+    private void renderSkeleton() {
+
+        if (listSkeleton.size == 0) return;
+
         synchronized (this) {
             listSkeleton.sort(zComparator);
         }
 
+        polygonBatch.setProjectionMatrix(CameraHelper.get().getCamera().combined);
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         polygonBatch.begin();
         for (int i = 0; i < listSkeleton.size; i++) {
@@ -111,7 +118,6 @@ public class G3DRenderManager {
         polygonBatch.end();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDisable(GL20.GL_CULL_FACE);
-
     }
 
     public ModelCache getModelCache() {
