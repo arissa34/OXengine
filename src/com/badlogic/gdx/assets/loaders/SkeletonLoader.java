@@ -35,7 +35,9 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
             atlasFileName = parameter.atlasFileName;
         }
         Logx.e(getClass(), "+++ loadAsync SKELETON ATLAS "+atlasFileName);
-        dependencies.add(new AssetDescriptor(atlasFileName, TextureAtlas.class));
+        MyTextureAtlasLoader.TextureAtlasParameter atlasParameter = new MyTextureAtlasLoader.TextureAtlasParameter();
+        atlasParameter.setUseInMainTextureAtlas(parameter!= null && parameter.useInMainTextureAtlas);
+        dependencies.add(new AssetDescriptor(atlasFileName, TextureAtlas.class, atlasParameter));
         return dependencies;
     }
 
@@ -56,9 +58,24 @@ public class SkeletonLoader extends AsynchronousAssetLoader<Skeleton, SkeletonLo
 
     static public class SkeletonParameter extends AssetLoaderParameters<Skeleton> {
         protected String atlasFileName;
+        public boolean useInMainTextureAtlas = false;
 
         public SkeletonParameter(String atlasFileName){
             this.atlasFileName = atlasFileName;
+        }
+
+        public SkeletonParameter(boolean useInMainTextureAtlas){
+            this.useInMainTextureAtlas = useInMainTextureAtlas;
+        }
+
+        public SkeletonParameter(String atlasFileName, boolean useInMainTextureAtlas){
+            this.atlasFileName = atlasFileName;
+            this.useInMainTextureAtlas = useInMainTextureAtlas;
+        }
+
+        public SkeletonParameter setUseInMainTextureAtlas(boolean useInMainTextureAtlas) {
+            this.useInMainTextureAtlas = useInMainTextureAtlas;
+            return this;
         }
     }
 }

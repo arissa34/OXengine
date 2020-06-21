@@ -132,7 +132,7 @@ public abstract class AbsDrawer extends Table {
         }
     }
 
-    protected void forceShow() {
+    public void forceShow() {
         if (getStage() == null) return;
         isShown = true;
         if (Align.isLeft(align)) {

@@ -29,7 +29,11 @@
 
 package com.esotericsoftware.spine;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.spine.attachments.RegionAttachment;
+
+import rma.ox.engine.ressource.MyAssetManager;
 
 /** Stores the setup pose and all of the stateless data for a skeleton.
  * <p>
@@ -319,6 +323,18 @@ public class SkeletonData {
 
 	public void setFps (float fps) {
 		this.fps = fps;
+	}
+
+	public void uploadAttachement(TextureAtlas atlas){
+		for(int i = 0; i < skins.size; i++ ){
+			for(int j = 0; j < skins.get(i).getAttachments().size; j++ ){
+				if(skins.get(i).getAttachments().get(j).getAttachment() instanceof RegionAttachment){
+					RegionAttachment regionAttachment = (RegionAttachment)skins.get(i).getAttachments().get(j).getAttachment();
+					regionAttachment.setRegion(atlas.findRegion(regionAttachment.getName()));
+					regionAttachment.updateOffset();
+				}
+			}
+		}
 	}
 
 	public String toString () {

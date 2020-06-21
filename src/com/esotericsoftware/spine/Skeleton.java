@@ -777,4 +777,8 @@ public class Skeleton {
 	public String toString () {
 		return data.name != null ? data.name : super.toString();
 	}
+
+	public Skeleton clone(){
+		return new Skeleton(this);
+	}
 }

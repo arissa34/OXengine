@@ -7,7 +7,7 @@ import rma.ox.engine.utils.Logx;
 
 public class SkeletonAnimation {
 
-    private static float MIX_DURATION = 0.25f;
+    private static float MIX_DURATION = 0.5f;
     private Skeleton skeleton;
     public AnimationState state;
 
@@ -36,6 +36,29 @@ public class SkeletonAnimation {
 
     public void playLoopAnimation(String animationName){
         playAnimation(0, animationName, true, MIX_DURATION);
+    }
+
+    public void playLoopAnimation(int trackIndex, String animationName){
+        playAnimation(trackIndex, animationName, true, MIX_DURATION);
+    }
+
+    public void addLoopAnimation(int trackIndex, String animationName, boolean isAddOrMix){
+        if(skeleton.getData().findAnimation(animationName) == null){
+            Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
+            return;
+        }
+        AnimationState.TrackEntry current = state.getCurrent(trackIndex);
+        AnimationState.TrackEntry entry;
+        if (current == null) {
+            state.setEmptyAnimation(trackIndex, 0);
+            entry = state.addAnimation(trackIndex, animationName, true, 0);
+            entry.setMixDuration(0.5f);
+        } else {
+            entry = state.setAnimation(trackIndex, animationName, true);
+        }
+        entry.setMixBlend(isAddOrMix ? Animation.MixBlend.add : Animation.MixBlend.replace);
+        entry.setAlpha(0.5f);
+        state.addAnimation(trackIndex, animationName, true, 0);
     }
 
     public void clearAnimation(){

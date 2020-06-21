@@ -37,7 +37,9 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
         position = new Vector3();
         direction = Direction.RIGHT;
         animation = new SkeletonAnimation(skeleton);
-        animation.playLoopAnimation("blink");
+        animation.playLoopAnimation(10, "blink");
+        animation.addLoopAnimation(11, "idle", true);
+        animation.addLoopAnimation(12, "hold_riffle", true);
         isInit = true;
         return this;
     }

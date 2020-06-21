@@ -1,8 +1,11 @@
 package rma.ox.engine.ressource;
 
 import com.badlogic.gdx.assets.AssetLoaderParameters;
+import com.badlogic.gdx.utils.Json;
 
 public abstract class AbsAssets {
+
+    public static final Json json = new Json();
 
     public static boolean isLoaded (String fileName) {
         return MyAssetManager.get().isLoaded(fileName);

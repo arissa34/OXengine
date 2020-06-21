@@ -21,7 +21,17 @@ public class MyAssetManager extends CustomManager {
 
     /*******************************/
 
+    private String currentLoadDescription;
 
     public MyAssetManager(){
+        currentLoadDescription = new String();
+    }
+
+    public String getCurrentLoadDescription() {
+        return currentLoadDescription;
+    }
+
+    public void setCurrentLoadDescription(String currentLoadDescription) {
+        this.currentLoadDescription = currentLoadDescription;
     }
 }

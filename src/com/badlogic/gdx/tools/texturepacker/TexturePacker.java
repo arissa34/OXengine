@@ -843,6 +843,7 @@ public class TexturePacker {
 		public String[] scaleSuffix = {""};
 		//public Resampling[] scaleResampling = {Resampling.bicubic};
 		public String atlasExtension = ".atlas";
+		public boolean saveInFiles = false;
 
 		public Settings () {
 		}

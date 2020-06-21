@@ -2,14 +2,19 @@ package com.badlogic.gdx.assets;
 
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.FontGeneratorLoader;
+import com.badlogic.gdx.assets.loaders.MainTextureAtlasLoader;
+import com.badlogic.gdx.assets.loaders.MyTextureAtlasLoader;
 import com.badlogic.gdx.assets.loaders.NoSqlDBLoader;
 import com.badlogic.gdx.assets.loaders.SkeletonLoader;
 import com.badlogic.gdx.assets.loaders.SkyboxLoader;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.async.AsyncExecutor;
 import com.esotericsoftware.spine.Skeleton;
 
 import rma.ox.data.bdd.NoSqlDB;
+import rma.ox.engine.core.utils.MainTextureAtlas;
 import rma.ox.engine.renderable.obj.SkyboxModel;
 
 public class CustomManager extends AssetManager {
@@ -20,6 +25,8 @@ public class CustomManager extends AssetManager {
         setLoader(NoSqlDB.class, new NoSqlDBLoader(resolver));
         setLoader(BitmapFont.class, new FontGeneratorLoader(resolver));
         setLoader(SkyboxModel.class, new SkyboxLoader(resolver));
+        setLoader(TextureAtlas.class, new MyTextureAtlasLoader(resolver));
+        setLoader(MainTextureAtlas.class, new MainTextureAtlasLoader(resolver));
     }
 
     public <T> void addAsset (final String fileName, Class<T> type, T asset) {

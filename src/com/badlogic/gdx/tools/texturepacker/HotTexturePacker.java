@@ -20,6 +20,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.HotTextureAtlas;
@@ -36,7 +37,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import rma.ox.engine.core.tools.ChronoUtils;
-import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
 
 import static com.badlogic.gdx.graphics.Texture.TextureWrap.ClampToEdge;
@@ -50,11 +50,12 @@ public class HotTexturePacker extends TexturePacker {
     protected PixmapProcessor imageProcessor;
     protected Array<InputImage> inputImages = new Array();
     private ChronoUtils chrono;
-    private HotTextureAtlas hotTextureAtlas = new HotTextureAtlas();
+    private HotTextureAtlas hotTextureAtlas;
 
-    public HotTexturePacker(Settings settings) {
+    public HotTexturePacker(Settings settings, HotTextureAtlas hotTextureAtlas) {
         rootPath = Gdx.files.getLocalStoragePath() + "/cache";
         this.settings = settings;
+        this.hotTextureAtlas = hotTextureAtlas;
         chrono = new ChronoUtils();
         if (settings.pot) {
             if (settings.maxWidth != MathUtils.nextPowerOfTwo(settings.maxWidth))
@@ -123,10 +124,10 @@ public class HotTexturePacker extends TexturePacker {
             };
         }
 
-        //File fileAtlas = new File("cache/mainAtlas.atlas");
-        //if (fileAtlas.exists()) fileAtlas.delete();
-        //File filePng = new File("cache/mainAtlas.png");
-        //if (filePng.exists()) filePng.delete();
+        File fileAtlas = new File("cache/mainAtlas.atlas");
+        if (fileAtlas.exists()) fileAtlas.delete();
+        File filePng = new File("cache/mainAtlas.png");
+        if (filePng.exists()) filePng.delete();
 
         progress.start(1);
         int n = settings.scale.length;
@@ -167,14 +168,15 @@ public class HotTexturePacker extends TexturePacker {
             chronoTime = chrono.stopTimer(ChronoUtils.TimeUnit.MILLISECONDE);
             Logx.e("++++ WRITE IMAGES END : "+chronoTime);
 
-            //try {
-            //    writePackFile(scaledPackFileName, pages);
-            //} catch (IOException ex) {
-            //    throw new RuntimeException("Error writing pack file.", ex);
-            //}
+            if(settings.saveInFiles) {
+                try {
+                    writePackFile(scaledPackFileName, pages);
+                } catch (IOException ex) {
+                    throw new RuntimeException("Error writing pack file.", ex);
+                }
+            }
 
             hotTextureAtlas.hotLoad(settings, pages);
-            MyAssetManager.get().addAsset(scaledPackFileName, TextureAtlas.class, hotTextureAtlas);
 
             imageProcessor.clear();
             progress.end();
@@ -186,9 +188,9 @@ public class HotTexturePacker extends TexturePacker {
 
     private Array<Pixmap> writeImages(String scaledPackFileName, Array<Page> pages) {
 
-        //File packFileNoExt = new File(rootPath, scaledPackFileName);
-        //File packDir = packFileNoExt.getParentFile();
-        //String imageName = packFileNoExt.getName();
+        File packFileNoExt = new File(rootPath, scaledPackFileName);
+        File packDir = packFileNoExt.getParentFile();
+        String imageName = packFileNoExt.getName();
 
         Array<Pixmap> canvasList = new Array();
         int fileIndex = 0;
@@ -222,11 +224,6 @@ public class HotTexturePacker extends TexturePacker {
             page.imageWidth = width;
             page.imageHeight = height;
 
-           //File outputFile;
-           //while (true) {
-           //    outputFile = new File(packDir, imageName + (fileIndex++ == 0 ? "" : fileIndex) + "." + settings.outputFormat);
-           //    if (!outputFile.exists()) break;
-           //}
            //new FileHandle(outputFile).parent().mkdirs();
             //page.imageName = outputFile.getName();
             page.imageName = scaledPackFileName;
@@ -247,7 +244,14 @@ public class HotTexturePacker extends TexturePacker {
             }
             progress.end();
 
-            //PixmapIO.writePNG(new FileHandle(outputFile), canvas);
+            if(settings.saveInFiles) {
+                File outputFile;
+                while (true) {
+                    outputFile = new File(packDir, imageName + (fileIndex++ == 0 ? "" : fileIndex) + "." + settings.outputFormat);
+                    if (!outputFile.exists()) break;
+                }
+                PixmapIO.writePNG(new FileHandle(outputFile), canvas);
+            }
 
             if (progress.update(p + 1, pn)) return canvasList;
             progress.count++;

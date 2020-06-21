@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.UBJsonReader;
 
 import rma.ox.engine.renderable.obj.SkyboxModel;
+import rma.ox.engine.ressource.MyAssetManager;
 
 public class SkyboxLoader extends AsynchronousAssetLoader<SkyboxModel, SkyboxLoader.SkyboxParameter> {
 
@@ -26,11 +27,12 @@ public class SkyboxLoader extends AsynchronousAssetLoader<SkyboxModel, SkyboxLoa
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SkyboxParameter parameter) {
-
+        MyAssetManager.get().setCurrentLoadDescription("Load skybox");
     }
 
     @Override
     public SkyboxModel loadSync(AssetManager manager, String fileName, FileHandle file, SkyboxParameter parameter) {
+
         UBJsonReader jsonReader = new UBJsonReader();
         G3dModelLoader modelLoader = new G3dModelLoader(jsonReader);
         return new SkyboxModel(modelLoader.loadModel(Gdx.files.internal(fileName)));

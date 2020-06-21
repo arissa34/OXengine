@@ -1,14 +1,17 @@
 package rma.ox.engine.core.utils;
 
+import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
+import com.badlogic.gdx.graphics.g2d.HotTextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.tools.texturepacker.HotTexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 
+import rma.ox.engine.ressource.MyAssetManager;
 import rma.ox.engine.utils.Logx;
 
 public class MainTextureAtlas {
@@ -19,6 +22,7 @@ public class MainTextureAtlas {
         if (instance == null) {
             instance = new MainTextureAtlas();
             settings = new TexturePacker.Settings();
+            settings.saveInFiles = true;
             settings.fast = true;
             settings.pot = true;
             settings.multipleOfFour = false;
@@ -35,7 +39,8 @@ public class MainTextureAtlas {
             settings.filterMag = Texture.TextureFilter.Linear;
             settings.premultiplyAlpha = true;
             settings.format = Pixmap.Format.RGBA8888;
-            texturePacker = new HotTexturePacker(settings);
+            texturePacker = new HotTexturePacker(settings, mainAltas);
+            MyAssetManager.get().addAsset("mainAtlas", TextureAtlas.class, mainAltas);
         }
         return instance;
     }
@@ -44,21 +49,37 @@ public class MainTextureAtlas {
 
     private static TexturePacker.Settings settings;
     private ArrayMap<String, TextureAtlas> listAtlas = new ArrayMap<>();
+    private Array<String> listAtlasToLoad = new Array<>();
     private static HotTexturePacker texturePacker ;
-    private TextureAtlas mainAltas = new TextureAtlas();
+    private static HotTextureAtlas mainAltas = new HotTextureAtlas();
 
-    public TextureAtlas getMainAltas() {
+    public HotTextureAtlas getMainAltas() {
         Logx.e(MainTextureAtlas.class, "===+++ getMainAltas ");
         return mainAltas;
     }
 
-    public void setMainAltas(TextureAtlas mainAltas) {
-        Logx.e(MainTextureAtlas.class, "===+++ setMainAltas ");
-        this.mainAltas = mainAltas;
+    public void addAtlasToLoad(String atlasPath){
+        if(!listAtlasToLoad.contains(atlasPath, false)) {
+            Logx.e(MainTextureAtlas.class, "===+++ addAtlasToLoad : "+atlasPath);
+            listAtlasToLoad.add(atlasPath);
+        }
+    }
+
+    public void load(){
+
+    }
+
+    public void buildAllTextureAtlas(){
+        Logx.e(MainTextureAtlas.class, "===+++ buildAllTextureAtlas ");
+        for(int i =0; i < listAtlasToLoad.size; i++){
+            addTextureAtals(listAtlasToLoad.get(i), new TextureAtlas(listAtlasToLoad.get(i)));
+        }
+        texturePacker.packOnMemory("mainAtlas");
+        listAtlas.clear();
     }
 
     public void addTextureAtals(String path, TextureAtlas atlas) {
-        Logx.e(MainTextureAtlas.class, "===+++ ADD atlas : " + path);
+        Logx.e(MainTextureAtlas.class, "===+++ ADD addTextureAtals : " + path);
 
         if (listAtlas.containsKey(path)) return;
 
@@ -76,11 +97,4 @@ public class MainTextureAtlas {
 
         listAtlas.put(path, atlas);
     }
-
-    public TextureAtlas updateTheMainTextureAtlas() {
-        Logx.e(MainTextureAtlas.class, "===+++ updateTheMainTextureAtlas ");
-        texturePacker.packOnMemory("mainAtlas");
-        return mainAltas;
-    }
-
 }
