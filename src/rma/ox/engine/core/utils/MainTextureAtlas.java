@@ -54,7 +54,7 @@ public class MainTextureAtlas {
     private static HotTextureAtlas mainAltas = new HotTextureAtlas();
 
     public HotTextureAtlas getMainAltas() {
-        Logx.e(MainTextureAtlas.class, "===+++ getMainAltas ");
+        //Logx.e(MainTextureAtlas.class, "===+++ getMainAltas ");
         return mainAltas;
     }
 
