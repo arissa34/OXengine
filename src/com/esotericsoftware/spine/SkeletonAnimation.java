@@ -1,6 +1,7 @@
 package com.esotericsoftware.spine;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 
 import rma.ox.engine.settings.Config;
 import rma.ox.engine.utils.Logx;
@@ -10,9 +11,11 @@ public class SkeletonAnimation {
     private static float MIX_DURATION = 0.5f;
     private Skeleton skeleton;
     public AnimationState state;
+    private ArrayMap<String, Integer> animationAlreadyUsed;
 
     public SkeletonAnimation(Skeleton skeleton) {
         this.skeleton = skeleton;
+        animationAlreadyUsed = new ArrayMap<>();
 
         AnimationStateData stateData = new AnimationStateData(skeleton.getData());
         state = new AnimationState(stateData);
@@ -70,12 +73,44 @@ public class SkeletonAnimation {
             Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
             return;
         }
-        if(state.getTracks().size>0 && state.getTracks().get(trackIndex)!=null && !state.getTracks().get(trackIndex).getAnimation().getName().equals(animationName)){
-            state.setAnimation(trackIndex, animationName, loop).setMixDuration(mixDuration);
-        }else if(state.getTracks().size==0){
-            state.setAnimation(trackIndex, animationName, loop).setMixDuration(mixDuration);
-        }
+        state.setAnimation(trackIndex, animationName, loop).setMixDuration(mixDuration);
         state.setTimeScale(1f);
+    }
+
+    public void setEmptyAnimation(String animationName, float mixDuration){
+        if(animationAlreadyUsed.containsKey(animationName)){
+            state.setEmptyAnimation(animationAlreadyUsed.get(animationName), mixDuration);
+            animationAlreadyUsed.removeKey(animationName);
+        }
+    }
+
+    public void setAnimation(int trackIndex, String animationName, boolean isLoop, boolean isAddOrMix, float mixDuration, float speed, float alpha){
+        if(skeleton.getData().findAnimation(animationName) == null){
+            Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
+            return;
+        }
+
+        if(animationAlreadyUsed.containsKey(animationName)) return;
+
+        while (animationAlreadyUsed.containsValue(trackIndex, true)){
+            trackIndex ++;
+        }
+
+        Logx.e("===/// setAnimation animationName : "+animationName+ " track Index : "+trackIndex+ " speed : "+speed);
+        AnimationState.TrackEntry current = state.getCurrent(trackIndex);
+        AnimationState.TrackEntry entry;
+        if (current == null) {
+            state.setEmptyAnimation(trackIndex, 0);
+            entry = state.addAnimation(trackIndex, animationName, isLoop, 0);
+        } else {
+            entry = state.setAnimation(trackIndex, animationName, isLoop);
+        }
+        entry.setMixBlend(isAddOrMix ? Animation.MixBlend.add : Animation.MixBlend.replace);
+        entry.setMixDuration(mixDuration);
+        entry.setTimeScale(speed);
+        entry.setAlpha(alpha);
+
+        animationAlreadyUsed.put(animationName, trackIndex);
     }
 
     public  void playAnimation(AnimationState state, int trackIndex, String animationName, boolean loop){

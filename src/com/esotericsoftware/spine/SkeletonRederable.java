@@ -23,7 +23,7 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
     protected Skeleton skeleton;
     protected Matrix4 transform;
     protected Vector3 position;
-    public SkeletonAnimation animation;
+    protected SkeletonAnimation animation;
     private boolean isVisibleInFrustrum = false;
     private Direction direction;
 
@@ -37,9 +37,9 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
         position = new Vector3();
         direction = Direction.RIGHT;
         animation = new SkeletonAnimation(skeleton);
-        animation.playLoopAnimation(10, "blink");
-        animation.addLoopAnimation(11, "idle", true);
-        animation.addLoopAnimation(12, "hold_riffle", true);
+        //animation.playLoopAnimation(10, "blink");
+        //animation.addLoopAnimation(11, "idle", true);
+        //animation.addLoopAnimation(12, "hold_riffle", true);
         isInit = true;
         return this;
     }
@@ -90,6 +90,10 @@ public class SkeletonRederable implements UpdatableMainThread, UpdatableThread, 
         if(!isVisibleInFrustrum){ return;}
         polygonBatch.setTransformMatrix(transform);
         skeletonRenderer.draw(polygonBatch, skeleton);
+    }
+
+    public SkeletonAnimation getSkeletonAnimation() {
+        return animation;
     }
 
     public Vector3 getPosition(){
