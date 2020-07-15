@@ -84,13 +84,13 @@ public class SkeletonAnimation {
         }
     }
 
-    public void setAnimation(int trackIndex, String animationName, boolean isLoop, boolean isAddOrMix, float mixDuration, float speed, float alpha){
+    public AnimationState.TrackEntry setAnimation(int trackIndex, String animationName, boolean isLoop, boolean isAddOrMix, float mixDuration, float speed, float alpha){
         if(skeleton.getData().findAnimation(animationName) == null){
             Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
-            return;
+            return null;
         }
 
-        if(animationAlreadyUsed.containsKey(animationName)) return;
+        if(animationAlreadyUsed.containsKey(animationName)) return null;
 
         while (animationAlreadyUsed.containsValue(trackIndex, true)){
             trackIndex ++;
@@ -100,7 +100,7 @@ public class SkeletonAnimation {
         AnimationState.TrackEntry current = state.getCurrent(trackIndex);
         AnimationState.TrackEntry entry;
         if (current == null) {
-            state.setEmptyAnimation(trackIndex, 0);
+            state.setEmptyAnimation(trackIndex, mixDuration);
             entry = state.addAnimation(trackIndex, animationName, isLoop, 0);
         } else {
             entry = state.setAnimation(trackIndex, animationName, isLoop);
@@ -111,6 +111,8 @@ public class SkeletonAnimation {
         entry.setAlpha(alpha);
 
         animationAlreadyUsed.put(animationName, trackIndex);
+
+        return entry;
     }
 
     public  void playAnimation(AnimationState state, int trackIndex, String animationName, boolean loop){
