@@ -84,7 +84,7 @@ public class SkeletonAnimation {
         }
     }
 
-    public AnimationState.TrackEntry setAnimation(int trackIndex, String animationName, boolean isLoop, boolean isAddOrMix, float mixDuration, float speed, float alpha){
+    public AnimationState.TrackEntry setAnimation(int trackIndex, String animationName, float delay, boolean isLoop, boolean isAddOrMix, float mixDuration, float speed, float alpha){
         if(skeleton.getData().findAnimation(animationName) == null){
             Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
             return null;
@@ -101,9 +101,10 @@ public class SkeletonAnimation {
         AnimationState.TrackEntry entry;
         if (current == null) {
             state.setEmptyAnimation(trackIndex, mixDuration);
-            entry = state.addAnimation(trackIndex, animationName, isLoop, 0);
+            entry = state.addAnimation(trackIndex, animationName, isLoop, delay);
         } else {
             entry = state.setAnimation(trackIndex, animationName, isLoop);
+            entry.setDelay(delay);
         }
         entry.setMixBlend(isAddOrMix ? Animation.MixBlend.add : Animation.MixBlend.replace);
         entry.setMixDuration(mixDuration);
