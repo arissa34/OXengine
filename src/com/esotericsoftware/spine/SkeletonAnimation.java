@@ -33,54 +33,17 @@ public class SkeletonAnimation {
         return skeleton.getData().getAnimations();
     }
 
-    public void playSingleAnimation(String animationName){
-        playAnimation(0, animationName, false, MIX_DURATION);
-    }
-
-    public void playLoopAnimation(String animationName){
-        playAnimation(0, animationName, true, MIX_DURATION);
-    }
-
-    public void playLoopAnimation(int trackIndex, String animationName){
-        playAnimation(trackIndex, animationName, true, MIX_DURATION);
-    }
-
-    public void addLoopAnimation(int trackIndex, String animationName, boolean isAddOrMix){
-        if(skeleton.getData().findAnimation(animationName) == null){
-            Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
-            return;
-        }
-        AnimationState.TrackEntry current = state.getCurrent(trackIndex);
-        AnimationState.TrackEntry entry;
-        if (current == null) {
-            state.setEmptyAnimation(trackIndex, 0);
-            entry = state.addAnimation(trackIndex, animationName, true, 0);
-            entry.setMixDuration(0.5f);
-        } else {
-            entry = state.setAnimation(trackIndex, animationName, true);
-        }
-        entry.setMixBlend(isAddOrMix ? Animation.MixBlend.add : Animation.MixBlend.replace);
-        entry.setAlpha(0.5f);
-        state.addAnimation(trackIndex, animationName, true, 0);
-    }
-
     public void clearAnimation(){
         state.clearTracks();
     }
 
-    public  void playAnimation(int trackIndex, String animationName, boolean loop, float mixDuration){
-        if(skeleton.getData().findAnimation(animationName) == null){
-            Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
-            return;
-        }
-        state.setAnimation(trackIndex, animationName, loop).setMixDuration(mixDuration);
-        state.setTimeScale(1f);
-    }
-
-    public void setEmptyAnimation(String animationName, float mixDuration){
+    public void setEmptyAnimation(int trackIndex, String animationName, float mixDuration){
         if(animationAlreadyUsed.containsKey(animationName)){
             state.setEmptyAnimation(animationAlreadyUsed.get(animationName), mixDuration);
             animationAlreadyUsed.removeKey(animationName);
+        }else{
+            state.addEmptyAnimation(trackIndex, mixDuration, 0);
+            //animationAlreadyUsed.put(animationName, trackIndex);
         }
     }
 
@@ -90,11 +53,16 @@ public class SkeletonAnimation {
             return null;
         }
 
-        if(animationAlreadyUsed.containsKey(animationName)) return null;
+        //if(animationAlreadyUsed.containsKey(animationName)){
+        //    //return null;
+        //    state.addEmptyAnimation(trackIndex, mixDuration, 0);
+        //}
 
-        while (animationAlreadyUsed.containsValue(trackIndex, true)){
-            trackIndex ++;
-        }
+       while (animationAlreadyUsed.containsValue(trackIndex, true)){
+           trackIndex ++;
+       }
+
+        state.addEmptyAnimation(trackIndex, mixDuration, 0);
 
         Logx.e("===/// setAnimation animationName : "+animationName+ " track Index : "+trackIndex+ " speed : "+speed);
         AnimationState.TrackEntry current = state.getCurrent(trackIndex);
@@ -114,18 +82,6 @@ public class SkeletonAnimation {
         animationAlreadyUsed.put(animationName, trackIndex);
 
         return entry;
-    }
-
-    public  void playAnimation(AnimationState state, int trackIndex, String animationName, boolean loop){
-        if(skeleton.getData().findAnimation(animationName) == null){
-            Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
-            return;
-        }
-        if(state.getTracks().size>0 && state.getTracks().get(trackIndex)!=null && !state.getTracks().get(trackIndex).getAnimation().getName().equals(animationName)){
-            state.setAnimation(trackIndex, animationName, loop).setMixDuration(MIX_DURATION);
-        }else if(state.getTracks().size==0){
-            state.setAnimation(trackIndex, animationName, loop).setMixDuration(MIX_DURATION);
-        }
     }
 
     public void update(float delta){
