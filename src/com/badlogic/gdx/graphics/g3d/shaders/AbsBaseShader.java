@@ -81,16 +81,6 @@ public abstract class AbsBaseShader extends MyBaseShader implements UpdatableMai
         this.delta = delta;
     }
 
-    public void setNewProgram(String vertexShader, String fragmentShader) {
-        program = new ShaderProgram(vertexShader, fragmentShader);
-        init(program, null);
-        init();
-    }
-
-    public boolean writeShaderInFile(String vertexText, String fragmentText){
-        return loader.writeShaderInFile(vertexText, fragmentText, getVertexFileName(), getFragmentFileName());
-    }
-
     @Override
     public void dispose () {
         super.dispose();

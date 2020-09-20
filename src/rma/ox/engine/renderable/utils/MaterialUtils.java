@@ -29,6 +29,7 @@ public class MaterialUtils {
     }
 
     public static void updateBlendingValue(ModelInstance modelInstance, float opacity){
+        if(modelInstance == null) return;
         for(int i = 0; i < modelInstance.materials.size; i++){
             if(modelInstance.materials.get(i).has(BlendingAttribute.Type)){
                 BlendingAttribute attribute = (BlendingAttribute) modelInstance.materials.get(i).get(BlendingAttribute.Type);
@@ -74,6 +75,7 @@ public class MaterialUtils {
     }
 
     public static void addDepthTest(ModelInstance modelInstance){
+        if(modelInstance == null) return;
         for(int i = 0; i < modelInstance.materials.size; i++){
             modelInstance.materials.get(i).set(new DepthTestAttribute(0));
         }
@@ -97,5 +99,4 @@ public class MaterialUtils {
             }
         }
     }
-
 }

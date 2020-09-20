@@ -1,6 +1,7 @@
 package rma.ox.engine.renderable.obj;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -32,6 +33,16 @@ public class SkyboxModel implements UpdatableMainThread {
         MaterialUtils.addDepthTest(modelInstance);
         MaterialUtils.addMaterialNoLight(modelInstance);
         MaterialUtils.addMaterialCulling(modelInstance);
+    }
+
+    public SkyboxModel createSkyBox(TextureAtlas atlas) {
+        modelInstance.materials.get(0).set(TextureAttribute.createDiffuse(atlas.findRegion("xpos")));
+        modelInstance.materials.get(1).set(TextureAttribute.createDiffuse(atlas.findRegion("xneg")));
+        modelInstance.materials.get(2).set(TextureAttribute.createDiffuse(atlas.findRegion("ypos")));
+        modelInstance.materials.get(3).set(TextureAttribute.createDiffuse(atlas.findRegion("yneg")));
+        modelInstance.materials.get(5).set(TextureAttribute.createDiffuse(atlas.findRegion("zpos")));
+        modelInstance.materials.get(4).set(TextureAttribute.createDiffuse(atlas.findRegion("zneg")));
+        return this;
     }
 
     public SkyboxModel createSkyBox(Texture xpos, Texture xneg, Texture ypos, Texture yneg, Texture zpos, Texture zneg) {

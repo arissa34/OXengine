@@ -37,14 +37,21 @@ public class SkeletonAnimation {
         state.clearTracks();
     }
 
-    public void setEmptyAnimation(int trackIndex, String animationName, float mixDuration){
+    public AnimationState.TrackEntry setEmptyAnimation(int trackIndex, String animationName, float mixDuration, AnimationState.AnimationStateListener listener){
+        if(skeleton.getData().findAnimation(animationName) == null){
+            Logx.l(this.getClass(), "Animation "+animationName+ " not found !");
+            return null;
+        }
+        AnimationState.TrackEntry entry;
         if(animationAlreadyUsed.containsKey(animationName)){
-            state.setEmptyAnimation(animationAlreadyUsed.get(animationName), mixDuration);
+            entry = state.setEmptyAnimation(animationAlreadyUsed.get(animationName), mixDuration);
             animationAlreadyUsed.removeKey(animationName);
         }else{
-            state.addEmptyAnimation(trackIndex, mixDuration, 0);
+            entry = state.addEmptyAnimation(trackIndex, mixDuration, 0);
             //animationAlreadyUsed.put(animationName, trackIndex);
         }
+        entry.setListener(listener);
+        return entry;
     }
 
     public AnimationState.TrackEntry setAnimation(int trackIndex, String animationName, float delay, boolean isLoop, boolean isAddOrMix, float mixDuration, float speed, float alpha){
@@ -58,9 +65,9 @@ public class SkeletonAnimation {
         //    state.addEmptyAnimation(trackIndex, mixDuration, 0);
         //}
 
-       while (animationAlreadyUsed.containsValue(trackIndex, true)){
-           trackIndex ++;
-       }
+       //while (animationAlreadyUsed.containsValue(trackIndex, true)){
+       //    trackIndex ++;
+       //}
 
         state.addEmptyAnimation(trackIndex, mixDuration, 0);
 
@@ -70,10 +77,12 @@ public class SkeletonAnimation {
         if (current == null) {
             state.setEmptyAnimation(trackIndex, mixDuration);
             entry = state.addAnimation(trackIndex, animationName, isLoop, delay);
+            Logx.e("===/// addAnimation ");
         } else {
             entry = state.setAnimation(trackIndex, animationName, isLoop);
-            entry.setDelay(delay);
+            Logx.e("===/// setAnimation ");
         }
+        entry.setDelay(delay);
         entry.setMixBlend(isAddOrMix ? Animation.MixBlend.add : Animation.MixBlend.replace);
         entry.setMixDuration(mixDuration);
         entry.setTimeScale(speed);

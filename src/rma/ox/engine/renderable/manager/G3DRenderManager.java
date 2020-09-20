@@ -120,6 +120,8 @@ public class G3DRenderManager {
         Gdx.gl.glDisable(GL20.GL_CULL_FACE);
     }
 
+
+
     public ModelCache getModelCache() {
         if (modelCacheDirty) {
             updateModelCache();

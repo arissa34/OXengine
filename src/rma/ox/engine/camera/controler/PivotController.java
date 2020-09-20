@@ -68,12 +68,16 @@ public class PivotController extends AbsController {
 
     private final Quaternion deltaRotation = new Quaternion();
 
-    public void drag() {
+    private void drag() {
         float deltaX = -Gdx.input.getDeltaX() * degreesPerPixel;
         float deltaY = -Gdx.input.getDeltaY() * degreesPerPixel;
-        if(camera.targetUp.y < 0){
-            deltaX = -deltaX;
-        }
+        //if(camera.targetUp.y < 0){
+        //    deltaX = -deltaX;
+        //}
+        drag(deltaX, deltaY);
+    }
+
+    private void drag(float deltaX, float deltaY) {
         tmp.set(camera.targetDirection).crs(camera.targetUp).nor();
         deltaRotation.setEulerAngles(deltaX, deltaY * tmp.x, deltaY * tmp.z);
         rotateAround(targetRotation, deltaRotation);
@@ -83,25 +87,9 @@ public class PivotController extends AbsController {
         tmp.set(point).sub(camera.targetPosition);
         camera.targetPosition.add(tmp);
         quat.transform(camera.targetDirection);
-        quat.transform(camera.targetUp);
         quat.transform(tmp);
+        quat.transform(camera.targetUp);
         camera.targetPosition.add(-tmp.x, -tmp.y, -tmp.z);
-    }
-
-    public void rotateAround (Vector3 point, Vector3 axis, float angle) {
-        tmp2.set(point);
-        tmp2.sub(camera.targetPosition);
-        translateTarget(tmp2);
-        rotateTarget(axis, angle);
-        tmp2.rotate(axis, angle);
-        camera.translate(-tmp2.x, -tmp2.y, -tmp2.z);
-    }
-    public void translateTarget (Vector3 vec) {
-        camera.targetPosition.add(vec);
-    }
-    public void rotateTarget (Vector3 axis, float angle) {
-        camera.targetDirection.rotate(axis, angle);
-        camera.targetUp.rotate(axis, angle);
     }
 
     @Override
@@ -144,7 +132,7 @@ public class PivotController extends AbsController {
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        drag();
+        drag(-deltaX * degreesPerPixel, -deltaY * degreesPerPixel);
         return false;
     }
 

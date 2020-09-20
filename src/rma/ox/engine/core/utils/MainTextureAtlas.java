@@ -1,6 +1,5 @@
 package rma.ox.engine.core.utils;
 
-import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
@@ -22,7 +21,7 @@ public class MainTextureAtlas {
         if (instance == null) {
             instance = new MainTextureAtlas();
             settings = new TexturePacker.Settings();
-            settings.saveInFiles = true;
+            settings.saveInFiles = false;
             settings.fast = true;
             settings.pot = true;
             settings.multipleOfFour = false;
