@@ -71,9 +71,9 @@ public class PivotController extends AbsController {
     private void drag() {
         float deltaX = -Gdx.input.getDeltaX() * degreesPerPixel;
         float deltaY = -Gdx.input.getDeltaY() * degreesPerPixel;
-        //if(camera.targetUp.y < 0){
-        //    deltaX = -deltaX;
-        //}
+        if(camera.targetUp.y < 0){
+            deltaX = -deltaX;
+        }
         drag(deltaX, deltaY);
     }
 
