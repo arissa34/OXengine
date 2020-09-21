@@ -1,11 +1,6 @@
 package rma.ox.engine.core.threading;
 
 import com.badlogic.gdx.ai.utils.CircularBuffer;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
-
-import rma.ox.engine.update.UpdatableThread;
-import rma.ox.engine.utils.Logx;
 
 public class RunnableThread extends AbsPausableThread {
 

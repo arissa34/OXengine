@@ -117,7 +117,7 @@ public class G3DRenderManager {
         }
         polygonBatch.end();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+        //Gdx.gl.glDisable(GL20.GL_CULL_FACE);
     }
 
 
