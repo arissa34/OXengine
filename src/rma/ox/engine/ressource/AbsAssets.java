@@ -20,4 +20,9 @@ public abstract class AbsAssets {
         if(!isLoaded(fileName))
             MyAssetManager.get().load(fileName, type, parameter);
     }
+
+    public static void unload (String fileName) {
+        if(isLoaded(fileName))
+            MyAssetManager.get().unload(fileName);
+    }
 }

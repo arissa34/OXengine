@@ -27,7 +27,6 @@ public class PivotController extends AbsController {
 
     @Override
     public void update(float delta) {
-
     }
 
     /**** InputProcessor ****/

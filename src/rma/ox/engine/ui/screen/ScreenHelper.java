@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntMap;
 
+import rma.ox.engine.utils.Logx;
+
 public class ScreenHelper implements Disposable {
 
     private static ScreenHelper instance;
@@ -27,14 +29,31 @@ public class ScreenHelper implements Disposable {
     }
 
     public void setScreen(AbsScreen screen){
+        setScreen(screen, false);
+    }
+
+    public void setScreen(AbsScreen screen, boolean shouldDispose){
         if(currentScreen != null){
             currentScreen.unload();
         }
+        if(shouldDispose && currentScreen != null){
+            currentScreen.dispose();
+            listScreen.removeValue(currentScreen, true);
+            Logx.e("----- REMOVE SCREEN "+currentScreen.getClass());
+        }
         if(!listScreen.contains(screen, true)){
+            Logx.e("----- ADD SCREEN "+screen.getClass());
             listScreen.add(screen);
         }
         currentScreen = screen;
         game.setScreen(screen);
+
+        Logx.e("-****************-");
+        for(int i = 0; i < listScreen.size; i++){
+
+            Logx.e("-****** SCREEN : "+listScreen.get(i).getClass());
+        }
+        Logx.e("-****************-");
     }
 
     @Override

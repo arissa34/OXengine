@@ -25,8 +25,14 @@ public class RectBuilder {
     private Node node;
     private Model model;
     private VertexAttributes vertexAttributes;
+    private boolean isDoubleFace;
 
     public RectBuilder(float width, float height){
+        this(width, height, false);
+    }
+
+    public RectBuilder(float width, float height, boolean isDoubleFace){
+        this.isDoubleFace = isDoubleFace;
         this.width = width;
         this.height = height;
 
@@ -70,11 +76,16 @@ public class RectBuilder {
         //verts.add(0);verts.add(0);verts.add(1);
         verts.add(1);verts.add(1);verts.add(1);verts.add(1);
         verts.add(1);verts.add(0);
+
     }
 
     private void buildIndices(){
         indices.add(0); indices.add(1); indices.add(3);
         indices.add(3); indices.add(1); indices.add(2);
+        if(isDoubleFace){
+            indices.add(0); indices.add(3); indices.add(2);
+            indices.add(2); indices.add(1); indices.add(0);
+        }
     }
 
     private void buildMesh(){

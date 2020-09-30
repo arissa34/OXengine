@@ -44,8 +44,8 @@ public class CameraHelper {
         setGodCamera();
     }
 
-    public GhostCamera getCamera(){
-        return camera;
+    public static GhostCamera getCamera(){
+        return get().camera;
     }
 
     public void update(float delta){
@@ -103,6 +103,13 @@ public class CameraHelper {
         if(defaultController != null) {
             defaultController.enable();
         }
+    }
+
+    public boolean isTouchEnable(){
+        if(defaultController != null) {
+            return defaultController.isEnable();
+        }
+        return false;
     }
 
     public AbsController getDefaultController(){

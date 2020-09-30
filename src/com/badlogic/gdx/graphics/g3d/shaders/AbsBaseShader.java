@@ -14,13 +14,8 @@ import rma.ox.engine.update.UpdateManager;
 
 public abstract class AbsBaseShader extends MyBaseShader implements UpdatableMainThread {
 
-    protected final int u_delta = register(new Uniform("u_delta"));
-    protected final int u_mouse = register(new Uniform("u_mouse"));
-    protected final int u_resolution = register(new Uniform("u_resolution"));
 
     protected static float delta = 0f;
-    protected static Vector2 mouse = new Vector2();
-    protected static Vector2 resolution = new Vector2();
 
     private ShaderLoader loader;
 
@@ -56,9 +51,6 @@ public abstract class AbsBaseShader extends MyBaseShader implements UpdatableMai
     @Override
     public void begin(Camera camera, RenderContext context) {
         program.begin();
-        //set(u_delta, delta);
-        //set(u_mouse, mouse.set(Gdx.input.getX(), Gdx.input.getY()));
-        //set(u_resolution, resolution.set(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight()));
     }
 
     @Override

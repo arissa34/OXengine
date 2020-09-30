@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.MyModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Disposable;
@@ -58,7 +59,7 @@ public class AxeModel implements Disposable {
     }
 
     public AxeModel registerForRender(){
-        G3DRenderManager.get().addModelToCacheNoEnv(new ModelInstance(gridModel));
+        G3DRenderManager.get().addModelToCacheNoEnv(new MyModelInstance(gridModel));
         //G3DRenderManager.get().addModelToCacheNoEnv(new ModelInstance(axesModel));
         return this;
     }

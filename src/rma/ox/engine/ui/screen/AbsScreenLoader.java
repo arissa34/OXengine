@@ -31,7 +31,7 @@ public abstract class AbsScreenLoader extends AbsScreen {
         if (MyAssetManager.get().update()) {
             System.gc();
             nextScreen.loadingFinished(game);
-            ScreenHelper.get().setScreen(nextScreen);
+            ScreenHelper.get().setScreen(nextScreen, true);
             nextScreen = null;
         }
         progress = MyAssetManager.get().getProgress();

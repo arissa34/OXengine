@@ -25,7 +25,8 @@ public class StageManager {
     }
 
     public void addStage(AbsStage stage){
-        listStage.add(stage);
+        if(!listStage.contains(stage, true))
+            listStage.add(stage);
     }
 
     public void removeStage(AbsStage stage){

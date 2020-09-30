@@ -14,8 +14,7 @@ public class MaterialUtils {
         if(modelInstance == null) return;
         for(int i = 0; i < modelInstance.materials.size; i++){
             if(!modelInstance.materials.get(i).has(BlendingAttribute.Type)) {
-                BlendingAttribute attribute = new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-                attribute.opacity = 1f;
+                BlendingAttribute attribute = new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.98f);
                 modelInstance.materials.get(i).set(attribute);
             }
         }

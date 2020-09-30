@@ -3,10 +3,12 @@ package rma.ox.engine.renderable.manager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelCache;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.MyModelInstance;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -35,15 +37,16 @@ public class G3DRenderManager {
 
     /*******************************/
 
-    private Array<ModelInstance> listModelsDynamic;
-    private Array<ModelInstance> listModelsDynamicNoEnv;
-    private Array<ModelInstance> listModelsCache;
-    private Array<ModelInstance> listModelsCacheNoEnv;
+    private Array<MyModelInstance> listModelsDynamic;
+    private Array<MyModelInstance> listModelsDynamicNoEnv;
+    private Array<MyModelInstance> listModelsCache;
+    private Array<MyModelInstance> listModelsCacheNoEnv;
     private Array<SkeletonRender> listSkeleton;
     private ModelInstance skybox;
     private ModelCache modelCache;
     private ModelCache modelCacheNoEnv;
     private ModelBatch modelBatch;
+    private SpriteBatch spriteBatch;
     private DefaultShaderProvider shaderProvider;
 
     private PolygonSpriteBatch polygonBatch;
@@ -64,14 +67,16 @@ public class G3DRenderManager {
             protected Shader createShader(final Renderable renderable) {
                 ShaderLoader loader = ShaderHelper.get().getShaderLoader();
                 MyDefaultShader.Config config = new MyDefaultShader.Config();
-                config.vertexShader = loader.load("day_night_color.glsl:VS");
-                config.fragmentShader = loader.load("day_night_color.glsl:FS");
+                config.vertexShader = loader.load("main_shader.glsl:VS");
+                config.fragmentShader = loader.load("main_shader.glsl:FS");
                 config.numBones = 3;
+                config.defaultCullFace = 0;
                 return new MyDefaultShader(renderable, config);
             }
         });
         modelCache = new ModelCache();
         modelCacheNoEnv = new ModelCache();
+        spriteBatch = new SpriteBatch();
         polygonBatch = new PolygonSpriteBatch();
         polygonBatch.setBlendFunction(GL20.GL_SRC_COLOR, GL20.GL_ONE);
         skeletonRenderer = new SkeletonRenderer();
@@ -86,17 +91,35 @@ public class G3DRenderManager {
         listSkeleton = new Array<>();
     }
 
+    private int i;
     public void render() {
+        render(true);
+    }
+    public void render(boolean renderSkyBox) {
 
-        modelBatch.begin(CameraHelper.get().getCamera());
+        if (skybox != null && renderSkyBox) {
+            modelBatch.begin(CameraHelper.getCamera());
+                modelBatch.render(skybox);
+            modelBatch.end();
+        }
+
+        modelBatch.begin(CameraHelper.getCamera());
         {
-            if (skybox != null) modelBatch.render(skybox, environment);
             modelBatch.render(getModelCacheNoEnv());
             modelBatch.render(getModelCache(), environment);
-            modelBatch.render(listModelsDynamicNoEnv);
-            modelBatch.render(listModelsDynamic, environment);
+
+            for (i = 0; i < listModelsDynamicNoEnv.size; i++) {
+                if (listModelsDynamicNoEnv.get(i).isVisible(CameraHelper.getCamera()))
+                    modelBatch.render(listModelsDynamicNoEnv.get(i));
+            }
+            for (i = 0; i < listModelsDynamic.size; i++) {
+                if (listModelsDynamic.get(i).isVisible(CameraHelper.getCamera()))
+                    modelBatch.render(listModelsDynamic.get(i), environment);
+            }
         }
         modelBatch.end();
+
+        //Logx.e("--- nbr render listModelsDynamicNoEnv : "+listModelsDynamicNoEnv.size);
 
         renderSkeleton();
     }
@@ -120,7 +143,9 @@ public class G3DRenderManager {
         //Gdx.gl.glDisable(GL20.GL_CULL_FACE);
     }
 
-
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
+    }
 
     public ModelCache getModelCache() {
         if (modelCacheDirty) {
@@ -160,11 +185,12 @@ public class G3DRenderManager {
         listSkeleton.clear();
     }
 
-    public synchronized void addModelDynamic(ModelInstance instance) {
-        listModelsDynamic.add(instance);
+    public synchronized void addModelDynamic(MyModelInstance instance) {
+        if (!listModelsDynamic.contains(instance, true))
+            listModelsDynamic.add(instance);
     }
 
-    public synchronized void removeModelDynamic(ModelInstance instance) {
+    public synchronized void removeModelDynamic(MyModelInstance instance) {
         listModelsDynamic.removeValue(instance, true);
     }
 
@@ -172,24 +198,27 @@ public class G3DRenderManager {
         listModelsDynamic.clear();
     }
 
-    public synchronized void addModelNoEnvDynamic(ModelInstance instance) {
-        listModelsDynamicNoEnv.add(instance);
+    public synchronized void addModelNoEnvDynamic(MyModelInstance instance) {
+        if (!listModelsDynamicNoEnv.contains(instance, true))
+            listModelsDynamicNoEnv.add(instance);
     }
 
-    public synchronized void removeModelNoEnvDynamic(ModelInstance instance) {
-        listModelsDynamicNoEnv.add(instance);
+    public synchronized void removeModelNoEnvDynamic(MyModelInstance instance) {
+        listModelsDynamicNoEnv.removeValue(instance, true);
     }
 
     public synchronized void clearModelNoenvDynamic() {
         listModelsDynamicNoEnv.clear();
     }
 
-    public synchronized void addModelToCache(ModelInstance instance) {
-        listModelsCache.add(instance);
-        modelCacheDirty = true;
+    public synchronized void addModelToCache(MyModelInstance instance) {
+        if (!listModelsCache.contains(instance, true)) {
+            listModelsCache.add(instance);
+            modelCacheDirty = true;
+        }
     }
 
-    public synchronized void removeModelToCache(ModelInstance instance) {
+    public synchronized void removeModelToCache(MyModelInstance instance) {
         listModelsCache.removeValue(instance, true);
         modelCacheDirty = true;
     }
@@ -208,12 +237,14 @@ public class G3DRenderManager {
         modelCacheDirty = false;
     }
 
-    public void addModelToCacheNoEnv(ModelInstance instance) {
-        listModelsCacheNoEnv.add(instance);
-        modelCacheNoEnvDirty = true;
+    public void addModelToCacheNoEnv(MyModelInstance instance) {
+        if (!listModelsCacheNoEnv.contains(instance, true)) {
+            listModelsCacheNoEnv.add(instance);
+            modelCacheNoEnvDirty = true;
+        }
     }
 
-    public void removeModelToCacheNoEnv(ModelInstance instance) {
+    public void removeModelToCacheNoEnv(MyModelInstance instance) {
         listModelsCacheNoEnv.removeValue(instance, true);
         modelCacheNoEnvDirty = true;
     }
@@ -236,6 +267,10 @@ public class G3DRenderManager {
         this.skybox = skybox;
     }
 
+    public ModelInstance getSkybox() {
+        return skybox;
+    }
+
     public ModelBatch getModelBatch() {
         return modelBatch;
     }
@@ -249,12 +284,28 @@ public class G3DRenderManager {
     }
 
     public void addLight(BaseLight light) {
-        lights.add(light);
-        environment.add(light);
+        if (!lights.contains(light, true)) {
+            lights.add(light);
+            environment.add(light);
+        }
+    }
+
+    public void removeLight(BaseLight light) {
+        lights.removeValue(light, true);
+        environment.remove(light);
     }
 
     public void clearAllLights() {
         environment.remove(lights);
         lights.clear();
+    }
+
+    public void clearAll() {
+        clearAllLights();
+        clearModelToCacheNoEnv();
+        clearModelToCache();
+        clearModelNoenvDynamic();
+        clearModelDynamic();
+        clearSkeletonList();
     }
 }

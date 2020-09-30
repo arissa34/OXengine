@@ -19,6 +19,7 @@ public abstract class AbsController implements GestureDetector.GestureListener, 
     protected GhostCamera camera;
 
     private GestureDetector gestureListener;
+    private boolean isEnable;
 
     public AbsController(GhostCamera camera){
         this.camera = camera;
@@ -31,14 +32,17 @@ public abstract class AbsController implements GestureDetector.GestureListener, 
         if(inputMultiplexer == null){
             Gdx.input.setInputProcessor(inputMultiplexer = new InputMultiplexer());
         }
-        if(Config.isDesktop()) {
+        if(Config.isDesktop() && !inputMultiplexer.getProcessors().contains(this, true)) {
             inputMultiplexer.addProcessor(this);
         }else{
             if(gestureListener == null){
                 gestureListener = new GestureDetector(this);
             }
-            inputMultiplexer.addProcessor(gestureListener);
+            if(!inputMultiplexer.getProcessors().contains(gestureListener, true)){
+                inputMultiplexer.addProcessor(gestureListener);
+            }
         }
+        isEnable = true;
     }
 
     public void disable(){
@@ -50,6 +54,11 @@ public abstract class AbsController implements GestureDetector.GestureListener, 
                 inputMultiplexer.removeProcessor(gestureListener);
             }
         }
+        isEnable = false;
+    }
+
+    public boolean isEnable(){
+        return isEnable;
     }
 
 }
