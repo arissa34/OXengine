@@ -20,6 +20,7 @@ public class GhostCamera extends PerspectiveCamera {
     public Vector3 targetPosition;
     public Vector3 targetDirection;
     public Vector3 targetUp;
+    public Vector3 right;
     public final Matrix4 targetView;
     public float targetFieldOfView;
     public float speed = 10f;
@@ -30,6 +31,7 @@ public class GhostCamera extends PerspectiveCamera {
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
 
+        right = new Vector3();
         targetPosition = new Vector3(0, 0, 0);
         targetDirection = new Vector3(0, 0, -1);
         targetUp = new Vector3(0, 1, 0);
@@ -39,7 +41,7 @@ public class GhostCamera extends PerspectiveCamera {
         isLerping = true;
 
         near = 0.1f;
-        far = 1000f;
+        far = 10000f;
 
         update();
     }
@@ -51,6 +53,7 @@ public class GhostCamera extends PerspectiveCamera {
             Vector3Utils.lerp(up, targetUp, speed, delta);
             Vector3Utils.lerp(fieldOfView, targetFieldOfView, speed, delta);
         }
+        right.set(tmp.set(up).crs(direction).nor());
         update();
     }
 
@@ -105,6 +108,28 @@ public class GhostCamera extends PerspectiveCamera {
         up.set(targetUp);
     }
 
+
+    public void lookAtTarget (Vector3 v) {
+        lookAtTarget(v.x, v.y, v.z);
+    }
+    public void lookAtTarget (float x, float y, float z) {
+        tmp.set(x, y, z).sub(targetPosition).nor();
+        if (!tmp.isZero()) {
+            float dot = tmp.dot(targetUp); // up and direction must ALWAYS be orthonormal vectors
+            if (Math.abs(dot - 1) < 0.000000001f) {
+                // Collinear
+                targetUp.set(targetDirection).scl(-1);
+            } else if (Math.abs(dot + 1) < 0.000000001f) {
+                // Collinear opposite
+                targetUp.set(targetDirection);
+            }
+            targetDirection.set(tmp);
+            //Normalize UP
+            tmp.set(targetDirection).crs(targetUp);
+            targetUp.set(tmp).crs(targetDirection).nor();
+        }
+    }
+
     public void moveTo(float x, float y, float z) {
         targetPosition.set(x, y, z);
     }
@@ -116,7 +141,7 @@ public class GhostCamera extends PerspectiveCamera {
 
     public GhostCamera moveTo(Vector3 targetPosition, Vector3 targetDirection) {
         this.targetPosition.set(targetPosition);
-        this.targetDirection.set(targetDirection);
+        lookAtTarget(targetDirection);
         return this;
     }
 
@@ -133,8 +158,9 @@ public class GhostCamera extends PerspectiveCamera {
         return this;
     }
 
+    // SHOULD REMOVE THIS ?
     public GhostCamera moveToLooktAt(Vector3 targetDirection){
-        this.targetDirection.set(targetDirection);
+        lookAtTarget(targetDirection);
         return this;
     }
 
